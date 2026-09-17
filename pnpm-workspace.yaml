@@ -1,0 +1,7 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+allowBuilds:
+  # Dependencia transitiva de eslint-config-next (vía eslint-import-resolver-typescript).
+  # Su postinstall compila/descarga un binario nativo de resolución de módulos.
+  unrs-resolver: true
