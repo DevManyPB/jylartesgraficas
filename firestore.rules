@@ -1,0 +1,148 @@
+rules_version = '2';
+
+// Modelo de datos: SPEC.md §7. Principios: todo cerrado por defecto y se abre
+// lo mínimo. El rol se lee del custom claim, nunca del documento del cliente
+// (SPEC.md §6.1). Las escrituras con privilegios — consecutivos, totales,
+// stock, roles — van por Route Handler con firebase-admin, que no pasa por
+// estas reglas (AGENTS.md §3 y §6); por eso aquí se deniegan.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    function rol() {
+      return request.auth.token.role;
+    }
+
+    function esAdmin() {
+      return autenticado() && rol() == 'admin';
+    }
+
+    function esPersonal() {
+      return autenticado() && (rol() == 'admin' || rol() == 'operador');
+    }
+
+    function esDueno(uid) {
+      return autenticado() && request.auth.uid == uid;
+    }
+
+    function noTocaCampos(campos) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(campos);
+    }
+
+    // --- Cuentas -----------------------------------------------------------
+    // El cliente lee y edita su ficha, pero nunca su rol: eso se asigna como
+    // custom claim desde una Route Handler protegida.
+    match /users/{uid} {
+      allow get: if esDueno(uid) || esPersonal();
+      allow list: if esPersonal();
+      allow create: if esDueno(uid) && !('role' in request.resource.data);
+      allow update: if (esDueno(uid) && noTocaCampos(['role'])) || esAdmin();
+      allow delete: if false;
+    }
+
+    // --- Catálogo público --------------------------------------------------
+    // Lectura pública solo de lo publicado. El resto, solo el personal.
+    match /services/{serviceId} {
+      allow read: if resource.data.activo == true || esPersonal();
+      allow write: if esAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if resource.data.activo == true || esPersonal();
+      allow write: if esAdmin();
+
+      // El stock vive en la variante y nunca se edita a mano: se registran
+      // movimientos y el servidor recalcula en transacción (AGENTS.md §6).
+      // Solo el personal la lee: lleva el costo unitario, que es finanzas. El
+      // sitio público lee talla, color, precio y stock desde el servidor.
+      match /variants/{variantId} {
+        allow read: if esPersonal();
+        allow write: if false;
+
+        match /movements/{movementId} {
+          allow read: if esPersonal();
+          allow write: if false;
+        }
+      }
+    }
+
+    match /portfolio/{projectId} {
+      allow read: if resource.data.publicado == true || esPersonal();
+      allow write: if esAdmin();
+    }
+
+    // --- Pedidos -----------------------------------------------------------
+    // El cliente solo ve los suyos. La creación no se permite desde el
+    // cliente: el número sale de una transacción sobre counters/{año}, así que
+    // el pedido lo crea una Route Handler. Ver la nota en el plan sobre la
+    // discrepancia con SPEC.md §7 principio 5.
+    match /orders/{orderId} {
+      allow get: if esPersonal() || (autenticado() && resource.data.uid == request.auth.uid);
+      allow list: if esPersonal();
+      allow create: if false;
+      allow update: if esPersonal() && noTocaCampos(['numero', 'uid']);
+      allow delete: if false;
+
+      match /events/{eventId} {
+        allow read: if esPersonal()
+          || (autenticado() && get(/databases/$(database)/documents/orders/$(orderId)).data.uid == request.auth.uid);
+        allow write: if false;
+      }
+
+      // Los mensajes marcados como internos no salen al cliente.
+      match /messages/{messageId} {
+        allow read: if esPersonal()
+          || (autenticado()
+              && resource.data.visibleParaCliente == true
+              && get(/databases/$(database)/documents/orders/$(orderId)).data.uid == request.auth.uid);
+        allow create: if esPersonal()
+          || (autenticado()
+              && get(/databases/$(database)/documents/orders/$(orderId)).data.uid == request.auth.uid
+              && request.resource.data.autorUid == request.auth.uid
+              && request.resource.data.visibleParaCliente == true);
+        allow update, delete: if false;
+      }
+    }
+
+    // --- Facturación e inventario -----------------------------------------
+    // Totales, consecutivos y stock los recalcula el servidor: nunca se
+    // confía en el número que llega del cliente (SPEC.md §7 principio 6).
+    match /invoices/{invoiceId} {
+      allow get: if esAdmin() || (autenticado() && resource.data.clienteUid == request.auth.uid);
+      allow list: if esAdmin();
+      allow write: if false;
+    }
+
+    match /supplies/{supplyId} {
+      allow read: if esPersonal();
+      allow write: if false;
+    }
+
+    match /counters/{year} {
+      allow read, write: if false;
+    }
+
+    // Mezcla cifras de ingresos, y el operador no ve finanzas (SPEC.md §6.1).
+    match /stats/{docId} {
+      allow read: if esAdmin();
+      allow write: if false;
+    }
+
+    // --- Configuración -----------------------------------------------------
+    // Son los datos de contacto, horarios y ubicación que el sitio muestra en
+    // público; por eso se leen sin sesión.
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if esAdmin();
+    }
+
+    // --- Cierre ------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

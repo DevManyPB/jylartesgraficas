@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Mismo motivo que en apps/web: <fieldset> no encoge por debajo de su
+     contenido y rompe el ancho en pantallas estrechas. */
+  fieldset {
+    min-inline-size: 0;
+  }
+}

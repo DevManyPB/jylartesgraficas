@@ -81,6 +81,8 @@ Reglas de uso:
 
 **Elección por defecto: Cloudflare (Pages/Workers con el adaptador de Next.js).** Suplente: Netlify. Ambos permiten dominio propio y subdominio con SSL gratis.
 
+> **Paso obligatorio al desplegar: rate limiting en Cloudflare.** Dos endpoints son públicos por diseño, porque un invitado tiene que poder pedir sin cuenta: `POST /api/pedidos` (escribe en Firestore) y `POST /api/subidas/firma` (habilita una subida a Cloudinary). Sin un límite en el borde, cualquiera puede agotar las 20.000 escrituras diarias de Firestore o los créditos de Cloudinary. Se limita en Cloudflare y no en el código a propósito: allí el bloqueo ocurre antes de llegar a la aplicación y no consume cuota, mientras que un contador en la propia base de datos gastaría justo aquello que intenta proteger.
+
 > Estos límites y condiciones cambian. Antes de desplegar, verificar en la documentación oficial de cada proveedor.
 
 ### 2.5 Mapa de ubicación
@@ -386,25 +388,32 @@ services/{serviceId}
 products/{productId}
   nombre, slug, categoria, descripcion, proveedor,
   imagenes[{publicId,url,ancho,alto,alt}],
-  permitePersonalizacion, activo, orden, precioDesde
+  permitePersonalizacion, activo, orden, precioDesde,
+  precioHasta, stockTotal, variantesBajoMinimo   // agregados que recalcula el servidor en cada movimiento
 
 products/{productId}/variants/{variantId}
   talla, color, sku, stock, stockMinimo,
-  costoUnitario, precioVenta, activo
+  costoUnitario, precioVenta, activo, orden
 
 products/{productId}/variants/{variantId}/movements/{movementId}
-  tipo, cantidad, motivo, orderId | null, autorUid, createdAt
+  tipo, cantidad, motivo, orderId | null, autorUid, createdAt,
+  delta, stockAnterior, stockNuevo, productId, variantId   // para auditar y consultar el historial del producto
 
 supplies/{supplyId}
   nombre, sku, unidad, stock, stockMinimo, costoUnitario, proveedor
+
+supplies/{supplyId}/movements/{movementId}
+  tipo, cantidad, delta, stockAnterior, stockNuevo, motivo, insumoId, autorUid, createdAt
 
 orders/{orderId}
   numero, tipo: 'servicio' | 'producto',
   uid | null, invitado{nombre,email,telefono,ciudad},
   serviceId | null,
   items[{productId,variantId,nombre,talla,color,cantidad,personalizado}],
-  detalle, medidas, material, fechaDeseada, presupuestoAprox,
-  archivos[{publicId,url,nombre,tipo,peso}],
+  detalle, medidas, material, camposExtra{}, fechaDeseada, presupuestoAprox,
+  archivos[{publicId,url,formato,bytes,ancho,alto}],
+  archivosIncompletos,
+  busqueda[],   // prefijos normalizados de nombre, correo y teléfono, para buscar desde el panel
   estado, prioridad, notasInternas, createdAt, updatedAt
 
 orders/{orderId}/events/{eventId}

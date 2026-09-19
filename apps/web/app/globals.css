@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /**
+   * El navegador le da a <fieldset> un `min-inline-size: min-content`, así que
+   * se niega a encogerse por debajo de su contenido más ancho. Con un nombre
+   * de archivo largo sin espacios, el paso de referencias empujaba la página a
+   * 627 px dentro de un móvil de 320 y aparecía scroll horizontal — y el
+   * `truncate` del nombre no servía de nada, porque el fieldset crecía antes
+   * de que hubiera algo que truncar. SPEC.md §9 pide 320 px sin scroll lateral.
+   */
+  fieldset {
+    min-inline-size: 0;
+  }
+}

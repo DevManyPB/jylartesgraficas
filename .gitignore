@@ -39,3 +39,7 @@ pnpm-debug.log*
 
 # testing
 coverage/
+
+# capturas y ajustes locales: pueden llevar credenciales a la vista
+Captura de pantalla*.png
+.claude/settings.local.json

@@ -10,11 +10,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
     "@jyl/core": "workspace:*",
     "@jyl/ui": "workspace:*",
+    "firebase": "^11.1.0",
+    "firebase-admin": "^13.0.2",
     "next": "16.3.5",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-hook-form": "^7.88.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20",

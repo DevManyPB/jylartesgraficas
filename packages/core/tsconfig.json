@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    // core tiene código de navegador (SDK de cliente, subida a Cloudinary)
+    // además del de servidor: necesita los tipos del DOM.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": ["src"]
 }
