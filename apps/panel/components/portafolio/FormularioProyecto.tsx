@@ -50,7 +50,9 @@ export function FormularioProyecto({ id, inicial, categorias }: FormularioProyec
         toast({ title: "No se guardó el proyecto", description: r.error, variant: "error" });
         return;
       }
-      reset(datos);
+      // `datos` es la salida del esquema, que descarta la `url` de cada imagen:
+      // se reinicia con lo que hay en pantalla para no perder las vistas previas.
+      reset(getValues());
       ok = true;
       toast({ title: creando ? "Proyecto creado" : "Proyecto guardado", variant: "success" });
       if (creando && r.datos.id) router.replace(`/portafolio/${r.datos.id}`);

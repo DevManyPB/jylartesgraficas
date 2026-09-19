@@ -53,7 +53,9 @@ export function FormularioProducto({ id, inicial, categorias }: FormularioProduc
         toast({ title: "No se guardó el producto", description: resultado.error, variant: "error" });
         return;
       }
-      reset(datos);
+      // `datos` es la salida del esquema, que descarta la `url` de cada imagen:
+      // se reinicia con lo que hay en pantalla para no perder las vistas previas.
+      reset(getValues());
       ok = true;
       toast({ title: creando ? "Producto creado" : "Producto guardado", variant: "success" });
       if (creando && resultado.datos.id) router.replace(`/inventario/productos/${resultado.datos.id}`);
