@@ -67,3 +67,13 @@ export interface InsumoDelPanel {
 export function nombreDeVariante(v: { talla: string; color: string }): string {
   return [v.color, v.talla].filter(Boolean).join(" / ");
 }
+
+export interface VarianteParaVender {
+  productId: string;
+  variantId: string;
+  /** "Camiseta institucional — Negra / M". */
+  nombre: string;
+  sku: string;
+  precioVenta: number;
+  stock: number;
+}

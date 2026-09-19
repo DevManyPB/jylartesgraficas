@@ -30,6 +30,7 @@ import {
   type ProductoConVariantes,
   type ProductoDelPanel,
   type VarianteDelPanel,
+  type VarianteParaVender,
 } from "./tipos";
 
 export const PRODUCTOS_POR_PAGINA = 25;
@@ -42,7 +43,7 @@ export const PRODUCTOS_POR_PAGINA = 25;
  * nunca descuadra nada (la transacción que falla no escribe), pero no hace
  * falta que falle.
  */
-const INTENTOS_DE_STOCK = { maxAttempts: 20 };
+export const INTENTOS_DE_STOCK = { maxAttempts: 20 };
 
 const db = () => getFirebaseAdmin().db;
 const productos = () => db().collection("products");
@@ -347,6 +348,98 @@ export async function registrarMovimientoVariante(
   }, INTENTOS_DE_STOCK);
 }
 
+/** Referencias de una variante y su producto, para leerlas dentro de una transacción. */
+export function referenciasDeVariante(productId: string, variantId: string) {
+  const producto = productos().doc(productId);
+  return { producto, variante: producto.collection("variants").doc(variantId) };
+}
+
+export interface MovimientoEnLote {
+  productId: string;
+  variantId: string;
+  tipo: TipoMovimiento;
+  cantidad: number;
+  motivo: string;
+  /** Cómo se llama la línea, para el mensaje si no se puede mover. */
+  nombre: string;
+}
+
+export type PlanDeMovimientos =
+  | { ok: true; aplicar: (tx: Transaction) => void }
+  | { ok: false; mensaje: string };
+
+/**
+ * Varios movimientos de stock que deben ir juntos o no ir — p. ej. las líneas
+ * de una factura (SPEC.md §6.4: facturar descuenta el stock).
+ *
+ * Quien llama lee las variantes y los productos con un solo `tx.getAll` (ver
+ * `registrarMovimientoVariante` sobre por qué una sola lectura) y pasa aquí
+ * lo leído. Si algún movimiento no cabe, no se escribe ninguno. Los
+ * agregados del producto se ajustan por diferencia, sumados por producto.
+ * Cada variante aparece una sola vez: quien llama suma antes las líneas que
+ * la repiten.
+ */
+export function planDeMovimientos(
+  movimientos: readonly MovimientoEnLote[],
+  leido: (ref: DocumentReference) => FirebaseFirestore.DocumentSnapshot | undefined,
+  autorUid: string,
+  orderId: string | null,
+): PlanDeMovimientos {
+  const escrituras: ((tx: Transaction) => void)[] = [];
+  const porProducto = new Map<string, { ref: DocumentReference; delta: number; bajoMinimo: number }>();
+
+  for (const m of movimientos) {
+    const { producto, variante } = referenciasDeVariante(m.productId, m.variantId);
+    const documento = leido(variante);
+    if (!documento?.exists || !leido(producto)?.exists) {
+      return { ok: false, mensaje: `«${m.nombre}» ya no está en el inventario. Quita el vínculo de esa línea.` };
+    }
+    const v = aVariante(documento.id, documento.data()!);
+    const calculo = calcularMovimiento(v.stock, m.tipo, m.cantidad);
+    if (!calculo.ok) return { ok: false, mensaje: `«${m.nombre}»: ${calculo.mensaje}` };
+
+    escrituras.push((tx) => {
+      tx.update(variante, { stock: calculo.stockNuevo });
+      tx.set(variante.collection("movements").doc(), {
+        tipo: m.tipo,
+        cantidad: m.cantidad,
+        motivo: m.motivo,
+        delta: calculo.delta,
+        stockAnterior: v.stock,
+        stockNuevo: calculo.stockNuevo,
+        productId: m.productId,
+        variantId: m.variantId,
+        orderId,
+        autorUid,
+        createdAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    if (v.activo) {
+      const agregado = porProducto.get(m.productId) ?? { ref: producto, delta: 0, bajoMinimo: 0 };
+      agregado.delta += calculo.delta;
+      agregado.bajoMinimo +=
+        (estadoDeStock(calculo.stockNuevo, v.stockMinimo) !== "ok" ? 1 : 0) -
+        (estadoDeStock(v.stock, v.stockMinimo) !== "ok" ? 1 : 0);
+      porProducto.set(m.productId, agregado);
+    }
+  }
+
+  return {
+    ok: true,
+    aplicar: (tx) => {
+      for (const escribir of escrituras) escribir(tx);
+      for (const { ref, delta, bajoMinimo } of porProducto.values()) {
+        tx.update(ref, {
+          stockTotal: FieldValue.increment(delta),
+          variantesBajoMinimo: FieldValue.increment(bajoMinimo),
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      }
+    },
+  };
+}
+
 async function nombresDeAutores(uids: string[]): Promise<Map<string, string>> {
   const unicos = [...new Set(uids.filter(Boolean))];
   if (unicos.length === 0) return new Map();
@@ -496,4 +589,36 @@ export async function movimientosDeInsumo(id: string): Promise<MovimientoDelPane
 export async function categoriasDeProductos(): Promise<string[]> {
   const r = await productos().select("categoria").get();
   return [...new Set(r.docs.map((d) => txt(d.data().categoria)).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
+}
+
+
+/**
+ * Todas las variantes activas, para vincularlas a una línea de factura. Dos
+ * lecturas (productos y un `collectionGroup` de variantes) en vez de una por
+ * producto: el catálogo de un estudio es de decenas o pocos cientos.
+ */
+export async function variantesParaVender(): Promise<VarianteParaVender[]> {
+  const [listaProductos, variantes] = await Promise.all([
+    productos().get(),
+    db().collectionGroup("variants").get(),
+  ]);
+  const nombres = new Map(listaProductos.docs.map((p) => [p.id, txt(p.data().nombre)]));
+
+  return variantes.docs
+    .filter((v) => v.ref.parent.parent?.parent.id === "products" && nombres.has(v.ref.parent.parent.id))
+    .map((v) => {
+      const productId = v.ref.parent.parent!.id;
+      const variante = aVariante(v.id, v.data());
+      return { productId, variante };
+    })
+    .filter(({ variante }) => variante.activo)
+    .map(({ productId, variante }) => ({
+      productId,
+      variantId: variante.id,
+      nombre: [nombres.get(productId), nombreDeVariante(variante)].filter(Boolean).join(" — "),
+      sku: variante.sku,
+      precioVenta: variante.precioVenta,
+      stock: variante.stock,
+    }))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 }

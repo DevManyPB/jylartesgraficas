@@ -28,3 +28,8 @@ export function datosInvalidos(error: ZodError): NextResponse<RespuestaDeError> 
 export function errorDelServidor(mensaje: string): NextResponse<RespuestaDeError> {
   return NextResponse.json({ error: mensaje }, { status: 500 });
 }
+
+/** 404 o 409 con el mensaje que explica por qué no se pudo. */
+export function rechazo(resultado: { estado: 404 | 409; mensaje: string }): NextResponse<RespuestaDeError> {
+  return NextResponse.json({ error: resultado.mensaje }, { status: resultado.estado });
+}

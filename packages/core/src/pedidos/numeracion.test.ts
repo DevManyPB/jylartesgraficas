@@ -1,7 +1,7 @@
 import { deleteApp, initializeApp, type App } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { formatearNumeroPedido, siguienteNumeroDePedido } from "./numeracion";
+import { anioEnColombia, formatearNumeroPedido, siguienteNumeroDePedido } from "./numeracion";
 
 describe("formato del número", () => {
   it("rellena con ceros hasta cuatro cifras", () => {
@@ -11,6 +11,12 @@ describe("formato del número", () => {
 
   it("no recorta cuando se pasa de cuatro cifras", () => {
     expect(formatearNumeroPedido(2026, 12345)).toBe("JYL-2026-12345");
+  });
+
+  it("el año es el de Colombia, no el del servidor", () => {
+    // 1 de enero a las 02:00 UTC es todavía 31 de diciembre en Bogotá.
+    expect(anioEnColombia(new Date("2027-01-01T02:00:00Z"))).toBe(2026);
+    expect(anioEnColombia(new Date("2027-01-01T05:00:00Z"))).toBe(2027);
   });
 });
 

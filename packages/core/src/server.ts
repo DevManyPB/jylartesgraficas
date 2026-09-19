@@ -65,6 +65,7 @@ export {
   registrarMovimientoInsumo,
   movimientosDeInsumo,
   categoriasDeProductos,
+  variantesParaVender,
 } from "./inventario/servidor";
 export type { ResultadoRegistro } from "./inventario/servidor";
 
@@ -79,3 +80,18 @@ export {
   eliminarProyecto,
   categoriasDeProyectos,
 } from "./portafolio/servidor";
+
+export {
+  FACTURAS_POR_PAGINA,
+  listarFacturas,
+  facturasDePedido,
+  leerFactura,
+  borradorDesdePedido,
+  crearBorrador,
+  actualizarBorrador,
+  eliminarBorrador,
+  emitirFactura,
+  anularFactura,
+  registrarPago,
+} from "./facturas/servidor";
+export type { Resultado as ResultadoFactura } from "./facturas/servidor";

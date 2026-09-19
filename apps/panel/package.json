@@ -16,6 +16,7 @@
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "next": "16.3.5",
+    "pdf-lib": "^1.17.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.88.0",

@@ -21,6 +21,7 @@ export const SECCIONES: readonly Seccion[] = [
   { href: "/", nombre: "Tablero", roles: PERSONAL },
   { href: "/pedidos", nombre: "Pedidos", roles: PERSONAL },
   { href: "/inventario", nombre: "Inventario", roles: PERSONAL },
+  { href: "/facturas", nombre: "Facturas", roles: SOLO_ADMIN },
   { href: "/portafolio", nombre: "Portafolio", roles: SOLO_ADMIN },
   { href: "/servicios", nombre: "Servicios", roles: SOLO_ADMIN },
   { href: "/configuracion", nombre: "Configuración", roles: SOLO_ADMIN },

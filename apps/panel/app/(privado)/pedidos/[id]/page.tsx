@@ -1,9 +1,11 @@
 import { NOMBRE_CAMPO_EXTRA, NOMBRE_ESTADO } from "@jyl/core";
-import { leerPedidoDelPanel } from "@jyl/core/server";
+import { facturasDePedido, leerPedidoDelPanel } from "@jyl/core/server";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { EstadoFactura } from "@/components/facturas/EstadoFactura";
 import { CambiarEstado } from "@/components/pedidos/CambiarEstado";
 import { EstadoPedido } from "@/components/pedidos/EstadoPedido";
 import {
@@ -33,9 +35,11 @@ function Bloque({ titulo, children }: { titulo: string; children: ReactNode }) {
 
 /** Detalle de un pedido — SPEC.md §6.3. Admin y operador. */
 export default async function DetallePedido({ params }: PageProps<"/pedidos/[id]">) {
-  await paginaSoloPara(["admin", "operador"]);
+  const sesion = await paginaSoloPara(["admin", "operador"]);
   const { id } = await params;
-  const pedido = await leerPedidoDelPanel(id);
+  // Las facturas son finanzas: el operador no las ve (SPEC.md §6.1).
+  const esAdmin = sesion.rol === "admin";
+  const [pedido, facturas] = await Promise.all([leerPedidoDelPanel(id), esAdmin ? facturasDePedido(id) : []]);
   if (!pedido) notFound();
 
   const { contacto } = pedido;
@@ -155,6 +159,32 @@ export default async function DetallePedido({ params }: PageProps<"/pedidos/[id]
             {/* La key reinicia la selección cuando el estado cambia. */}
             <CambiarEstado key={pedido.estado} pedidoId={pedido.id} numero={pedido.numero} actual={pedido.estado} />
           </Bloque>
+
+          {esAdmin && (
+            <Bloque titulo="Facturas">
+              {facturas.length > 0 && (
+                <ul className="mb-3 flex flex-col gap-1.5 text-sm">
+                  {facturas.map((f) => (
+                    <li key={f.id} className="flex flex-wrap items-center justify-between gap-2">
+                      <Link href={`/facturas/${f.id}`} className="tabular-nums text-ink underline-offset-2 hover:underline">
+                        {f.numero ?? "Borrador"}
+                      </Link>
+                      <span className="flex items-center gap-2">
+                        <span className="tabular-nums text-ink-muted">{pesos.format(f.total)}</span>
+                        <EstadoFactura estado={f.estado} />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link
+                href={`/facturas/nueva?pedido=${pedido.id}`}
+                className="inline-block rounded-md border border-border-strong px-3 py-1.5 text-sm font-medium text-ink hover:bg-canvas-sunken"
+              >
+                Crear factura
+              </Link>
+            </Bloque>
+          )}
 
           <Bloque titulo="Notas">
             <NotasInternas pedidoId={pedido.id} inicial={pedido.notasInternas} />

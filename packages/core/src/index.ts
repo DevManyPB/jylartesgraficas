@@ -95,6 +95,7 @@ export type {
   ProductoConVariantes,
   MovimientoDelPanel,
   InsumoDelPanel,
+  VarianteParaVender,
 } from "./inventario/tipos";
 
 export { pedirPermiso, subirACloudinary } from "./cloudinary/subir-desde-navegador";
@@ -102,3 +103,30 @@ export type { PermisoDeSubidaNavegador, RespuestaCloudinary } from "./cloudinary
 
 export { MAX_IMAGENES_PROYECTO, proyectoEditableSchema } from "./portafolio/esquemas";
 export type { ProyectoEditable, ProyectoDelPanel } from "./portafolio/esquemas";
+
+export {
+  ESTADOS_FACTURA,
+  NOMBRE_ESTADO_FACTURA,
+  METODOS_PAGO,
+  NOMBRE_METODO_PAGO,
+  MAX_LINEAS_FACTURA,
+  lineaFacturaSchema,
+  clienteFacturaSchema,
+  borradorFacturaSchema,
+  pagoSchema,
+  anulacionSchema,
+} from "./facturas/esquemas";
+export type {
+  EstadoFactura,
+  MetodoPago,
+  LineaFactura,
+  ClienteFactura,
+  BorradorFactura,
+  BorradorFacturaEntrante,
+  Pago,
+} from "./facturas/esquemas";
+export { calcularTotales, totalDeLinea, saldoPendiente, formatearNumeroFactura } from "./facturas/calculo";
+export type { Totales } from "./facturas/calculo";
+export type { EmisorFactura, PagoDeFactura, FilaFactura, FacturaDelPanel } from "./facturas/tipos";
+
+export { normalizarTexto } from "./pedidos/busqueda";

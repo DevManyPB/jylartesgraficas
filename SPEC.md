@@ -423,11 +423,14 @@ orders/{orderId}/messages/{messageId}
   autorUid, texto, visibleParaCliente, createdAt
 
 invoices/{invoiceId}
-  numero, orderId | null, clienteUid | null, clienteDatos{},
-  lineas[{descripcion,cantidad,precioUnitario,variantId,descuento}],
+  numero | null,   // se asigna al emitir: un borrador no tiene número, así borrarlo no deja huecos
+  orderId | null, clienteUid | null, clienteDatos{},
+  lineas[{descripcion,cantidad,precioUnitario,productId,variantId,descuento}],   // descuento en pesos, sobre la línea
   subtotal, descuento, impuesto, total, estado,
+  emisor{razonSocial,nit,direccion,telefono,email}, impuestoPorcentaje,   // copia al emitir: la factura no cambia si cambia la configuración
+  stockDescontado,   // si al emitir se descontó stock; anular lo devuelve
   emitidaEn, vencimientoEn, anulacion{motivo,autorUid,fecha},
-  pagos[{fecha,monto,metodo}]
+  pagos[{fecha,monto,metodo,autorUid,registradoEn}]
 
 portfolio/{projectId}
   titulo, slug, categoria, cliente, descripcion,

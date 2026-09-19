@@ -21,6 +21,8 @@ interface CampoProps {
   ayuda?: ReactNode;
   error?: string;
   className?: string;
+  /** Para ocultar la etiqueta visualmente donde otra cosa la da, p. ej. la cabecera de una tabla. */
+  claseEtiqueta?: string;
   /** Recibe los atributos que conectan la entrada con su etiqueta y su error. */
   children: (props: PropsDeEntrada) => ReactNode;
 }
@@ -30,7 +32,7 @@ interface CampoProps {
  * con `aria-describedby` y se anuncia al aparecer, así que quien usa lector
  * de pantalla lo oye sin tener que buscarlo.
  */
-export function Campo({ etiqueta, ayuda, error, className, children }: CampoProps) {
+export function Campo({ etiqueta, ayuda, error, className, claseEtiqueta, children }: CampoProps) {
   const id = useId();
   const idAyuda = `${id}-ayuda`;
   const idError = `${id}-error`;
@@ -38,7 +40,7 @@ export function Campo({ etiqueta, ayuda, error, className, children }: CampoProp
 
   return (
     <div className={cn("flex flex-col gap-1", className)}>
-      <label htmlFor={id} className="text-[13px] font-medium text-ink">
+      <label htmlFor={id} className={cn("text-[13px] font-medium text-ink", claseEtiqueta)}>
         {etiqueta}
       </label>
       {children({ id, "aria-invalid": Boolean(error), "aria-describedby": describe })}
