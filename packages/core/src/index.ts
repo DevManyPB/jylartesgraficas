@@ -68,6 +68,7 @@ export type {
   EventoDelPedido,
   FilaPedido,
   PaginaDePedidos,
+  ColumnaDelTablero,
   PedidoDelPanel,
 } from "./pedidos/tipos-panel";
 

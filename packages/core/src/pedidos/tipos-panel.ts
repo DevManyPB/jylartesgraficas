@@ -63,3 +63,10 @@ export interface PaginaDePedidos {
   /** Id del último de la página, para pedir la siguiente; null si no hay más. */
   siguiente: string | null;
 }
+
+export interface ColumnaDelTablero {
+  estado: EstadoPedido;
+  filas: FilaPedido[];
+  /** Cuántos hay en ese estado en total, aunque la columna muestre menos. */
+  total: number;
+}

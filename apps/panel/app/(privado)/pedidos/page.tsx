@@ -49,7 +49,12 @@ export default async function Pedidos({ searchParams }: PageProps<"/pedidos">) {
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display text-2xl text-ink">Pedidos</h1>
+        <div className="flex items-baseline gap-3">
+          <h1 className="font-display text-2xl text-ink">Pedidos</h1>
+          <Link href="/pedidos/tablero" className="text-sm text-accent underline-offset-2 hover:underline">
+            Ver tablero
+          </Link>
+        </div>
         <form action="/pedidos" role="search" className="flex items-center gap-2">
           <label htmlFor="buscar-pedido" className="sr-only">
             Buscar por número, nombre o teléfono

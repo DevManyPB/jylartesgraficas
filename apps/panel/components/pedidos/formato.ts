@@ -8,6 +8,14 @@ import { normalizarWhatsapp } from "@jyl/core";
 
 const ZONA = "America/Bogota";
 
+/**
+ * Node y el navegador no ponen el mismo espacio dentro de "p. m." ni entre
+ * "$" y la cifra: uno usa espacio duro y el otro uno normal. En un componente
+ * de cliente eso hace que React rechace la hidratación, así que aquí se
+ * normalizan a un espacio corriente y las dos partes escriben lo mismo.
+ */
+const mismoEspacio = (texto: string) => texto.replace(/[  ]/g, " ");
+
 const fechaCorta = new Intl.DateTimeFormat("es-CO", {
   day: "numeric",
   month: "short",
@@ -25,24 +33,27 @@ const fechaLarga = new Intl.DateTimeFormat("es-CO", {
 const soloFecha = new Intl.DateTimeFormat("es-CO", { dateStyle: "long", timeZone: "UTC" });
 
 export function formatearFechaCorta(iso: string | null): string {
-  return iso ? fechaCorta.format(new Date(iso)) : "—";
+  return iso ? mismoEspacio(fechaCorta.format(new Date(iso))) : "—";
 }
 
 export function formatearFechaLarga(iso: string | null): string {
-  return iso ? fechaLarga.format(new Date(iso)) : "—";
+  return iso ? mismoEspacio(fechaLarga.format(new Date(iso))) : "—";
 }
 
 /** Una fecha sin hora ("2026-10-02"), tal como la eligió el cliente. */
 export function formatearDia(dia: string): string {
   // Se interpreta en UTC a propósito: es un día del calendario, no un instante.
-  return soloFecha.format(new Date(`${dia}T00:00:00Z`));
+  return mismoEspacio(soloFecha.format(new Date(`${dia}T00:00:00Z`)));
 }
 
-export const pesos = new Intl.NumberFormat("es-CO", {
+const moneda = new Intl.NumberFormat("es-CO", {
   style: "currency",
   currency: "COP",
   maximumFractionDigits: 0,
 });
+
+/** Se usa como `pesos.format(1000)`; devuelve "$ 1.000" con espacio normal. */
+export const pesos = { format: (valor: number) => mismoEspacio(moneda.format(valor)) };
 
 export function pesoDeArchivo(bytes: number): string {
   return bytes < 1024 * 1024

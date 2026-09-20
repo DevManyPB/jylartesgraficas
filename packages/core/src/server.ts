@@ -35,6 +35,8 @@ export type { ContactoCliente } from "./clientes/perfil";
 export {
   PEDIDOS_POR_PAGINA,
   listarPedidos,
+  tableroDePedidos,
+  PEDIDOS_POR_COLUMNA,
   buscarPedidos,
   leerPedidoDelPanel,
   cambiarEstadoPedido,

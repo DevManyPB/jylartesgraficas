@@ -4,9 +4,10 @@ import { FieldValue, Timestamp, type DocumentData, type Query } from "firebase-a
 import { leerContactosClientes, type ContactoCliente } from "../clientes/perfil";
 import { getFirebaseAdmin } from "../firebase/admin";
 import { planDeBusqueda } from "./busqueda";
-import { estadoPedidoSchema, type EstadoPedido } from "./esquemas";
+import { ESTADOS_PEDIDO, estadoPedidoSchema, type EstadoPedido } from "./esquemas";
 import type {
   ArchivoDelPedido,
+  ColumnaDelTablero,
   ContactoDelPedido,
   EventoDelPedido,
   FilaPedido,
@@ -110,6 +111,38 @@ export async function listarPedidos(filtro: FiltroPedidos = {}): Promise<PaginaD
     filas: await filasDe(documentos),
     siguiente: hayMas ? (documentos.at(-1)?.id ?? null) : null,
   };
+}
+
+/** Cuántos pedidos muestra cada columna del kanban antes de "ver más". */
+export const PEDIDOS_POR_COLUMNA = 15;
+
+/**
+ * El kanban por estado — SPEC.md §6.3. Una consulta y un conteo por columna:
+ * el conteo es una agregación, que cuesta mucho menos que traer los
+ * documentos, así que la cabecera puede decir "3 de 41" sin leerlos todos.
+ *
+ * Los contactos y los nombres de servicio se resuelven de una sola vez para
+ * todas las columnas, no por columna.
+ */
+export async function tableroDePedidos(porColumna = PEDIDOS_POR_COLUMNA): Promise<ColumnaDelTablero[]> {
+  const consultas = ESTADOS_PEDIDO.map((estado) =>
+    coleccion().where("estado", "==", estado).orderBy("createdAt", "desc").limit(porColumna),
+  );
+
+  const [paginas, totales] = await Promise.all([
+    Promise.all(consultas.map((c) => c.get())),
+    Promise.all(consultas.map((c) => c.count().get())),
+  ]);
+
+  const filas = await filasDe(paginas.flatMap((p) => p.docs));
+  let desde = 0;
+
+  return ESTADOS_PEDIDO.map((estado, i) => {
+    const cuantos = paginas[i]!.size;
+    const columna = filas.slice(desde, desde + cuantos);
+    desde += cuantos;
+    return { estado, filas: columna, total: totales[i]!.data().count };
+  });
 }
 
 /**
