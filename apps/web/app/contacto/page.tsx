@@ -2,13 +2,14 @@ import { DIAS_SEMANA, NOMBRE_DIA } from "@jyl/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mapa } from "@/components/contacto/Mapa";
+import { NegocioLocal } from "@/components/seo/DatosEstructurados";
 import { configuracionPublica } from "@/datos/cache";
 import { enlaceWhatsapp, franjaDelDia } from "@/lib/formato";
 
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Contacto — JYL Artes Gráficos",
+  title: "Contacto",
   description: "Dónde estamos, a qué hora abrimos y cómo escribirnos.",
 };
 
@@ -36,6 +37,7 @@ export default async function Contacto() {
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
+      <NegocioLocal configuracion={configuracion} />
       <h1 className="font-display text-4xl text-ink sm:text-5xl">Contacto</h1>
       <p className="mt-4 max-w-prose text-base text-ink-muted">
         Escríbenos por WhatsApp para lo rápido, o mándanos el pedido con los archivos si ya sabes qué necesitas.

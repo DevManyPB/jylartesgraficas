@@ -7,7 +7,7 @@ import { proyectosPublicos } from "@/datos/cache";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Portafolio — JYL Artes Gráficos",
+  title: "Portafolio",
   description: "Trabajos hechos en el estudio: publicidad, diseño gráfico y web.",
 };
 

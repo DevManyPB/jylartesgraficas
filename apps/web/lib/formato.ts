@@ -40,3 +40,10 @@ export function franjaDelDia(horario: Horario): string | null {
   if (!horario.abre || !horario.cierra) return null;
   return `${formatearHora(horario.abre)} – ${formatearHora(horario.cierra)}`;
 }
+
+const fechaLarga = new Intl.DateTimeFormat("es-CO", { dateStyle: "long", timeZone: "America/Bogota" });
+
+/** "20 de septiembre de 2026", o una raya si no hay fecha. */
+export function formatearFecha(iso: string | null): string {
+  return iso ? mismoEspacio(fechaLarga.format(new Date(iso))) : "—";
+}

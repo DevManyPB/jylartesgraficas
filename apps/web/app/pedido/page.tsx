@@ -1,14 +1,15 @@
 import { COOKIE_SESION, leerContactoCliente, leerSesion } from "@jyl/core/server";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { normalizarWhatsapp } from "@jyl/core";
 import { FormularioPedido } from "@/components/pedido/FormularioPedido";
 import type { ProductoElegido } from "@/components/pedido/PasoProducto";
-import { productoPublico, serviciosPublicos } from "@/datos/cache";
+import { configuracionPublica, productoPublico, serviciosPublicos } from "@/datos/cache";
 
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Pedir un trabajo — JYL Artes Gráficos",
+  title: "Pedir un trabajo",
   description: "Cuéntanos qué necesitas y te respondemos con una cotización.",
 };
 
@@ -53,11 +54,16 @@ async function productoDeLaUrl(parametros: Record<string, string | string[] | un
 
 export default async function Pedido({ searchParams }: PageProps<"/pedido">) {
   const parametros = await searchParams;
-  const [servicios, sesion, producto] = await Promise.all([
+  const [servicios, sesion, producto, configuracion] = await Promise.all([
     serviciosPublicos(),
     leerSesion((await cookies()).get(COOKIE_SESION)?.value),
     productoDeLaUrl(parametros),
+    configuracionPublica(),
   ]);
+
+  // Solo si parece un número completo: un enlace de WhatsApp a medias no sirve.
+  const numeroWhatsapp = normalizarWhatsapp(configuracion.whatsapp);
+  const whatsapp = /^\d{11,15}$/.test(numeroWhatsapp) ? numeroWhatsapp : null;
 
   const pedido = uno(parametros.servicio);
   const servicioInicial = servicios.some((s) => s.id === pedido) ? (pedido ?? null) : null;
@@ -72,6 +78,7 @@ export default async function Pedido({ searchParams }: PageProps<"/pedido">) {
         servicios={servicios}
         producto={producto}
         servicioInicial={servicioInicial}
+        whatsapp={whatsapp}
         identidad={
           sesion
             ? {

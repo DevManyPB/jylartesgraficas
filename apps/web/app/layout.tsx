@@ -5,6 +5,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SiteHeader } from "@/components/header/SiteHeader";
+import { SITIO_URL } from "@/lib/sitio";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -19,8 +20,19 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "JYL Artes Gráficos",
+  // Con esto, las imágenes de Open Graph de cada página se resuelven a
+  // direcciones absolutas, que es lo único que entienden las redes.
+  metadataBase: new URL(SITIO_URL),
+  title: {
+    default: "JYL Artes Gráficos",
+    template: "%s — JYL Artes Gráficos",
+  },
   description: "Estudio de artes gráficas, desarrollo web y servicios técnicos.",
+  openGraph: {
+    type: "website",
+    locale: "es_CO",
+    siteName: "JYL Artes Gráficos",
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

@@ -23,6 +23,8 @@ interface FormularioPedidoProps {
   producto?: ProductoElegido | null;
   /** Si se llegó desde /servicios, el servicio ya elegido. */
   servicioInicial?: string | null;
+  /** WhatsApp del estudio, ya normalizado; null si no está configurado. */
+  whatsapp?: string | null;
 }
 
 /**
@@ -42,7 +44,13 @@ interface PedidoEnviado {
   archivosIncompletos: boolean;
 }
 
-export function FormularioPedido({ servicios, identidad, producto = null, servicioInicial = null }: FormularioPedidoProps) {
+export function FormularioPedido({
+  servicios,
+  identidad,
+  producto = null,
+  servicioInicial = null,
+  whatsapp = null,
+}: FormularioPedidoProps) {
   const [paso, setPaso] = useState(0);
   const [confirmando, setConfirmando] = useState(false);
   const [enviado, setEnviado] = useState<PedidoEnviado | null>(null);
@@ -138,6 +146,11 @@ export function FormularioPedido({ servicios, identidad, producto = null, servic
       <Confirmacion
         numero={enviado.numero}
         archivosIncompletos={enviado.archivosIncompletos}
+        whatsapp={
+          whatsapp
+            ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(`Hola, acabo de enviar el pedido ${enviado.numero}.`)}`
+            : null
+        }
       />
     );
   }

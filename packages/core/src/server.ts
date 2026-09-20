@@ -118,3 +118,6 @@ export {
   guardarNotasCliente,
 } from "./clientes/panel";
 export type { FilaCliente, ClienteDelPanel, PedidoDelCliente } from "./clientes/panel";
+
+export { historialDelCliente, PEDIDOS_EN_MI_CUENTA } from "./clientes/cuenta";
+export type { HistorialDelCliente, PedidoDeMiCuenta, FacturaDeMiCuenta } from "./clientes/cuenta";

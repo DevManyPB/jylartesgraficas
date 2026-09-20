@@ -5,7 +5,7 @@ import { configuracionPublica } from "@/datos/cache";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Privacidad — JYL Artes Gráficos",
+  title: "Privacidad",
   description: "Qué datos pedimos, para qué los usamos y cómo pedir que los borremos.",
 };
 

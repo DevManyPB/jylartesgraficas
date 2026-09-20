@@ -7,7 +7,7 @@ import { enlaceWhatsapp } from "@/lib/formato";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Servicios — JYL Artes Gráficos",
+  title: "Servicios",
   description: "Publicidad y diseño gráfico, desarrollo web y servicios técnicos.",
 };
 

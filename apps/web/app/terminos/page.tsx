@@ -5,7 +5,7 @@ import { Apartado, PaginaLegal, PorDefinir } from "@/components/legal/Legal";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Términos y condiciones — JYL Artes Gráficos",
+  title: "Términos y condiciones",
   description: "Cómo funcionan los pedidos, las cotizaciones y los productos del estudio.",
 };
 

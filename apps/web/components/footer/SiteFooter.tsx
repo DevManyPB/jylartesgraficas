@@ -32,6 +32,7 @@ export async function SiteFooter() {
           <ul className="mt-3 flex flex-col gap-2 text-sm">
             {[
               { href: "/portafolio", label: "Portafolio" },
+              { href: "/nosotros", label: "Nosotros" },
               { href: "/servicios", label: "Servicios" },
               { href: "/tienda", label: "Tienda" },
               { href: "/pedido", label: "Pedir un trabajo" },

@@ -3,10 +3,12 @@ import Link from "next/link";
 interface ConfirmacionProps {
   numero: string;
   archivosIncompletos: boolean;
+  /** Enlace de WhatsApp con el número del pedido ya escrito; null si no hay número configurado. */
+  whatsapp: string | null;
 }
 
 /** SPEC.md §4.5: número de pedido, resumen y salida. */
-export function Confirmacion({ numero, archivosIncompletos }: ConfirmacionProps) {
+export function Confirmacion({ numero, archivosIncompletos, whatsapp }: ConfirmacionProps) {
   return (
     <div>
       <h1 className="font-display text-3xl text-ink">Recibimos tu pedido</h1>
@@ -29,15 +31,29 @@ export function Confirmacion({ numero, archivosIncompletos }: ConfirmacionProps)
         Te escribiremos para revisar los detalles y pasarte la cotización.
       </p>
 
-      {/* TODO (bloque 4): salida a WhatsApp con mensaje pre-llenado — necesita
-          el número de settings/general (SPEC.md §4.5 y §4.7). */}
-
-      <Link
-        href="/"
-        className="mt-8 inline-flex rounded-full bg-accent px-5 py-3 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-      >
-        Volver al inicio
-      </Link>
+      {/* Dos salidas, como pide SPEC.md §4.5. */}
+      <div className="mt-8 flex flex-wrap gap-3">
+        {whatsapp && (
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex rounded-full bg-accent px-5 py-3 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          >
+            Escribir por WhatsApp sobre este pedido
+          </a>
+        )}
+        <Link
+          href="/"
+          className={
+            whatsapp
+              ? "inline-flex rounded-full border border-border-strong px-5 py-3 text-sm font-medium text-ink transition-colors hover:bg-canvas-sunken"
+              : "inline-flex rounded-full bg-accent px-5 py-3 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover"
+          }
+        >
+          Volver al inicio
+        </Link>
+      </div>
     </div>
   );
 }

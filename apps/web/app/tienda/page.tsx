@@ -8,7 +8,7 @@ import { pesos } from "@/lib/formato";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Tienda — JYL Artes Gráficos",
+  title: "Tienda",
   description: "Productos del estudio, con opción de personalizarlos con tu diseño.",
 };
 

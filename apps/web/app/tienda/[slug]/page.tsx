@@ -2,6 +2,7 @@ import { miniaturaDesdeUrl } from "@jyl/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ProductoEstructurado } from "@/components/seo/DatosEstructurados";
 import { GaleriaProducto } from "@/components/tienda/GaleriaProducto";
 import { PedirProducto } from "@/components/tienda/PedirProducto";
 import { productoPublico } from "@/datos/cache";
@@ -10,11 +11,11 @@ export const runtime = "nodejs";
 
 export async function generateMetadata({ params }: PageProps<"/tienda/[slug]">): Promise<Metadata> {
   const producto = await productoPublico((await params).slug);
-  if (!producto) return { title: "Producto — JYL Artes Gráficos" };
+  if (!producto) return { title: "Producto" };
 
   const portada = producto.imagenes[0];
   return {
-    title: `${producto.nombre} — JYL Artes Gráficos`,
+    title: producto.nombre,
     description: producto.descripcion || `${producto.nombre}, en la tienda de JYL Artes Gráficos.`,
     openGraph: portada ? { images: [{ url: miniaturaDesdeUrl(portada.url, 1200) ?? portada.url }] } : undefined,
   };
@@ -27,6 +28,7 @@ export default async function Producto({ params }: PageProps<"/tienda/[slug]">) 
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
+      <ProductoEstructurado producto={producto} />
       <Link href="/tienda" className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline">
         ← Tienda
       </Link>
