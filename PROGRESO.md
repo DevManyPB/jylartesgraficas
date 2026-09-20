@@ -24,8 +24,10 @@
 ## Hecho
 
 - **Fase 1:** monorepo, sistema de diseño, modales, autenticación, reglas.
-- **Fase 2 (parcial):** formulario de pedido de 4 pasos con subida firmada a
-  Cloudinary, cuenta de cliente y revalidación del sitio desde el panel.
+- **Fase 2 completa:** inicio, servicios, portafolio con visor, tienda
+  (listado y ficha con variantes), contacto con mapa de Leaflet, pie de
+  página, textos legales y el formulario de pedido de 4 pasos, que ahora
+  también recibe productos de la tienda.
 - **Fase 3, bloques 1 a 6:**
   1. Esqueleto del panel: navegación por rol, cambios sin guardar.
   2. Configuración y servicios.
@@ -70,10 +72,12 @@ restar contadores en cada escritura.
 
 - **Ordenar arrastrando** en portafolio y productos (SPEC §6.7), que hoy es
   con botones subir/bajar. El kanban ya tiene el patrón de arrastre.
-- **Fase 2, páginas públicas:** inicio, servicios, portafolio, tienda y
-  contacto (mapa con Leaflet, ya aprobado pero sin instalar, y botón de
-  WhatsApp). Leen `configuracionPublica`. Los textos legales necesitan
-  contenido real del estudio: no se inventa.
+- **Contenido del estudio, no de código:** las descripciones y los precios de
+  los 14 servicios (sembrados vacíos a propósito) y los textos legales.
+  En Términos y Privacidad, lo que falta está marcado como «Pendiente» en la
+  propia página: plazos, revisiones, garantías, cuánto se guardan los datos y
+  los datos de la empresa como responsable. Hay que completarlos y que los
+  revise un abogado antes de publicar.
 - **Correos** (confirmación de pedido, envío de facturas): falta la cuenta de
   Resend.
 - Borrar de Cloudinary las imágenes de prueba en `jyl/productos` y
