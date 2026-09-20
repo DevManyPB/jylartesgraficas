@@ -24,10 +24,12 @@
 ## Hecho
 
 - **Fase 1:** monorepo, sistema de diseño, modales, autenticación, reglas.
-- **Fase 2 completa:** inicio, servicios, portafolio con visor, tienda
-  (listado y ficha con variantes), contacto con mapa de Leaflet, pie de
-  página, textos legales y el formulario de pedido de 4 pasos, que ahora
-  también recibe productos de la tienda.
+- **Fase 2 completa:** inicio, nosotros, servicios, portafolio con visor,
+  tienda (listado y ficha con variantes), contacto con mapa de Leaflet, pie
+  de página, textos legales, «Mi cuenta» con el historial real del cliente,
+  y el formulario de pedido de 4 pasos, que también recibe productos de la
+  tienda y ofrece escribir por WhatsApp al terminar.
+  SEO de §10: sitemap, robots, Open Graph y datos estructurados.
 - **Fase 3 completa:**
   1. Esqueleto del panel: navegación por rol, cambios sin guardar.
   2. Configuración y servicios.
@@ -55,6 +57,12 @@
   reglas no abren a nadie salvo al servidor. Hay prueba de reglas.
 
 ## Pendiente
+
+- **Medir Lighthouse en móvil** (SPEC §13 pide rendimiento ≥ 90 y
+  accesibilidad ≥ 95). Nunca se ha medido: es la única casilla de §13 sin
+  comprobar, junto con el envío de correos.
+- **Correo**: el envío de la factura al cliente (SPEC §6.5) y la
+  confirmación del pedido siguen esperando la cuenta de Resend.
 - **Contenido del estudio, no de código:** las descripciones y los precios de
   los 14 servicios (sembrados vacíos a propósito) y los textos legales.
   En Términos y Privacidad, lo que falta está marcado como «Pendiente» en la
