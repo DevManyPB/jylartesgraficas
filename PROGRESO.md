@@ -1,6 +1,6 @@
 # Por dónde vamos
 
-Última actualización: 19 de septiembre de 2026. Qué construir: `SPEC.md`. Cómo: `AGENTS.md`.
+Última actualización: 20 de septiembre de 2026. Qué construir: `SPEC.md`. Cómo: `AGENTS.md`.
 
 ## Para seguir en otra máquina
 
@@ -69,8 +69,6 @@
   propia página: plazos, revisiones, garantías, cuánto se guardan los datos y
   los datos de la empresa como responsable. Hay que completarlos y que los
   revise un abogado antes de publicar.
-- **Correos** (confirmación de pedido, envío de facturas): falta la cuenta de
-  Resend.
 - Borrar de Cloudinary las imágenes de prueba en `jyl/productos` y
   `jyl/portafolio`.
 - **Enter en los formularios en modal** (Registrar pago, Registrar
