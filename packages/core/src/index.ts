@@ -139,3 +139,6 @@ export type {
   ProductoPublicoConVariantes,
   ProyectoPublico,
 } from "./catalogo/publico";
+
+export { ordenDelCatalogoSchema } from "./catalogo/esquemas";
+export type { OrdenDelCatalogo } from "./catalogo/esquemas";

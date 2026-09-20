@@ -52,3 +52,27 @@ export async function idYOrdenNuevos(
   const orden = ultimo.empty ? 0 : num(ultimo.docs[0]!.data().orden) + 1;
   return { id, orden };
 }
+
+/**
+ * Reordena los documentos que se ven en pantalla, arrastrando — SPEC.md §6.7.
+ *
+ * Solo toca los `orden` de esos documentos: reparte entre ellos, en el nuevo
+ * orden, los valores que ya tenían. Así funciona con listas paginadas, porque
+ * ninguna otra página cambia de sitio, y dos personas ordenando a la vez no
+ * pueden entrelazar sus listas: la transacción relee lo que va a escribir.
+ *
+ * Devuelve false si algún id ya no existe: la lista cambió mientras se
+ * ordenaba y quien llama debe recargar en vez de guardar un orden a medias.
+ */
+export async function reordenarEnColeccion(coleccion: CollectionReference, ids: string[]): Promise<boolean> {
+  if (ids.length === 0 || new Set(ids).size !== ids.length) return false;
+
+  return coleccion.firestore.runTransaction(async (tx) => {
+    const documentos = await tx.getAll(...ids.map((id) => coleccion.doc(id)));
+    if (documentos.some((d) => !d.exists)) return false;
+
+    const ordenes = documentos.map((d) => num(d.data()!.orden)).sort((a, b) => a - b);
+    ids.forEach((id, i) => tx.update(coleccion.doc(id), { orden: ordenes[i] }));
+    return true;
+  });
+}

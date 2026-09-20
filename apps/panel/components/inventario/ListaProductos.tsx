@@ -5,6 +5,7 @@ import { cn, useToast } from "@jyl/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useOrdenArrastrable } from "@/components/catalogo/usar-orden-arrastrable";
 import { enviarJson } from "@/components/formularios/enviar";
 import { pesos } from "@/components/pedidos/formato";
 
@@ -15,14 +16,18 @@ function rango(p: ProductoDelPanel): string {
 }
 
 /**
- * Productos en el orden de la tienda. "Subir" y "Bajar" intercambian con el
- * vecino en el servidor, aunque esté en otra página; con teclado funcionan
- * igual que con el ratón.
+ * Productos en el orden de la tienda. Se pueden arrastrar (SPEC.md §6.7), y
+ * "Subir" y "Bajar" hacen lo mismo con el teclado; esos dos intercambian con
+ * el vecino en el servidor, aunque esté en otra página.
  */
 export function ListaProductos({ productos, esAdmin }: { productos: ProductoDelPanel[]; esAdmin: boolean }) {
   const { toast } = useToast();
   const router = useRouter();
   const [moviendo, setMoviendo] = useState<string | null>(null);
+  const { enPantalla, propsDeFila, arrastrando, encima, guardando } = useOrdenArrastrable(
+    productos,
+    "/api/productos/orden",
+  );
 
   async function mover(id: string, direccion: -1 | 1) {
     if (moviendo) return;
@@ -34,11 +39,19 @@ export function ListaProductos({ productos, esAdmin }: { productos: ProductoDelP
   }
 
   return (
-    <ul aria-busy={moviendo !== null} className="divide-y divide-border border-y border-border">
-      {productos.map((p) => {
+    <ul aria-busy={moviendo !== null || guardando} className="divide-y divide-border border-y border-border">
+      {enPantalla.map((p) => {
         const portada = p.imagenes[0];
         return (
-          <li key={p.id} className="flex items-center gap-3 py-2">
+          <li
+            key={p.id}
+            {...propsDeFila(p.id)}
+            className={cn(
+              "flex items-center gap-3 py-2",
+              arrastrando === p.id && "opacity-50",
+              encima === p.id && arrastrando && arrastrando !== p.id && "bg-accent-soft",
+            )}
+          >
             <span className="h-12 w-12 shrink-0 overflow-hidden rounded bg-canvas-sunken">
               {portada && (
                 // eslint-disable-next-line @next/next/no-img-element

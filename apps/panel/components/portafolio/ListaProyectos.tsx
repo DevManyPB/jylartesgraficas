@@ -1,10 +1,11 @@
 "use client";
 
 import { miniaturaDesdeUrl, type ProyectoDelPanel } from "@jyl/core";
-import { useToast } from "@jyl/ui";
+import { cn, useToast } from "@jyl/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useOrdenArrastrable } from "@/components/catalogo/usar-orden-arrastrable";
 import { enviarJson } from "@/components/formularios/enviar";
 
 /** El portafolio en el orden en que lo ve el público. */
@@ -12,6 +13,10 @@ export function ListaProyectos({ proyectos }: { proyectos: ProyectoDelPanel[] })
   const { toast } = useToast();
   const router = useRouter();
   const [moviendo, setMoviendo] = useState<string | null>(null);
+  const { enPantalla, propsDeFila, arrastrando, encima, guardando } = useOrdenArrastrable(
+    proyectos,
+    "/api/portafolio/orden",
+  );
 
   async function mover(id: string, direccion: -1 | 1) {
     if (moviendo) return;
@@ -23,11 +28,19 @@ export function ListaProyectos({ proyectos }: { proyectos: ProyectoDelPanel[] })
   }
 
   return (
-    <ul aria-busy={moviendo !== null} className="divide-y divide-border border-y border-border">
-      {proyectos.map((p) => {
+    <ul aria-busy={moviendo !== null || guardando} className="divide-y divide-border border-y border-border">
+      {enPantalla.map((p) => {
         const portada = p.imagenes[0];
         return (
-          <li key={p.id} className="flex items-center gap-3 py-2">
+          <li
+            key={p.id}
+            {...propsDeFila(p.id)}
+            className={cn(
+              "flex items-center gap-3 py-2",
+              arrastrando === p.id && "opacity-50",
+              encima === p.id && arrastrando && arrastrando !== p.id && "bg-accent-soft",
+            )}
+          >
             <span className="h-14 w-20 shrink-0 overflow-hidden rounded bg-canvas-sunken">
               {portada && (
                 // eslint-disable-next-line @next/next/no-img-element

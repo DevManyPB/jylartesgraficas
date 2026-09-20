@@ -2,7 +2,7 @@ import "server-only";
 
 import { FieldValue, type DocumentData } from "firebase-admin/firestore";
 import { aImagenes, borrarImagenes, borrarImagenesSobrantes, resolverImagenes } from "../catalogo/imagenes";
-import { idYOrdenNuevos, moverEnColeccion } from "../catalogo/orden";
+import { idYOrdenNuevos, moverEnColeccion, reordenarEnColeccion } from "../catalogo/orden";
 import { getFirebaseAdmin } from "../firebase/admin";
 import type { ProyectoDelPanel, ProyectoEditable } from "./esquemas";
 
@@ -74,6 +74,11 @@ export async function actualizarProyecto(id: string, datos: ProyectoEditable): P
 
 export function moverProyecto(id: string, direccion: -1 | 1): Promise<boolean> {
   return moverEnColeccion(coleccion(), id, direccion);
+}
+
+/** Aplica el orden de los proyectos que se ven en pantalla, tras arrastrar. */
+export function reordenarProyectos(ids: string[]): Promise<boolean> {
+  return reordenarEnColeccion(coleccion(), ids);
 }
 
 export async function eliminarProyecto(id: string): Promise<boolean> {

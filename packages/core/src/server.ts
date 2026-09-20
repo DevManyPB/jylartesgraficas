@@ -56,6 +56,7 @@ export {
   crearProducto,
   actualizarProducto,
   moverProducto,
+  reordenarProductos,
   eliminarProducto,
   crearVariante,
   actualizarVariante,
@@ -80,6 +81,7 @@ export {
   crearProyecto,
   actualizarProyecto,
   moverProyecto,
+  reordenarProyectos,
   eliminarProyecto,
   categoriasDeProyectos,
 } from "./portafolio/servidor";

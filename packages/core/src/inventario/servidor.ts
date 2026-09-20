@@ -14,7 +14,7 @@ import {
   ErrorDeCatalogo,
   resolverImagenes,
 } from "../catalogo/imagenes";
-import { idYOrdenNuevos, moverEnColeccion } from "../catalogo/orden";
+import { idYOrdenNuevos, moverEnColeccion, reordenarEnColeccion } from "../catalogo/orden";
 import { getFirebaseAdmin } from "../firebase/admin";
 import type {
   InsumoEditable,
@@ -198,6 +198,11 @@ export async function actualizarProducto(id: string, datos: ProductoEditable): P
  */
 export async function moverProducto(id: string, direccion: -1 | 1): Promise<boolean> {
   return moverEnColeccion(productos(), id, direccion);
+}
+
+/** Aplica el orden de los productos que se ven en pantalla, tras arrastrar. */
+export async function reordenarProductos(ids: string[]): Promise<boolean> {
+  return reordenarEnColeccion(productos(), ids);
 }
 
 /**
