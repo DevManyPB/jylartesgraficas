@@ -74,6 +74,7 @@ function filaDe(
     contacto: contactoDe(datos, cuentas),
     archivos: Array.isArray(datos.archivos) ? datos.archivos.length : 0,
     archivosIncompletos: datos.archivosIncompletos === true,
+    fechaDeseada: typeof datos.fechaDeseada === "string" ? datos.fechaDeseada : null,
   };
 }
 
@@ -224,7 +225,6 @@ export async function leerPedidoDelPanel(id: string): Promise<PedidoDelPanel | n
     medidas: typeof datos.medidas === "string" ? datos.medidas : null,
     material: typeof datos.material === "string" ? datos.material : null,
     camposExtra: (datos.camposExtra ?? {}) as Record<string, string>,
-    fechaDeseada: typeof datos.fechaDeseada === "string" ? datos.fechaDeseada : null,
     presupuestoAprox: typeof datos.presupuestoAprox === "number" ? datos.presupuestoAprox : null,
     archivosDetalle,
     notasInternas: texto(datos.notasInternas),
@@ -284,4 +284,19 @@ export async function guardarNotasInternas(id: string, notas: string): Promise<b
   if (!documento.exists) return false;
   await referencia.update({ notasInternas: notas, updatedAt: FieldValue.serverTimestamp() });
   return true;
+}
+
+/**
+ * Pedidos en producción con fecha de entrega, la más próxima primero — para
+ * el tablero (SPEC.md §6.2). Los que no tienen fecha deseada no aparecen:
+ * Firestore no los devuelve al ordenar por ese campo, y aquí es lo correcto,
+ * porque sin fecha no hay entrega próxima que avisar.
+ */
+export async function entregasProximas(limite = 5): Promise<FilaPedido[]> {
+  const consulta = await coleccion()
+    .where("estado", "==", "en_produccion")
+    .orderBy("fechaDeseada")
+    .limit(limite)
+    .get();
+  return filasDe(consulta.docs);
 }

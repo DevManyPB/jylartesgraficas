@@ -24,6 +24,8 @@ export interface FilaPedido {
   contacto: ContactoDelPedido;
   archivos: number;
   archivosIncompletos: boolean;
+  /** Para cuándo lo pidió el cliente; null si no dijo. */
+  fechaDeseada: string | null;
 }
 
 export interface ArchivoDelPedido {
@@ -51,7 +53,6 @@ export interface PedidoDelPanel extends FilaPedido {
   medidas: string | null;
   material: string | null;
   camposExtra: Record<string, string>;
-  fechaDeseada: string | null;
   presupuestoAprox: number | null;
   archivosDetalle: ArchivoDelPedido[];
   notasInternas: string;

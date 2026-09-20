@@ -103,6 +103,21 @@ describe("cuentas", () => {
       updateDoc(doc(cliente(UID_CLIENTE), "users", UID_CLIENTE), { telefono: "3000000000" }),
     );
   });
+
+  /**
+   * Las notas del estudio sobre un cliente viven en una subcolección suya
+   * (SPEC.md §6.6 y §7). Ninguna regla la abre, así que ni él ni el personal
+   * las leen desde el cliente: solo el servidor, con firebase-admin.
+   */
+  it("un cliente no puede leer las notas que el estudio escribió sobre él", async () => {
+    await assertFails(getDoc(doc(cliente(UID_CLIENTE), "users", UID_CLIENTE, "interno", "notas")));
+  });
+
+  it("ni siquiera el admin las lee desde el navegador", async () => {
+    const db = entorno.authenticatedContext(UID_ADMIN, { role: "admin" }).firestore();
+    await assertFails(getDoc(doc(db, "users", UID_CLIENTE, "interno", "notas")));
+    await assertFails(setDoc(doc(db, "users", UID_CLIENTE, "interno", "notas"), { texto: "x" }));
+  });
 });
 
 describe("pedidos", () => {

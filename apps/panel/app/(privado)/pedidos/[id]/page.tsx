@@ -187,7 +187,7 @@ export default async function DetallePedido({ params }: PageProps<"/pedidos/[id]
           )}
 
           <Bloque titulo="Notas">
-            <NotasInternas pedidoId={pedido.id} inicial={pedido.notasInternas} />
+            <NotasInternas endpoint={`/api/pedidos/${pedido.id}/notas`} inicial={pedido.notasInternas} />
           </Bloque>
         </aside>
       </div>

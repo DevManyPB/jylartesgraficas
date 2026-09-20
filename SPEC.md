@@ -108,7 +108,7 @@ Con 50.000 lecturas al día hay margen de sobra, pero se rompe fácil si se prog
 
 - El panel **no** deja listeners abiertos sobre colecciones completas. Se escucha solo lo visible y se paginan de 25 en 25.
 - El sitio público lee el portafolio y los productos desde el servidor con caché e ISR. Un visitante no genera lecturas de Firestore por cada scroll.
-- Los contadores del tablero se guardan agregados en `stats/resumen`, actualizados al escribir. Nunca se cuenta recorriendo la colección entera.
+- Los contadores del tablero se guardan agregados en `stats/resumen`. Se recalculan con consultas de agregación (`count` y `sum`, que se cobran por cada mil entradas de índice, no por documento) cuando el tablero encuentra el resumen con más de diez minutos, y con el botón «Actualizar». No se llevan al día en cada escritura: un contador al que se le escapa un incremento queda mal para siempre, y aquí el peor caso es una cifra de hace unos minutos. Nunca se cuenta recorriendo la colección entera.
 - Se configuran alertas de uso en la consola de Firebase.
 
 ---
@@ -381,6 +381,9 @@ WhatsApp, dirección, horarios, coordenadas del mapa, datos del emisor, impuesto
 users/{uid}
   nombre, email, telefono, ciudad, role, createdAt
 
+users/{uid}/interno/notas
+  texto, autorUid, actualizadoEn   // notas del estudio sobre el cliente; ninguna regla abre esta subcolección, así que el cliente no las ve
+
 services/{serviceId}
   nombre, categoria, descripcion, slug, activo, orden,
   requiereReferencias, requiereMedidas, campos[], precioBase
@@ -426,7 +429,8 @@ invoices/{invoiceId}
   numero | null,   // se asigna al emitir: un borrador no tiene número, así borrarlo no deja huecos
   orderId | null, clienteUid | null, clienteDatos{},
   lineas[{descripcion,cantidad,precioUnitario,productId,variantId,descuento}],   // descuento en pesos, sobre la línea
-  subtotal, descuento, impuesto, total, estado,
+  subtotal, descuento, impuesto, total, saldo,   // saldo: lo que falta por cobrar; al día al emitir, pagar y anular, para sumar "por cobrar" con una agregación
+  estado,
   emisor{razonSocial,nit,direccion,telefono,email}, impuestoPorcentaje,   // copia al emitir: la factura no cambia si cambia la configuración
   stockDescontado,   // si al emitir se descontó stock; anular lo devuelve
   emitidaEn, vencimientoEn, anulacion{motivo,autorUid,fecha},
@@ -445,6 +449,8 @@ settings/general
 stats/resumen
   pedidosNuevos, pedidosEnProduccion, porCobrar,
   ingresosMes, ingresosMesAnterior, variantesBajoMinimo, actualizadoEn
+  // Se recalcula con agregaciones (count/sum) cuando el tablero lo encuentra
+  // con más de diez minutos; ingresos = facturado en el mes, sin las anuladas.
 
 counters/{año}
   orders, invoices

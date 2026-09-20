@@ -36,6 +36,7 @@ export {
   PEDIDOS_POR_PAGINA,
   listarPedidos,
   tableroDePedidos,
+  entregasProximas,
   PEDIDOS_POR_COLUMNA,
   buscarPedidos,
   leerPedidoDelPanel,
@@ -103,3 +104,15 @@ export {
   leerProductoPublico,
   leerProyectosPublicos,
 } from "./catalogo/publico-servidor";
+
+export { leerResumen, recalcularResumen, MINUTOS_FRESCO, mesEnColombia } from "./estadisticas/resumen";
+export type { ResumenDelTablero } from "./estadisticas/resumen";
+
+export {
+  CLIENTES_POR_PAGINA,
+  listarClientes,
+  buscarClientes,
+  leerCliente,
+  guardarNotasCliente,
+} from "./clientes/panel";
+export type { FilaCliente, ClienteDelPanel, PedidoDelCliente } from "./clientes/panel";

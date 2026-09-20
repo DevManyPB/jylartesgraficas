@@ -6,8 +6,18 @@ import { useProtegerCambios } from "@/components/cambios/CambiosSinGuardar";
 import { claseEntrada } from "@/components/formularios/Campo";
 import { enviarJson } from "@/components/formularios/enviar";
 
+interface NotasInternasProps {
+  /** Route Handler que las guarda, con PUT. */
+  endpoint: string;
+  inicial: string;
+  /** Nombre del campo que espera el servidor. */
+  campo?: string;
+  /** Qué son estas notas, para la etiqueta. */
+  etiqueta?: string;
+}
+
 /** Notas que solo ve el estudio. Salir con cambios sin guardar pregunta. */
-export function NotasInternas({ pedidoId, inicial }: { pedidoId: string; inicial: string }) {
+export function NotasInternas({ endpoint, inicial, campo = "notasInternas", etiqueta = "Notas internas" }: NotasInternasProps) {
   const { toast } = useToast();
   const id = useId();
   const [guardado, setGuardado] = useState(inicial);
@@ -17,7 +27,7 @@ export function NotasInternas({ pedidoId, inicial }: { pedidoId: string; inicial
 
   async function guardar(): Promise<boolean> {
     setGuardando(true);
-    const resultado = await enviarJson(`/api/pedidos/${pedidoId}/notas`, "PUT", { notasInternas: texto });
+    const resultado = await enviarJson(endpoint, "PUT", { [campo]: texto });
     setGuardando(false);
 
     if (!resultado.ok) {
@@ -40,7 +50,7 @@ export function NotasInternas({ pedidoId, inicial }: { pedidoId: string; inicial
       className="flex flex-col gap-2"
     >
       <label htmlFor={id} className="text-[13px] font-medium text-ink">
-        Notas internas <span className="font-normal text-ink-subtle">· el cliente no las ve</span>
+        {etiqueta} <span className="font-normal text-ink-subtle">· el cliente no las ve</span>
       </label>
       <textarea
         id={id}

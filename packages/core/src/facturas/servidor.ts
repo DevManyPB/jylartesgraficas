@@ -78,7 +78,12 @@ function aFila(id: string, d: DocumentData): FilaFactura {
     estado: estadoDe(d.estado),
     cliente: txt(d.clienteDatos?.nombre),
     total,
-    saldo: d.estado === "emitida" ? saldoPendiente(total, aPagos(d.pagos, new Map())) : 0,
+    saldo:
+      d.estado !== "emitida"
+        ? 0
+        : typeof d.saldo === "number"
+          ? d.saldo
+          : saldoPendiente(total, aPagos(d.pagos, new Map())),
     creadaEn: iso(d.createdAt),
     emitidaEn: iso(d.emitidaEn),
   };
@@ -266,6 +271,7 @@ export async function crearBorrador(datos: BorradorFactura, autorUid: string): P
     ...calcularTotales(datos.lineas, configuracion.impuestoPorcentaje),
     numero: null,
     estado: "borrador",
+    saldo: 0,
     clienteUid,
     pagos: [],
     anulacion: null,
@@ -397,12 +403,17 @@ export async function emitirFactura(id: string, autorUid: string): Promise<Resul
       email: configuracion.email,
     };
 
+    const totales = calcularTotales(lineas, configuracion.impuestoPorcentaje);
+
     tx.set(contador, { invoices: num(documentoContador?.data()?.invoices) + 1 }, { merge: true });
     plan.aplicar(tx);
     tx.update(referencia, {
-      ...calcularTotales(lineas, configuracion.impuestoPorcentaje),
+      ...totales,
       numero,
       estado: "emitida",
+      // Se guarda para poder sumar "por cobrar" con una sola agregación,
+      // sin leer todas las facturas (SPEC.md §6.2 y §7).
+      saldo: totales.total,
       emisor,
       impuestoPorcentaje: configuracion.impuestoPorcentaje,
       stockDescontado: stock.length > 0,
@@ -455,6 +466,7 @@ export async function anularFactura(id: string, motivo: string, autorUid: string
 
     tx.update(referencia, {
       estado: "anulada",
+      saldo: 0,
       anulacion: { motivo, autorUid, fecha: FieldValue.serverTimestamp() },
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -484,6 +496,7 @@ export async function registrarPago(id: string, pago: Pago, autorUid: string): P
     tx.update(referencia, {
       // Timestamp.now(): serverTimestamp no se puede usar dentro de un arreglo.
       pagos: FieldValue.arrayUnion({ ...pago, autorUid, registradoEn: Timestamp.now() }),
+      saldo: nuevoSaldo,
       ...(nuevoSaldo === 0 ? { estado: "pagada", pagadaEn: FieldValue.serverTimestamp() } : {}),
       updatedAt: FieldValue.serverTimestamp(),
     });
