@@ -1,6 +1,12 @@
 import "server-only";
 
-import { leerConfiguracion, leerServiciosActivos } from "@jyl/core/server";
+import {
+  leerConfiguracion,
+  leerProductoPublico,
+  leerProductosPublicos,
+  leerProyectosPublicos,
+  leerServiciosActivos,
+} from "@jyl/core/server";
 import { unstable_cache } from "next/cache";
 
 /**
@@ -21,3 +27,25 @@ export const configuracionPublica = unstable_cache(leerConfiguracion, ["configur
   revalidate: UNA_HORA,
   tags: ["configuracion"],
 });
+
+export const productosPublicos = unstable_cache(leerProductosPublicos, ["productos-activos"], {
+  revalidate: UNA_HORA,
+  tags: ["productos"],
+});
+
+export const proyectosPublicos = unstable_cache(leerProyectosPublicos, ["portafolio-publicado"], {
+  revalidate: UNA_HORA,
+  tags: ["portafolio"],
+});
+
+/**
+ * Un producto con sus variantes. Cada uno se cachea aparte, con su slug en la
+ * clave; todos comparten la etiqueta "productos", así que un movimiento de
+ * stock o un cambio en el panel los invalida a la vez.
+ */
+export function productoPublico(slug: string) {
+  return unstable_cache(() => leerProductoPublico(slug), ["producto", slug], {
+    revalidate: UNA_HORA,
+    tags: ["productos"],
+  })();
+}

@@ -9,6 +9,7 @@ import { Confirmacion } from "./Confirmacion";
 import { PasoDatos } from "./PasoDatos";
 import { PasoDetalles } from "./PasoDetalles";
 import { PasoReferencias } from "./PasoReferencias";
+import { PasoProducto, type ProductoElegido } from "./PasoProducto";
 import { PasoServicio } from "./PasoServicio";
 import { Progreso, TOTAL_PASOS } from "./Progreso";
 import { useBorrador } from "./use-borrador";
@@ -18,6 +19,10 @@ interface FormularioPedidoProps {
   servicios: Servicio[];
   /** Con sesión: el contacto de la cuenta, para precargar el paso 4. */
   identidad: Invitado | null;
+  /** Si se llegó desde la tienda, el producto y la variante ya elegidos. */
+  producto?: ProductoElegido | null;
+  /** Si se llegó desde /servicios, el servicio ya elegido. */
+  servicioInicial?: string | null;
 }
 
 /**
@@ -26,7 +31,7 @@ interface FormularioPedidoProps {
  * porque un `File` no es serializable y no puede ir al borrador.
  */
 const CAMPOS_POR_PASO = [
-  ["serviceId"],
+  ["serviceId", "items"],
   ["detalle"],
   [],
   ["invitado", "aceptaTerminos"],
@@ -37,7 +42,7 @@ interface PedidoEnviado {
   archivosIncompletos: boolean;
 }
 
-export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps) {
+export function FormularioPedido({ servicios, identidad, producto = null, servicioInicial = null }: FormularioPedidoProps) {
   const [paso, setPaso] = useState(0);
   const [confirmando, setConfirmando] = useState(false);
   const [enviado, setEnviado] = useState<PedidoEnviado | null>(null);
@@ -49,9 +54,9 @@ export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps
     resolver: zodResolver(pedidoEntranteSchema),
     mode: "onTouched",
     defaultValues: {
-      tipo: "servicio",
-      serviceId: null,
-      items: [],
+      tipo: producto ? "producto" : "servicio",
+      serviceId: producto ? null : servicioInicial,
+      items: producto ? [producto.item] : [],
       detalle: "",
       medidas: null,
       material: null,
@@ -82,8 +87,10 @@ export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps
       invitado: identidad
         ? { ...identidad, ...(guardado.invitado ?? {}), email: identidad.email }
         : (guardado.invitado ?? actuales.invitado),
+      // Lo que se acaba de elegir en la tienda manda sobre un borrador viejo.
+      ...(producto ? { tipo: "producto" as const, serviceId: null, items: [producto.item] } : {}),
     }));
-  }, [leer, reset, identidad]);
+  }, [leer, reset, identidad, producto]);
 
   // Se guarda en cada cambio. `archivos` queda fuera: son identificadores de
   // una subida concreta y restaurarlos días después adjuntaría lo que no es.
@@ -146,7 +153,9 @@ export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps
           evento.preventDefault();
         }}
       >
-        {paso === 0 && (
+        {paso === 0 && producto && <PasoProducto producto={producto} />}
+
+        {paso === 0 && !producto && (
           <PasoServicio
             servicios={servicios}
             seleccionado={serviceId}
@@ -158,6 +167,7 @@ export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps
         {paso === 1 && (
           <PasoDetalles
             servicio={servicioElegido}
+            producto={producto?.item.nombre ?? null}
             register={register}
             errors={formState.errors}
           />
@@ -168,7 +178,7 @@ export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps
             referencias={referencias}
             onAgregar={agregar}
             onQuitar={quitar}
-            sugerir={servicioElegido?.requiereReferencias ?? true}
+            sugerir={producto ? producto.item.personalizado : (servicioElegido?.requiereReferencias ?? true)}
           />
         )}
 
@@ -222,7 +232,11 @@ export function FormularioPedido({ servicios, identidad }: FormularioPedidoProps
         confirmLabel="Enviar pedido"
         extra={
           <div className="rounded-lg border border-border bg-canvas-sunken p-4 text-sm">
-            <p className="font-medium text-ink">{servicioElegido?.nombre}</p>
+            <p className="font-medium text-ink">
+              {producto
+                ? `${producto.item.cantidad} × ${producto.item.nombre}`
+                : servicioElegido?.nombre}
+            </p>
             <p className="mt-1 line-clamp-3 text-ink-muted">{watch("detalle")}</p>
             {publicIds.length > 0 && (
               <p className="mt-2 text-ink-muted">

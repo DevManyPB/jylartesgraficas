@@ -3,6 +3,7 @@ import { ModalProvider, ToastProvider } from "@jyl/ui";
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
+import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import "./globals.css";
 
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <ToastProvider>
             <SiteHeader identidad={sesion?.nombre ?? sesion?.email ?? null} />
             {children}
+            <SiteFooter />
           </ToastProvider>
         </ModalProvider>
       </body>

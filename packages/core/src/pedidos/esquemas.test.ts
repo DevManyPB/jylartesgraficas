@@ -79,3 +79,29 @@ describe("validación del pedido entrante", () => {
     expect(resultado.success).toBe(false);
   });
 });
+
+describe("el detalle según el tipo de pedido", () => {
+  const item = {
+    productId: "taza",
+    variantId: "blanca",
+    nombre: "Taza",
+    cantidad: 2,
+  };
+
+  it("un servicio sin detalle suficiente no pasa", () => {
+    const r = pedidoEntranteSchema.safeParse({ ...pedidoDeServicio, detalle: "corto" });
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues[0]?.path).toEqual(["detalle"]);
+  });
+
+  it("un producto sí puede ir sin detalle: el pedido ya dice qué se quiere", () => {
+    const r = pedidoEntranteSchema.safeParse({
+      ...pedidoDeServicio,
+      tipo: "producto",
+      serviceId: null,
+      items: [item],
+      detalle: "",
+    });
+    expect(r.success).toBe(true);
+  });
+});

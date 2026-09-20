@@ -97,3 +97,9 @@ export {
   registrarPago,
 } from "./facturas/servidor";
 export type { Resultado as ResultadoFactura } from "./facturas/servidor";
+
+export {
+  leerProductosPublicos,
+  leerProductoPublico,
+  leerProyectosPublicos,
+} from "./catalogo/publico-servidor";

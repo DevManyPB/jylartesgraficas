@@ -6,6 +6,8 @@ import type { PedidoEntrante } from "@jyl/core";
 
 interface PasoDetallesProps {
   servicio: Servicio | null;
+  /** Nombre del producto, si el pedido viene de la tienda. */
+  producto?: string | null;
   register: UseFormRegister<PedidoEntrante>;
   errors: FieldErrors<PedidoEntrante>;
 }
@@ -19,7 +21,7 @@ const claseCampo =
  * sistema operativo. Se decide por la categoría y por `requiereMedidas`, sin
  * montar un motor de campos dinámicos para tres casos.
  */
-export function PasoDetalles({ servicio, register, errors }: PasoDetallesProps) {
+export function PasoDetalles({ servicio, producto = null, register, errors }: PasoDetallesProps) {
   const pideMedidas = servicio?.requiereMedidas ?? false;
   const esTecnico = servicio?.categoria === "tecnico";
 
@@ -27,12 +29,20 @@ export function PasoDetalles({ servicio, register, errors }: PasoDetallesProps) 
     <fieldset className="flex flex-col gap-5">
       <div>
         <legend className="font-display text-2xl text-ink">Cuéntanos los detalles</legend>
-        {servicio && <p className="mt-2 text-sm text-ink-muted">Para: {servicio.nombre}</p>}
+        {(servicio || producto) && (
+          <p className="mt-2 text-sm text-ink-muted">Para: {servicio?.nombre ?? producto}</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="detalle" className="text-sm font-medium text-ink">
-          ¿Qué necesitas exactamente?
+          {producto ? (
+            <>
+              ¿Algo que debamos saber? <span className="font-normal text-ink-subtle">(opcional)</span>
+            </>
+          ) : (
+            "¿Qué necesitas exactamente?"
+          )}
         </label>
         <textarea
           id="detalle"
@@ -41,9 +51,11 @@ export function PasoDetalles({ servicio, register, errors }: PasoDetallesProps) 
           aria-invalid={errors.detalle ? true : undefined}
           className={claseCampo}
           placeholder={
-            esTecnico
-              ? "Qué le pasa al equipo, desde cuándo, y qué has intentado."
-              : "Para qué es, qué debe transmitir, y cualquier referencia que tengas en mente."
+            producto
+              ? "Cómo lo quieres, para cuándo lo necesitas, o cualquier detalle del diseño."
+              : esTecnico
+                ? "Qué le pasa al equipo, desde cuándo, y qué has intentado."
+                : "Para qué es, qué debe transmitir, y cualquier referencia que tengas en mente."
           }
         />
         {errors.detalle && (

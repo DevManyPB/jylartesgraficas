@@ -43,3 +43,6 @@ coverage/
 # capturas y ajustes locales: pueden llevar credenciales a la vista
 Captura de pantalla*.png
 .claude/settings.local.json
+
+# Índice del grafo de código: se regenera localmente.
+.codebase-memory/

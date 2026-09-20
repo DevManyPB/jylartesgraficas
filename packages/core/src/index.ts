@@ -31,7 +31,7 @@ export {
   cambioEstadoSchema,
   notasInternasSchema,
 } from "./pedidos/esquemas";
-export type { CambioEstado, EstadoPedido, Invitado, PedidoEntrante } from "./pedidos/esquemas";
+export type { CambioEstado, EstadoPedido, Invitado, ItemPedido, PedidoEntrante } from "./pedidos/esquemas";
 export { formatearNumeroPedido } from "./pedidos/numeracion";
 export {
   CATEGORIAS_SERVICIO,
@@ -131,3 +131,11 @@ export type { Totales } from "./facturas/calculo";
 export type { EmisorFactura, PagoDeFactura, FilaFactura, FacturaDelPanel } from "./facturas/tipos";
 
 export { normalizarTexto } from "./pedidos/busqueda";
+
+export { rangoDePrecio, nombreDeVariantePublica } from "./catalogo/publico";
+export type {
+  VariantePublica,
+  ProductoPublico,
+  ProductoPublicoConVariantes,
+  ProyectoPublico,
+} from "./catalogo/publico";

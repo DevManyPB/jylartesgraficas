@@ -35,6 +35,8 @@ export const itemPedidoSchema = z.object({
   personalizado: z.boolean().default(false),
 });
 
+export type ItemPedido = z.infer<typeof itemPedidoSchema>;
+
 /**
  * Lo único que el servidor acepta del navegador.
  *
@@ -48,7 +50,12 @@ export const pedidoEntranteSchema = z
     serviceId: z.string().min(1).nullable().default(null),
     items: z.array(itemPedidoSchema).max(20).default([]),
 
-    detalle: z.string().trim().min(10, "Cuéntanos un poco más sobre lo que necesitas.").max(5000),
+    /**
+     * Obligatorio al pedir un servicio, opcional al pedir un producto de la
+     * tienda: ahí el pedido ya dice qué se quiere, y exigir diez caracteres
+     * sería un peaje para comprar una camiseta.
+     */
+    detalle: z.string().trim().max(5000).default(""),
     medidas: z.string().trim().max(200).nullable().default(null),
     material: z.string().trim().max(200).nullable().default(null),
 
@@ -84,6 +91,10 @@ export const pedidoEntranteSchema = z
   .refine((datos) => datos.tipo !== "producto" || datos.items.length > 0, {
     message: "Elige al menos un producto.",
     path: ["items"],
+  })
+  .refine((datos) => datos.tipo !== "servicio" || datos.detalle.length >= 10, {
+    message: "Cuéntanos un poco más sobre lo que necesitas.",
+    path: ["detalle"],
   });
 
 export type PedidoEntrante = z.infer<typeof pedidoEntranteSchema>;
