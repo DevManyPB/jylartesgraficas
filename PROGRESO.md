@@ -32,11 +32,18 @@
   3. Pedidos: lista, búsqueda, detalle, estados, notas y aviso en vivo.
   4. Inventario: productos, variantes, movimientos e insumos.
   5. Portafolio.
-  6. **Facturación** (último commit): borrador desde el pedido, emisión con
-     consecutivo `FAC-año-NNNN` sin huecos, descuento de stock, pagos,
-     anulación que devuelve el stock y PDF con pdf-lib.
+  6. **Facturación:** borrador desde el pedido, emisión con consecutivo
+     `FAC-año-NNNN` sin huecos, descuento de stock, pagos, anulación que
+     devuelve el stock y PDF con pdf-lib.
+  7. *(bloque 7, clientes y tablero: pendiente, ver abajo)*
+  8. **Kanban de pedidos** (último commit): una columna por estado, arrastrar
+     y soltar, y un selector en cada tarjeta para teclado y móvil. Al soltar,
+     el cambio se ve al instante y se revierte si el servidor lo rechaza.
 
 ## Lo siguiente: bloque 7, clientes y tablero
+
+Es lo único que queda de la Fase 3. Se saltó para no bloquearse, porque
+necesita cuatro decisiones tuyas.
 
 Estaba a punto de preguntar cuatro decisiones antes de empezar. Hay que
 contestarlas primero, porque cambian el modelo de datos (`AGENTS.md`):
@@ -61,9 +68,8 @@ restar contadores en cada escritura.
 
 ## Pendiente después
 
-- **Bloque 8:** kanban de pedidos, con arrastrar y soltar y alternativa por
-  teclado. Además, "ordenar arrastrando" en portafolio y productos, que hoy es
-  con botones subir/bajar.
+- **Ordenar arrastrando** en portafolio y productos (SPEC §6.7), que hoy es
+  con botones subir/bajar. El kanban ya tiene el patrón de arrastre.
 - **Fase 2, páginas públicas:** inicio, servicios, portafolio, tienda y
   contacto (mapa con Leaflet, ya aprobado pero sin instalar, y botón de
   WhatsApp). Leen `configuracionPublica`. Los textos legales necesitan
