@@ -28,7 +28,7 @@
   (listado y ficha con variantes), contacto con mapa de Leaflet, pie de
   página, textos legales y el formulario de pedido de 4 pasos, que ahora
   también recibe productos de la tienda.
-- **Fase 3, bloques 1 a 6:**
+- **Fase 3 completa:**
   1. Esqueleto del panel: navegación por rol, cambios sin guardar.
   2. Configuración y servicios.
   3. Pedidos: lista, búsqueda, detalle, estados, notas y aviso en vivo.
@@ -37,41 +37,24 @@
   6. **Facturación:** borrador desde el pedido, emisión con consecutivo
      `FAC-año-NNNN` sin huecos, descuento de stock, pagos, anulación que
      devuelve el stock y PDF con pdf-lib.
-  7. *(bloque 7, clientes y tablero: pendiente, ver abajo)*
-  8. **Kanban de pedidos** (último commit): una columna por estado, arrastrar
-     y soltar, y un selector en cada tarjeta para teclado y móvil. Al soltar,
-     el cambio se ve al instante y se revierte si el servidor lo rechaza.
+  7. **Clientes y tablero:** cifras del tablero con agregaciones sobre
+     `stats/resumen`, entregas próximas, y ficha de cliente con pedidos,
+     facturas, total facturado y notas privadas del estudio.
+  8. **Kanban de pedidos:** una columna por estado, arrastrar y soltar, y un
+     selector en cada tarjeta para teclado y móvil.
+  9. **Ordenar arrastrando** productos y portafolio (último commit).
 
-## Lo siguiente: bloque 7, clientes y tablero
+## Decisiones tomadas en el bloque 7
 
-Es lo único que queda de la Fase 3. Se saltó para no bloquearse, porque
-necesita cuatro decisiones tuyas.
+- **"Ingresos del mes" = facturado**: facturas emitidas en el mes que no se
+  anularon. Sale de una agregación, no de un contador que pueda desfasarse.
+- Cada factura guarda **`saldo`**, al día al emitir, pagar y anular.
+- En **Clientes** están quienes tienen cuenta; a los invitados se les busca
+  desde Pedidos.
+- Las **notas del cliente** viven en `users/{uid}/interno/notas`, que las
+  reglas no abren a nadie salvo al servidor. Hay prueba de reglas.
 
-Estaba a punto de preguntar cuatro decisiones antes de empezar. Hay que
-contestarlas primero, porque cambian el modelo de datos (`AGENTS.md`):
-
-1. **"Ingresos del mes"** en el tablero. *Facturado* (facturas emitidas en el
-   mes y no anuladas, con una consulta de agregación) o *cobrado* (pagos del
-   mes, que necesitaría un contador propio). Recomendado: facturado.
-2. **Campo `saldo` en cada factura**, al día al emitir, pagar y anular, para
-   sumar "por cobrar" con una sola agregación. Recomendado: sí, documentándolo
-   en `SPEC.md` §7.
-3. **Quién aparece en Clientes.** Solo quienes tienen cuenta (`users/{uid}`,
-   lo que modela el SPEC) o también los invitados agrupados por correo (sería
-   una colección nueva). Recomendado: solo con cuenta.
-4. **Dónde van las notas del cliente.** `users/{uid}` lo puede leer el propio
-   cliente, así que la propuesta es `users/{uid}/interno/notas`, que las
-   reglas actuales ya cierran a todos salvo el servidor.
-
-Idea para `stats/resumen` (SPEC §6.2): recalcularlo con consultas de
-agregación (`count`, `sum`) cuando el tablero lo encuentre con más de unos
-minutos de antigüedad, más un botón «Actualizar». Es más robusto que sumar y
-restar contadores en cada escritura.
-
-## Pendiente después
-
-- **Ordenar arrastrando** en portafolio y productos (SPEC §6.7), que hoy es
-  con botones subir/bajar. El kanban ya tiene el patrón de arrastre.
+## Pendiente
 - **Contenido del estudio, no de código:** las descripciones y los precios de
   los 14 servicios (sembrados vacíos a propósito) y los textos legales.
   En Términos y Privacidad, lo que falta está marcado como «Pendiente» en la
