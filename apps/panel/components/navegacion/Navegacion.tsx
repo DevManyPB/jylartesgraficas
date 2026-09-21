@@ -12,6 +12,8 @@ interface NavegacionProps {
   rol: Rol;
   email: string | null;
   nombre: string | null;
+  /** Dirección del sitio público, para poder volver a verlo. */
+  sitio: string;
 }
 
 const NOMBRE_ROL: Record<Rol, string> = {
@@ -27,7 +29,7 @@ const NOMBRE_ROL: Record<Rol, string> = {
  * "Menú" que la despliega debajo de la barra: es un disclosure, no un modal,
  * porque no pide ninguna decisión y el panel no gana nada tapando la página.
  */
-export function Navegacion({ rol, email, nombre }: NavegacionProps) {
+export function Navegacion({ rol, email, nombre, sitio }: NavegacionProps) {
   const ruta = usePathname();
   const [abierta, setAbierta] = useState(false);
   const idLista = useId();
@@ -82,7 +84,34 @@ export function Navegacion({ rol, email, nombre }: NavegacionProps) {
           </ul>
         </nav>
 
-        <div className="mt-6 border-t border-border px-3 pt-4 lg:mt-auto">
+        {/* Volver a ver la web. Va antes de los datos de la cuenta y con el
+            icono de enlace externo porque abre en otra pestaña: desde el
+            panel no había ninguna forma de llegar al sitio, y quien
+            administra necesita ver el resultado de lo que acaba de guardar. */}
+        <a
+          href={sitio}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-6 flex items-center justify-between gap-2 rounded-md border border-border-strong px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:mt-auto"
+        >
+          Ver el sitio
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4 text-ink-muted"
+          >
+            <path d="M7 17 17 7" />
+            <path d="M8 7h9v9" />
+          </svg>
+          <span className="sr-only">(se abre en una pestaña nueva)</span>
+        </a>
+
+        <div className="mt-4 border-t border-border px-3 pt-4">
           <p className="truncate text-sm font-medium text-ink">{nombre ?? email}</p>
           {nombre && email && <p className="truncate text-xs text-ink-muted">{email}</p>}
           <p className="mt-0.5 text-xs text-ink-subtle">{NOMBRE_ROL[rol]}</p>

@@ -1,12 +1,12 @@
 "use client";
 
-import { CATEGORIAS_SERVICIO, NOMBRE_CATEGORIA, type ServicioDelPanel } from "@jyl/core";
+import { CATEGORIAS_SERVICIO, NOMBRE_CATEGORIA, servicioEditableSchema, type ServicioDelPanel } from "@jyl/core";
 import { cn, useToast } from "@jyl/ui";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { enviarJson } from "@/components/formularios/enviar";
 import { pesos } from "@/components/pedidos/formato";
+import { SERVICIO_NUEVO, ServicioEnModal, type ServicioEnEdicion } from "./ServicioEnModal";
 
 /**
  * Catálogo de servicios, agrupado como lo ve el público (SPEC.md §3.1).
@@ -21,6 +21,15 @@ export function ListaServicios({ servicios }: { servicios: ServicioDelPanel[] })
   const router = useRouter();
   const [orden, setOrden] = useState(servicios);
   const [moviendo, setMoviendo] = useState<string | null>(null);
+  const [editando, setEditando] = useState<ServicioEnEdicion | null>(null);
+
+  /** El esquema descarta lo que no se edita (id, orden), igual que el servidor. */
+  const abrir = (servicio: ServicioDelPanel) =>
+    setEditando({
+      id: servicio.id,
+      nombre: servicio.nombre,
+      inicial: servicioEditableSchema.parse(servicio),
+    });
 
   async function mover(id: string, direccion: -1 | 1) {
     // Sin `disabled` mientras se guarda: deshabilitar el botón con foco lo
@@ -62,6 +71,20 @@ export function ListaServicios({ servicios }: { servicios: ServicioDelPanel[] })
 
   return (
     <div className="flex flex-col gap-8">
+      <div>
+        <button
+          type="button"
+          onClick={() => setEditando(SERVICIO_NUEVO)}
+          className="rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Nuevo servicio
+        </button>
+      </div>
+
+      {orden.length === 0 && (
+        <p className="text-sm text-ink-muted">Todavía no hay servicios. Crea el primero con el botón de arriba.</p>
+      )}
+
       {CATEGORIAS_SERVICIO.map((categoria) => {
         const grupo = orden.filter((s) => s.categoria === categoria);
         if (grupo.length === 0) return null;
@@ -76,12 +99,14 @@ export function ListaServicios({ servicios }: { servicios: ServicioDelPanel[] })
               {grupo.map((servicio, i) => (
                 <li key={servicio.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-2">
                   <div className="min-w-0 flex-1">
-                    <Link
-                      href={`/servicios/${servicio.id}`}
-                      className="text-sm font-medium text-ink underline-offset-2 hover:underline focus-visible:underline"
+                    <button
+                      type="button"
+                      onClick={() => abrir(servicio)}
+                      className="text-left text-sm font-medium text-ink underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
                     >
                       {servicio.nombre}
-                    </Link>
+                      <span className="sr-only"> (editar)</span>
+                    </button>
                     <p className="text-xs text-ink-muted">
                       {servicio.precioBase === null ? "Se cotiza" : `Desde ${pesos.format(servicio.precioBase)}`}
                       {servicio.descripcion === "" && (
@@ -129,6 +154,8 @@ export function ListaServicios({ servicios }: { servicios: ServicioDelPanel[] })
           </section>
         );
       })}
+
+      <ServicioEnModal servicio={editando} onCerrar={() => setEditando(null)} />
     </div>
   );
 }

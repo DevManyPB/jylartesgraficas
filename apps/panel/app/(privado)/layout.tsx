@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { CambiosSinGuardarProvider } from "@/components/cambios/CambiosSinGuardar";
 import { CerrarSesionPanel } from "@/components/CerrarSesionPanel";
 import { Navegacion } from "@/components/navegacion/Navegacion";
+import { SITIO_URL } from "@/lib/sitio";
 import { sesionActual } from "@/servidor/sesion";
 
 export const runtime = "nodejs";
@@ -39,7 +40,12 @@ export default async function LayoutPrivado({ children }: { children: ReactNode 
   return (
     <CambiosSinGuardarProvider>
       <div className="min-h-screen">
-        <Navegacion rol={sesion.rol} email={sesion.email} nombre={sesion.nombre} />
+        <Navegacion
+          rol={sesion.rol}
+          email={sesion.email}
+          nombre={sesion.nombre}
+          sitio={SITIO_URL}
+        />
         <div className="lg:pl-56">{children}</div>
       </div>
     </CambiosSinGuardarProvider>

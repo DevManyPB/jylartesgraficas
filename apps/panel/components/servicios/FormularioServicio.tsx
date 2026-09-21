@@ -9,6 +9,7 @@ import {
 import { useToast } from "@jyl/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useProtegerCambios } from "@/components/cambios/CambiosSinGuardar";
 import { BarraGuardar } from "@/components/formularios/BarraGuardar";
@@ -20,12 +21,31 @@ interface FormularioServicioProps {
   /** Sin id se crea uno nuevo. */
   id?: string;
   inicial: ServicioEditable;
+  /**
+   * El mismo formulario sirve en su página y dentro de un modal. Dentro del
+   * modal cambian tres cosas: los botones van en el pie del modal en vez de
+   * en la barra flotante, al crear no se navega a ninguna parte, y no se
+   * arma la guardia de «cambios sin guardar» —esa vigila la navegación, y
+   * aquí lo que hay que vigilar es el cierre del modal, de lo que ya se
+   * encarga el propio modal.
+   */
+  onListo?: () => void;
+  onCancelar?: () => void;
+  /** Para que el modal sepa si hay algo a medio escribir antes de cerrarse. */
+  onCambios?: (sucio: boolean) => void;
 }
 
-export function FormularioServicio({ id, inicial }: FormularioServicioProps) {
+export function FormularioServicio({
+  id,
+  inicial,
+  onListo,
+  onCancelar,
+  onCambios,
+}: FormularioServicioProps) {
   const { toast } = useToast();
   const router = useRouter();
   const creando = id === undefined;
+  const enModal = onListo !== undefined;
 
   const { register, handleSubmit, reset, setError, watch, formState } = useForm<ServicioEditable>({
     resolver: zodResolver(servicioEditableSchema),
@@ -53,14 +73,26 @@ export function FormularioServicio({ id, inicial }: FormularioServicioProps) {
       ok = true;
       toast({ title: creando ? "Servicio creado" : "Servicio guardado", variant: "success" });
 
-      // Al crear se pasa a la página del servicio nuevo, que ya tiene id.
-      if (creando && resultado.datos.id) router.replace(`/servicios/${resultado.datos.id}`);
-      else router.refresh();
+      if (enModal) {
+        // El modal se cierra y la lista de detrás se recarga: quien lo usa no
+        // se mueve de sitio y ve el cambio en la fila de la que salió.
+        router.refresh();
+        onListo();
+      } else if (creando && resultado.datos.id) {
+        // Al crear se pasa a la página del servicio nuevo, que ya tiene id.
+        router.replace(`/servicios/${resultado.datos.id}`);
+      } else {
+        router.refresh();
+      }
     })();
     return ok;
   }
 
-  useProtegerCambios(isDirty, guardar);
+  useProtegerCambios(isDirty && !enModal, guardar);
+
+  useEffect(() => {
+    onCambios?.(isDirty);
+  }, [isDirty, onCambios]);
 
   const descripcion = watch("descripcion") ?? "";
 
@@ -71,7 +103,7 @@ export function FormularioServicio({ id, inicial }: FormularioServicioProps) {
         evento.preventDefault();
         void guardar();
       }}
-      className="flex flex-col gap-10 pb-28"
+      className={enModal ? "flex flex-col gap-6" : "flex flex-col gap-10 pb-28"}
     >
       <Seccion titulo="Qué es">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -140,11 +172,33 @@ export function FormularioServicio({ id, inicial }: FormularioServicioProps) {
         </Casilla>
       </Seccion>
 
-      <BarraGuardar
-        visible={isDirty || creando}
-        guardando={isSubmitting}
-        etiqueta={creando ? "Crear servicio" : "Guardar cambios"}
-      />
+      {enModal ? (
+        // Cancelar a la izquierda, como en todos los modales del sistema
+        // (SPEC.md §5.2).
+        <div className="flex justify-end gap-2 border-t border-border pt-4">
+          <button
+            type="button"
+            onClick={onCancelar}
+            disabled={isSubmitting}
+            className="rounded-md px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas-sunken disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover disabled:opacity-50"
+          >
+            {isSubmitting ? "Guardando…" : creando ? "Crear servicio" : "Guardar cambios"}
+          </button>
+        </div>
+      ) : (
+        <BarraGuardar
+          visible={isDirty || creando}
+          guardando={isSubmitting}
+          etiqueta={creando ? "Crear servicio" : "Guardar cambios"}
+        />
+      )}
     </form>
   );
 }
