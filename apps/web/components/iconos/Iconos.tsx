@@ -54,6 +54,16 @@ export function IconoSalida(props: IconoProps) {
   );
 }
 
+/** El panel del estudio. */
+export function IconoPanel(props: IconoProps) {
+  return (
+    <Icono {...props}>
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+      <path d="M3.5 9.5h17M9 9.5v10" />
+    </Icono>
+  );
+}
+
 export function IconoCheck(props: IconoProps) {
   return (
     <Icono {...props}>

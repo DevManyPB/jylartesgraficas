@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { type RefObject, useState } from "react";
 import {
   IconoCorreo,
+  IconoPanel,
   IconoRecibo,
   IconoSalir,
   IconoTelefono,
@@ -113,6 +114,16 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
               {nombre ? (
                 <>
                   <p className="truncate text-sm text-ink-inverted/50">{nombre}</p>
+                  {identidad?.panel && (
+                    <a
+                      href={identidad.panel}
+                      onClick={() => onOpenChange(false)}
+                      className="mt-2 flex items-center gap-3 py-2 text-base font-medium text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                    >
+                      <IconoPanel className="h-5 w-5" />
+                      Ir al panel del estudio
+                    </a>
+                  )}
                   <Link
                     href="/mi-cuenta"
                     onClick={() => onOpenChange(false)}

@@ -6,12 +6,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
-import { IconoFlecha, IconoRecibo, IconoSalir } from "@/components/iconos/Iconos";
+import { IconoFlecha, IconoPanel, IconoRecibo, IconoSalir } from "@/components/iconos/Iconos";
 import { cerrarSesion } from "@/lib/cerrar-sesion";
 
 export interface IdentidadHeader {
   nombre: string | null;
   email: string | null;
+  /**
+   * Dirección del panel, solo si esta cuenta tiene rol del estudio. A un
+   * cliente le llega null y ni siquiera ve la dirección: la comprobación la
+   * hace el servidor al armar el layout, no el navegador.
+   */
+  panel: string | null;
 }
 
 /**
@@ -77,6 +83,21 @@ export function AccountButton({ identidad }: { identidad: IdentidadHeader | null
             </DropdownMenu.Label>
 
             <DropdownMenu.Separator className="my-1 h-px bg-border" />
+
+            {/* Primero y destacado: quien administra entra al panel muchas
+                más veces de las que mira sus propias facturas. Sale de la
+                aplicación, así que es un <a> normal y no un Link de Next. */}
+            {identidad.panel && (
+              <DropdownMenu.Item asChild>
+                <a
+                  href={identidad.panel}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-accent outline-none data-[highlighted]:bg-accent-soft"
+                >
+                  <IconoPanel className="h-4 w-4" />
+                  Ir al panel del estudio
+                </a>
+              </DropdownMenu.Item>
+            )}
 
             <DropdownMenu.Item asChild>
               <Link

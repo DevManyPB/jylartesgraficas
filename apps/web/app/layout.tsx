@@ -1,3 +1,4 @@
+import { esPersonal } from "@jyl/core";
 import { COOKIE_SESION, leerSesion } from "@jyl/core/server";
 import { ModalProvider, ToastProvider } from "@jyl/ui";
 import type { Metadata } from "next";
@@ -9,6 +10,7 @@ import { SiteHeader } from "@/components/header/SiteHeader";
 import { BotonWhatsapp } from "@/components/whatsapp/BotonWhatsapp";
 import { configuracionPublica } from "@/datos/cache";
 import { enlaceWhatsapp, numeroWhatsapp } from "@/lib/formato";
+import { PANEL_URL } from "@/lib/panel";
 import { SITIO_URL } from "@/lib/sitio";
 import "./globals.css";
 
@@ -67,7 +69,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <ModalProvider>
           <ToastProvider>
             <SiteHeader
-              identidad={sesion ? { nombre: sesion.nombre, email: sesion.email } : null}
+              identidad={
+                sesion
+                  ? {
+                      nombre: sesion.nombre,
+                      email: sesion.email,
+                      // El rol se comprueba aquí, en el servidor. Al navegador
+                      // solo le llega la dirección si de verdad tiene acceso.
+                      panel: esPersonal(sesion.rol) ? PANEL_URL : null,
+                    }
+                  : null
+              }
               contacto={contacto}
             />
             {/* Entre páginas, el contenido se funde en vez de saltar —
