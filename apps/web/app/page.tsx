@@ -1,7 +1,10 @@
 import { CATEGORIAS_SERVICIO, miniaturaDesdeUrl, NOMBRE_CATEGORIA, rangoDePrecio } from "@jyl/core";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Mapa } from "@/components/contacto/Mapa";
 import { EstadoAhora } from "@/components/horario/EstadoAhora";
+import { IconoCodigo, IconoLlave, IconoPincel } from "@/components/iconos/Iconos";
 import { Pieza } from "@/components/inicio/Pieza";
 import { configuracionPublica, productosPublicos, proyectosPublicos, serviciosPublicos } from "@/datos/cache";
 import { enlaceWhatsapp, pesos } from "@/lib/formato";
@@ -9,6 +12,13 @@ import { enlaceWhatsapp, pesos } from "@/lib/formato";
 export const runtime = "nodejs";
 
 const PIEZAS_EN_INICIO = 9;
+
+/** Un icono por área de servicio, para que el bloque se recorra con la vista. */
+const ICONO_CATEGORIA: Record<(typeof CATEGORIAS_SERVICIO)[number], ReactNode> = {
+  publicidad: <IconoPincel className="h-5 w-5" />,
+  web: <IconoCodigo className="h-5 w-5" />,
+  tecnico: <IconoLlave className="h-5 w-5" />,
+};
 
 /**
  * Inicio — SPEC.md §4.3: una pieza del portafolio a pantalla completa,
@@ -72,21 +82,13 @@ export default async function Home() {
             Artes gráficas, desarrollo web y servicios técnicos.
           </p>
           <div className="mt-10 flex animate-entrada-3 flex-wrap gap-3 motion-reduce:animate-none">
-            <Link
-              href="/pedido"
-              className="inline-flex rounded-full bg-accent px-6 py-3 text-base font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-            >
+            <BotonAccion href="/pedido" tamano="grande">
               Pedir un trabajo
-            </Link>
+            </BotonAccion>
             {whatsapp && (
-              <a
-                href={whatsapp}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex rounded-full border border-ink-inverted/30 px-6 py-3 text-base font-medium text-ink-inverted transition-colors hover:bg-ink-inverted/10"
-              >
+              <BotonAccion href={whatsapp} variante="claro" tamano="grande" externo>
                 Escribir por WhatsApp
-              </a>
+              </BotonAccion>
             )}
           </div>
           <div className="mt-8 flex animate-entrada-4 flex-wrap items-center justify-between gap-4 motion-reduce:animate-none">
@@ -167,7 +169,15 @@ export default async function Home() {
                     key={categoria}
                     className="grid gap-3 border-t border-border py-7 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-8"
                   >
-                    <dt className="font-display text-xl text-ink">{NOMBRE_CATEGORIA[categoria]}</dt>
+                    <dt className="flex items-center gap-3 font-display text-xl text-ink">
+                      {/* El icono no dice nada por sí solo: acompaña al
+                          nombre para poder saltar de un vistazo al área que
+                          interesa, en vez de leer tres bloques de texto. */}
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+                        {ICONO_CATEGORIA[categoria]}
+                      </span>
+                      {NOMBRE_CATEGORIA[categoria]}
+                    </dt>
                     <dd>
                       <ul className="flex flex-wrap gap-2">
                         {deLaCategoria.map((servicio) => (
@@ -265,21 +275,13 @@ export default async function Home() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/contacto"
-                className="rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas-sunken"
-              >
+              <BotonAccion href="/contacto" variante="contorno">
                 Horarios y mapa
-              </Link>
+              </BotonAccion>
               {whatsapp && (
-                <a
-                  href={whatsapp}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas-sunken"
-                >
+                <BotonAccion href={whatsapp} variante="contorno" externo>
                   Escribir por WhatsApp
-                </a>
+                </BotonAccion>
               )}
             </div>
 
@@ -288,12 +290,9 @@ export default async function Home() {
               <p className="mt-2 text-sm text-ink-muted">
                 Mándanos las referencias y las medidas y te respondemos con una cotización.
               </p>
-              <Link
-                href="/pedido"
-                className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover"
-              >
-                Pedir un trabajo
-              </Link>
+              <div className="mt-6">
+                <BotonAccion href="/pedido">Pedir un trabajo</BotonAccion>
+              </div>
             </div>
           </div>
 

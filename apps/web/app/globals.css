@@ -15,3 +15,59 @@
     min-inline-size: 0;
   }
 }
+
+/**
+ * Transiciones entre páginas — SPEC.md §9.
+ *
+ * Asimétricas a propósito: lo que se va, se va rápido (140 ms) para no
+ * competir por la atención; lo que llega entra más despacio y con un punto de
+ * desenfoque, que es lo que hace que se lea como un cambio y no como un
+ * parpadeo. El desplazamiento es de 8 px: suficiente para notar dirección,
+ * poco para no marear a quien navega rápido.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(.pagina) {
+    animation: 140ms ease-in both salir-pagina;
+  }
+
+  ::view-transition-new(.pagina) {
+    animation: 260ms cubic-bezier(0.2, 0.65, 0.3, 1) 100ms both entrar-pagina;
+  }
+
+  /**
+   * La foto del producto no desaparece para reaparecer: se transforma de la
+   * miniatura de la tienda a la foto grande de la ficha. Es el gesto que dice
+   * "es la misma cosa" y el que más se nota en un sitio con catálogo.
+   */
+  ::view-transition-group(.pieza) {
+    animation-duration: 420ms;
+    animation-timing-function: cubic-bezier(0.2, 0.65, 0.3, 1);
+  }
+
+  /* El desenfoque a media transición tapa los saltos de interpolación
+     cuando la miniatura y la foto grande no tienen la misma proporción. */
+  ::view-transition-image-pair(.pieza) {
+    animation: 420ms ease-in-out both desenfoque-al-vuelo;
+  }
+}
+
+@keyframes salir-pagina {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes entrar-pagina {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(8px);
+  }
+}
+
+@keyframes desenfoque-al-vuelo {
+  35% {
+    filter: blur(3px);
+  }
+}

@@ -3,15 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { AccountButton } from "./AccountButton";
+import { AccountButton, type IdentidadHeader } from "./AccountButton";
 import { MobileMenu } from "./MobileMenu";
-import { navItems, primaryAction } from "./nav-items";
+import { navItems } from "./nav-items";
 import { useHeaderScroll } from "./use-header-scroll";
 
 interface SiteHeaderProps {
   /** Lo resuelve el layout en el servidor: así el botón de cuenta sale bien
    *  en el primer pintado, sin parpadear de «Entrar» a la inicial. */
-  identidad: string | null;
+  identidad: IdentidadHeader | null;
+  /** Para el pie del menú móvil, que lleva los datos de contacto (§4.2). */
+  contacto: { whatsapp: string | null; telefono: string; email: string; redes: [string, string][] };
 }
 
 /**
@@ -20,7 +22,7 @@ interface SiteHeaderProps {
  * - sobre el héroe y sin haberlo pasado → transparente, texto claro
  * - en cualquier otro caso → sólido con desenfoque y línea inferior de 1px
  */
-export function SiteHeader({ identidad }: SiteHeaderProps) {
+export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -66,13 +68,6 @@ export function SiteHeader({ identidad }: SiteHeaderProps) {
             })}
 
             <AccountButton identidad={identidad} />
-
-            <Link
-              href={primaryAction.href}
-              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-            >
-              {primaryAction.label}
-            </Link>
           </nav>
 
           <button
@@ -94,6 +89,7 @@ export function SiteHeader({ identidad }: SiteHeaderProps) {
         onOpenChange={setMenuOpen}
         triggerRef={menuButtonRef}
         identidad={identidad}
+        contacto={contacto}
       />
     </>
   );

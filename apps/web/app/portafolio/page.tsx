@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Filtros } from "@/components/filtros/Filtros";
+import { IconoImagen } from "@/components/iconos/Iconos";
 import { GaleriaPortafolio } from "@/components/portafolio/GaleriaPortafolio";
+import { Vacio } from "@/components/vacio/Vacio";
 import { proyectosPublicos } from "@/datos/cache";
 
 export const runtime = "nodejs";
@@ -45,11 +48,23 @@ export default async function Portafolio({ searchParams }: PageProps<"/portafoli
       {visibles.length > 0 ? (
         <GaleriaPortafolio proyectos={visibles} />
       ) : (
-        <p className="mt-12 rounded-xl border border-border bg-canvas-sunken p-6 text-sm text-ink-muted">
+        <Vacio
+          icono={<IconoImagen className="h-6 w-6" />}
+          titulo={proyectos.length === 0 ? "Estamos montando el portafolio" : "Nada en esta categoría"}
+          accion={
+            proyectos.length === 0 ? (
+              <BotonAccion href="/pedido">Pedir un trabajo</BotonAccion>
+            ) : (
+              <BotonAccion href="/portafolio" variante="contorno">
+                Ver todas las piezas
+              </BotonAccion>
+            )
+          }
+        >
           {proyectos.length === 0
-            ? "Estamos preparando esta sección con trabajos recientes."
-            : "No hay piezas en esa categoría todavía."}
-        </p>
+            ? "Pronto verás aquí trabajos salidos del estudio."
+            : "Todavía no hemos publicado nada de este tipo."}
+        </Vacio>
       )}
     </main>
   );

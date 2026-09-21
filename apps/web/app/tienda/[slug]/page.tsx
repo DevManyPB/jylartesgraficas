@@ -34,7 +34,7 @@ export default async function Producto({ params }: PageProps<"/tienda/[slug]">) 
       </Link>
 
       <div className="mt-4 grid gap-10 lg:grid-cols-2 lg:gap-14">
-        <GaleriaProducto imagenes={producto.imagenes} nombre={producto.nombre} />
+        <GaleriaProducto imagenes={producto.imagenes} nombre={producto.nombre} slug={producto.slug} />
 
         <div>
           <p className="text-sm text-ink-muted">{producto.categoria}</p>

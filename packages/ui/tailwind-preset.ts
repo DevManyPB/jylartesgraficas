@@ -113,6 +113,19 @@ const preset: Omit<Config, "content"> = {
           from: { transform: "scale(1.06)" },
           to: { transform: "scale(1)" },
         },
+        /**
+         * Menú desplegable (la cuenta en el header): nace desde su botón,
+         * arriba a la derecha, en vez de aparecer de golpe. Así se ve de
+         * dónde sale.
+         */
+        "menu-cuenta-show": {
+          from: { opacity: "0", transform: "translateY(-0.375rem) scale(0.96)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "menu-cuenta-hide": {
+          from: { opacity: "1", transform: "translateY(0) scale(1)" },
+          to: { opacity: "0", transform: "translateY(-0.375rem) scale(0.96)" },
+        },
         /** El cursor que indica que abajo sigue habiendo sitio. */
         "cursor-abajo": {
           "0%, 100%": { transform: "translateY(0)", opacity: "0.6" },
@@ -147,6 +160,8 @@ const preset: Omit<Config, "content"> = {
         "menu-out": "menu-hide 180ms ease-in",
         "menu-line-top": "menu-line-top 200ms ease-out",
         "menu-line-bottom": "menu-line-bottom 200ms ease-out",
+        "content-in-menu": "menu-cuenta-show 160ms cubic-bezier(0.2, 0.65, 0.3, 1)",
+        "content-out-menu": "menu-cuenta-hide 120ms ease-in",
       },
     },
   },

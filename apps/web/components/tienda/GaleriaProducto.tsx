@@ -2,10 +2,19 @@
 
 import { miniaturaDesdeUrl, type ImagenGuardada } from "@jyl/core";
 import { VisorDeImagen } from "@jyl/ui";
-import { useState } from "react";
+import { useState, ViewTransition } from "react";
 
 /** Fotos del producto: una grande y las demás como miniaturas, con visor. */
-export function GaleriaProducto({ imagenes, nombre }: { imagenes: ImagenGuardada[]; nombre: string }) {
+export function GaleriaProducto({
+  imagenes,
+  nombre,
+  slug,
+}: {
+  imagenes: ImagenGuardada[];
+  nombre: string;
+  /** Empareja esta foto con su miniatura en la tienda para la transición. */
+  slug: string;
+}) {
   const [indice, setIndice] = useState(0);
   const [visible, setVisible] = useState(false);
   const actual = imagenes[indice];
@@ -20,19 +29,23 @@ export function GaleriaProducto({ imagenes, nombre }: { imagenes: ImagenGuardada
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => setVisible(true)}
-        aria-label={`Ver ${nombre} a tamaño completo`}
-        className="block w-full overflow-hidden rounded-xl border border-border bg-canvas-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={miniaturaDesdeUrl(actual.url, 1000, "limit") ?? actual.url}
-          alt={actual.alt}
-          className="aspect-square w-full object-contain"
-        />
-      </button>
+      {/* El nombre va en el marco y no en la foto: así sigue siendo "la misma
+          pieza" aunque se cambie de miniatura antes de volver a la tienda. */}
+      <ViewTransition name={`producto-${slug}`} share="pieza" default="none">
+        <button
+          type="button"
+          onClick={() => setVisible(true)}
+          aria-label={`Ver ${nombre} a tamaño completo`}
+          className="block w-full overflow-hidden rounded-xl border border-border bg-canvas-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={miniaturaDesdeUrl(actual.url, 1000, "limit") ?? actual.url}
+            alt={actual.alt}
+            className="aspect-square w-full object-contain"
+          />
+        </button>
+      </ViewTransition>
 
       {imagenes.length > 1 && (
         <ul className="mt-3 grid grid-cols-5 gap-2">

@@ -2,7 +2,11 @@ import { miniaturaDesdeUrl, rangoDePrecio } from "@jyl/core";
 import { cn } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ViewTransition } from "react";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Filtros } from "@/components/filtros/Filtros";
+import { IconoCajaVacia } from "@/components/iconos/Iconos";
+import { Vacio } from "@/components/vacio/Vacio";
 import { productosPublicos } from "@/datos/cache";
 import { pesos } from "@/lib/formato";
 
@@ -47,8 +51,7 @@ export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
       <h1 className="font-display text-4xl text-ink sm:text-5xl">Tienda</h1>
       <p className="mt-4 max-w-prose text-base text-ink-muted">
-        El pedido es una solicitud, no una compra en línea: lo confirmamos contigo y acordamos el pago por WhatsApp o
-        en el local.
+        Pides, lo confirmamos y acordamos el pago. No se paga en línea.
       </p>
 
       {categorias.length > 1 && (
@@ -91,16 +94,20 @@ export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
                 >
                   <span className="relative block aspect-square overflow-hidden bg-canvas-sunken">
                     {portada ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={miniaturaDesdeUrl(portada.url, 600) ?? portada.url}
-                        alt={portada.alt}
-                        loading="lazy"
-                        className={cn(
-                          "h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]",
-                          agotado && "opacity-60",
-                        )}
-                      />
+                      // El mismo `name` que la foto grande de la ficha: al
+                      // entrar, esta miniatura se transforma en aquella.
+                      <ViewTransition name={`producto-${producto.slug}`} share="pieza" default="none">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={miniaturaDesdeUrl(portada.url, 600) ?? portada.url}
+                          alt={portada.alt}
+                          loading="lazy"
+                          className={cn(
+                            "h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]",
+                            agotado && "opacity-60",
+                          )}
+                        />
+                      </ViewTransition>
                     ) : (
                       <span className="flex h-full items-center justify-center text-sm text-ink-subtle">Sin foto</span>
                     )}
@@ -133,13 +140,29 @@ export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
           })}
         </ul>
       ) : (
-        <p className="mt-12 rounded-xl border border-border bg-canvas-sunken p-6 text-sm text-ink-muted">
+        <Vacio
+          icono={<IconoCajaVacia className="h-6 w-6" />}
+          titulo={productos.length === 0 ? "La tienda está en camino" : "Nada por aquí"}
+          accion={
+            productos.length === 0 ? (
+              <BotonAccion href="/pedido">Pedir un trabajo</BotonAccion>
+            ) : soloDisponibles ? (
+              <BotonAccion href={enlace(categoria, false)} variante="contorno">
+                Ver también lo agotado
+              </BotonAccion>
+            ) : (
+              <BotonAccion href="/tienda" variante="contorno">
+                Ver toda la tienda
+              </BotonAccion>
+            )
+          }
+        >
           {productos.length === 0
-            ? "Estamos cargando los productos de la tienda. Mientras tanto, puedes pedirnos lo que necesites."
+            ? "Mientras tanto, pídenos lo que necesites y lo cotizamos."
             : soloDisponibles
-              ? "Ahora mismo no hay nada con stock aquí. Quita el filtro para ver lo agotado: casi todo se puede encargar."
-              : "No hay productos en esa categoría todavía."}
-        </p>
+              ? "No hay stock aquí ahora mismo, pero casi todo se puede encargar."
+              : "En esta categoría todavía no hay nada publicado."}
+        </Vacio>
       )}
     </main>
   );

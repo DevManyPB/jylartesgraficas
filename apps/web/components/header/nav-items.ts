@@ -9,4 +9,9 @@ export const navItems = [
   { href: "/contacto", label: "Contacto" },
 ] as const;
 
-export const primaryAction = { href: "/pedido", label: "Pedir un trabajo" } as const;
+/**
+ * Ya no hay acción de acento en el header: «Pedir un trabajo» aparece en el
+ * héroe, en cada servicio, en cada producto, en el menú de la cuenta y en el
+ * pie, así que repetirlo también arriba solo restaba sitio. El acento del
+ * header es ahora «Entrar», que es lo único que no estaba en ninguna parte.
+ */

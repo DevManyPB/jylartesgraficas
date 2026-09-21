@@ -184,7 +184,7 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 
 - **Marca a la izquierda, en dos líneas.** "JYL" en el peso más fuerte de la tipografía de titulares, "artes gráficas" debajo, mucho más pequeño y en el color secundario. La marca es un elemento tipográfico compuesto, no un logo genérico centrado.
 - **Navegación al centro-derecha**, en tamaño pequeño y espaciado generoso. Cuatro destinos como máximo. El resto vive en el pie de página.
-- **Una sola acción destacada:** *Pedir un trabajo*. Es el único elemento del header con color de acento.
+- **Una sola acción destacada:** *Entrar*. Es el único elemento del header con color de acento. *Pedir un trabajo* no va arriba: ya está en el héroe, en cada servicio, en cada producto, en el menú de la cuenta y en el pie, y repetirlo en el header solo restaba sitio a la navegación. Entrar, en cambio, no estaba en ningún otro lado.
 - Alineado a la misma rejilla que el contenido de la página, no pegado a los bordes del navegador.
 
 **Comportamiento**
@@ -192,7 +192,7 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 - Arranca **transparente sobre la pieza del héroe**, con el texto en blanco. Al pasar el primer pliegue, se vuelve sólido con desenfoque de fondo y una línea inferior de un píxel. La transición dura entre 200 y 300 ms.
 - Al bajar se oculta, al subir reaparece. Esto devuelve pantalla al portafolio en el móvil.
 - La página actual se marca con una línea corta debajo del enlace, no con negrita ni con otro color.
-- Si el usuario tiene sesión iniciada, el botón de cuenta reemplaza al de login y muestra su inicial.
+- Si el usuario tiene sesión iniciada, el botón de cuenta reemplaza al de login y muestra su inicial. Al pulsarlo abre un menú con su nombre y su correo, *Mis pedidos y facturas*, *Pedir un trabajo* y *Cerrar sesión*. Salir tiene que poder hacerse desde cualquier página, no solo desde «Mi cuenta».
 
 **En móvil**
 

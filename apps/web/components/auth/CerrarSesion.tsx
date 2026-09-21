@@ -1,10 +1,9 @@
 "use client";
 
-import { getFirebase } from "@jyl/core";
 import { ConfirmDialog } from "@jyl/ui";
-import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { cerrarSesion } from "@/lib/cerrar-sesion";
 
 /** SPEC.md §5.1: cerrar sesión lleva confirmación simple, no un alert. */
 export function CerrarSesion() {
@@ -28,9 +27,7 @@ export function CerrarSesion() {
         description="Tendrás que volver a entrar para ver tus pedidos y facturas."
         confirmLabel="Cerrar sesión"
         onConfirm={async () => {
-          const { auth } = getFirebase();
-          await signOut(auth);
-          await fetch("/api/session", { method: "DELETE" });
+          await cerrarSesion();
           router.push("/");
           router.refresh();
         }}

@@ -1,15 +1,26 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
+import { ConfirmDialog } from "@jyl/ui";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { RefObject } from "react";
-import { navItems, primaryAction } from "./nav-items";
+import { usePathname, useRouter } from "next/navigation";
+import { type RefObject, useState } from "react";
+import {
+  IconoCorreo,
+  IconoRecibo,
+  IconoSalir,
+  IconoTelefono,
+  IconoWhatsapp,
+} from "@/components/iconos/Iconos";
+import { cerrarSesion } from "@/lib/cerrar-sesion";
+import type { IdentidadHeader } from "./AccountButton";
+import { navItems } from "./nav-items";
 
 interface MobileMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  identidad: string | null;
+  identidad: IdentidadHeader | null;
+  contacto: { whatsapp: string | null; telefono: string; email: string; redes: [string, string][] };
   /** El botón que abrió el menú: Radix solo devuelve el foco solo si se usa
    *  <Dialog.Trigger>, y aquí el botón vive en el header. */
   triggerRef: RefObject<HTMLButtonElement | null>;
@@ -21,8 +32,11 @@ interface MobileMenuProps {
  * de hoja de confirmación) para heredar foco atrapado, Esc y bloqueo de
  * scroll del fondo sin deformar aquel primitivo.
  */
-export function MobileMenu({ open, onOpenChange, triggerRef, identidad }: MobileMenuProps) {
+export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto }: MobileMenuProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [confirmar, setConfirmar] = useState(false);
+  const nombre = identidad?.nombre?.trim() || identidad?.email || null;
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -85,26 +99,127 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad }: Mobile
             })}
 
             <Link
-              href={identidad ? "/mi-cuenta" : "/entrar"}
+              href="/pedido"
               onClick={() => onOpenChange(false)}
-              className="flex items-center py-4 text-base text-ink-inverted/70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-accent px-5 py-3.5 text-base font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
             >
-              {identidad ? `Mi cuenta · ${identidad}` : "Entrar"}
+              Pedir un trabajo
             </Link>
 
-            <Link
-              href={primaryAction.href}
-              onClick={() => onOpenChange(false)}
-              className="mt-4 inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-base font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-            >
-              {primaryAction.label}
-            </Link>
+            {/* La cuenta, abajo y separada de los destinos: aquí es donde se
+                entra y, sobre todo, donde se sale — antes no había manera de
+                cerrar sesión desde el móvil sin ir a «Mi cuenta». */}
+            <div className="mt-6 border-t border-ink-inverted/15 pt-4">
+              {nombre ? (
+                <>
+                  <p className="truncate text-sm text-ink-inverted/50">{nombre}</p>
+                  <Link
+                    href="/mi-cuenta"
+                    onClick={() => onOpenChange(false)}
+                    className="mt-2 flex items-center gap-3 py-2 text-base text-ink-inverted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                  >
+                    <IconoRecibo className="h-5 w-5 opacity-70" />
+                    Mis pedidos y facturas
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenChange(false);
+                      setConfirmar(true);
+                    }}
+                    className="flex items-center gap-3 py-2 text-base text-ink-inverted/70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                  >
+                    <IconoSalir className="h-5 w-5" />
+                    Cerrar sesión
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/entrar"
+                  onClick={() => onOpenChange(false)}
+                  className="flex items-center justify-center rounded-full border border-ink-inverted/30 px-5 py-3 text-base font-medium text-ink-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+                >
+                  Entrar
+                </Link>
+              )}
+            </div>
           </nav>
 
-          {/* TODO: contenido pendiente del cliente — teléfono, correo y redes
-              salen de settings/general (SPEC.md §4.6), disponible desde el Chunk E. */}
+          {/* Los datos de contacto cierran el menú — SPEC.md §4.2. Salen de
+              Configuración; lo que el estudio no haya puesto, no aparece. */}
+          {(contacto.whatsapp || contacto.telefono || contacto.email || contacto.redes.length > 0) && (
+            <div className="mx-auto w-full max-w-content shrink-0 px-6 pb-8 pt-6 lg:px-8">
+              <ul className="flex flex-col gap-3 text-sm text-ink-inverted/70">
+                {contacto.whatsapp && (
+                  <li>
+                    <a
+                      href={contacto.whatsapp}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                    >
+                      <IconoWhatsapp className="h-4 w-4" />
+                      WhatsApp
+                    </a>
+                  </li>
+                )}
+                {contacto.telefono && (
+                  <li>
+                    <a
+                      href={`tel:${contacto.telefono.replace(/\s/g, "")}`}
+                      className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                    >
+                      <IconoTelefono className="h-4 w-4" />
+                      {contacto.telefono}
+                    </a>
+                  </li>
+                )}
+                {contacto.email && (
+                  <li>
+                    <a
+                      href={`mailto:${contacto.email}`}
+                      className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                    >
+                      <IconoCorreo className="h-4 w-4" />
+                      {contacto.email}
+                    </a>
+                  </li>
+                )}
+              </ul>
+
+              {contacto.redes.length > 0 && (
+                <ul className="mt-5 flex flex-wrap gap-4 text-sm text-ink-inverted/70">
+                  {contacto.redes.map(([red, url]) => (
+                    <li key={red}>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="capitalize underline-offset-4 hover:text-ink-inverted hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                      >
+                        {red}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
+
+      <ConfirmDialog
+        open={confirmar}
+        onOpenChange={setConfirmar}
+        title="¿Cerrar la sesión?"
+        description="Tendrás que volver a entrar para ver tus pedidos y tus facturas."
+        confirmLabel="Cerrar sesión"
+        onConfirm={async () => {
+          await cerrarSesion();
+          router.push("/");
+          router.refresh();
+        }}
+      />
     </Dialog.Root>
   );
 }

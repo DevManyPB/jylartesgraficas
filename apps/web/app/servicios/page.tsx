@@ -1,6 +1,7 @@
 import { CATEGORIAS_SERVICIO, NOMBRE_CATEGORIA } from "@jyl/core";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { configuracionPublica, serviciosPublicos } from "@/datos/cache";
 import { enlaceWhatsapp } from "@/lib/formato";
 
@@ -68,21 +69,11 @@ export default async function Servicios() {
           Escríbenos con la idea, las medidas o una referencia y te decimos qué se puede hacer y cuánto cuesta.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/pedido"
-            className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover"
-          >
-            Pedir un trabajo
-          </Link>
+          <BotonAccion href="/pedido">Pedir un trabajo</BotonAccion>
           {whatsapp && (
-            <a
-              href={whatsapp}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas"
-            >
+            <BotonAccion href={whatsapp} variante="contorno" externo>
               Escribir por WhatsApp
-            </a>
+            </BotonAccion>
           )}
         </div>
       </section>

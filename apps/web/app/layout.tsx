@@ -3,11 +3,12 @@ import { ModalProvider, ToastProvider } from "@jyl/ui";
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
+import { ViewTransition } from "react";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { BotonWhatsapp } from "@/components/whatsapp/BotonWhatsapp";
 import { configuracionPublica } from "@/datos/cache";
-import { numeroWhatsapp } from "@/lib/formato";
+import { enlaceWhatsapp, numeroWhatsapp } from "@/lib/formato";
 import { SITIO_URL } from "@/lib/sitio";
 import "./globals.css";
 
@@ -44,6 +45,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     configuracionPublica(),
   ]);
   const whatsapp = numeroWhatsapp(configuracion.whatsapp);
+  const contacto = {
+    whatsapp: enlaceWhatsapp(configuracion.whatsapp),
+    telefono: configuracion.telefono,
+    email: configuracion.email,
+    redes: Object.entries(configuracion.redes).filter(([, url]) => url) as [string, string][],
+  };
   return (
     // `scroll-smooth` solo con motion-safe: los saltos a un ancla se ven
     // mejor deslizando, pero quien pidió menos movimiento no lo quiere.
@@ -59,8 +66,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="group bg-canvas font-sans text-ink">
         <ModalProvider>
           <ToastProvider>
-            <SiteHeader identidad={sesion?.nombre ?? sesion?.email ?? null} />
-            {children}
+            <SiteHeader
+              identidad={sesion ? { nombre: sesion.nombre, email: sesion.email } : null}
+              contacto={contacto}
+            />
+            {/* Entre páginas, el contenido se funde en vez de saltar —
+                SPEC.md §9: el movimiento responde a una acción del usuario y
+                muestra qué cambió. Es la API del navegador (View Transitions)
+                a través de React, así que la anima el compositor y no cuesta
+                JavaScript. Sin soporte del navegador, la navegación sigue
+                siendo instantánea: no hay nada que se rompa. */}
+            <ViewTransition default="pagina">{children}</ViewTransition>
             {whatsapp && <BotonWhatsapp numero={whatsapp} />}
             <SiteFooter />
           </ToastProvider>

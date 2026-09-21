@@ -1,8 +1,9 @@
 import { DIAS_SEMANA, NOMBRE_DIA } from "@jyl/core";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Mapa } from "@/components/contacto/Mapa";
 import { EstadoAhora } from "@/components/horario/EstadoAhora";
+import { IconoCorreo, IconoReloj, IconoTelefono, IconoUbicacion } from "@/components/iconos/Iconos";
 import { NegocioLocal } from "@/components/seo/DatosEstructurados";
 import { configuracionPublica } from "@/datos/cache";
 import { enlaceWhatsapp, franjaDelDia } from "@/lib/formato";
@@ -29,9 +30,21 @@ export default async function Contacto() {
 
   const contactos = [
     configuracion.telefono
-      ? { etiqueta: "Teléfono", valor: configuracion.telefono, href: `tel:${configuracion.telefono.replace(/\s/g, "")}` }
+      ? {
+          etiqueta: "Teléfono",
+          valor: configuracion.telefono,
+          href: `tel:${configuracion.telefono.replace(/\s/g, "")}`,
+          icono: <IconoTelefono className="h-4 w-4" />,
+        }
       : null,
-    configuracion.email ? { etiqueta: "Correo", valor: configuracion.email, href: `mailto:${configuracion.email}` } : null,
+    configuracion.email
+      ? {
+          etiqueta: "Correo",
+          valor: configuracion.email,
+          href: `mailto:${configuracion.email}`,
+          icono: <IconoCorreo className="h-4 w-4" />,
+        }
+      : null,
   ].filter((c) => c !== null);
 
   const redes = Object.entries(configuracion.redes).filter(([, url]) => url);
@@ -48,21 +61,13 @@ export default async function Contacto() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-wrap gap-3">
             {whatsapp && (
-              <a
-                href={whatsapp}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover"
-              >
+              <BotonAccion href={whatsapp} externo>
                 Escribir por WhatsApp
-              </a>
+              </BotonAccion>
             )}
-            <Link
-              href="/pedido"
-              className="rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas-sunken"
-            >
+            <BotonAccion href="/pedido" variante="contorno">
               Pedir un trabajo
-            </Link>
+            </BotonAccion>
           </div>
 
           {contactos.length > 0 && (
@@ -72,8 +77,11 @@ export default async function Contacto() {
               </h2>
               <dl className="mt-3 flex flex-col gap-2 text-sm">
                 {contactos.map((contacto) => (
-                  <div key={contacto.etiqueta} className="flex gap-3">
-                    <dt className="w-20 shrink-0 text-ink-muted">{contacto.etiqueta}</dt>
+                  <div key={contacto.etiqueta} className="flex items-center gap-3">
+                    <dt className="flex w-24 shrink-0 items-center gap-2 text-ink-muted">
+                      {contacto.icono}
+                      {contacto.etiqueta}
+                    </dt>
                     <dd>
                       <a href={contacto.href} className="text-ink underline-offset-4 hover:underline">
                         {contacto.valor}
@@ -87,7 +95,8 @@ export default async function Contacto() {
 
           {lineaDireccion && (
             <section aria-labelledby="donde">
-              <h2 id="donde" className="font-display text-xl text-ink">
+              <h2 id="donde" className="flex items-center gap-2 font-display text-xl text-ink">
+                <IconoUbicacion className="h-5 w-5 text-accent" />
                 Dónde estamos
               </h2>
               <address className="mt-3 not-italic text-sm text-ink">
@@ -108,7 +117,8 @@ export default async function Contacto() {
           )}
 
           <section aria-labelledby="horarios">
-            <h2 id="horarios" className="font-display text-xl text-ink">
+            <h2 id="horarios" className="flex items-center gap-2 font-display text-xl text-ink">
+              <IconoReloj className="h-5 w-5 text-accent" />
               Horarios
             </h2>
             {horarios.some((h) => franjaDelDia(h) !== null) ? (
