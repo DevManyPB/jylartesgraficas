@@ -58,6 +58,8 @@ interface BotonAccionProps {
   externo?: boolean;
   type?: ComponentProps<"button">["type"];
   onClick?: () => void;
+  /** Solo para botones: un enlace deshabilitado no existe, se quita. */
+  deshabilitado?: boolean;
 }
 
 export function BotonAccion({
@@ -69,6 +71,7 @@ export function BotonAccion({
   externo,
   type = "button",
   onClick,
+  deshabilitado,
 }: BotonAccionProps) {
   const estilo = VARIANTES[variante];
   const iman = useIman<HTMLAnchorElement & HTMLButtonElement>();
@@ -106,7 +109,13 @@ export function BotonAccion({
   }
 
   return (
-    <button ref={iman} type={type} onClick={onClick} className={clases}>
+    <button
+      ref={iman}
+      type={type}
+      onClick={onClick}
+      disabled={deshabilitado}
+      className={cn(clases, "disabled:pointer-events-none disabled:opacity-50")}
+    >
       {interior}
     </button>
   );

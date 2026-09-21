@@ -3,8 +3,9 @@
 import { pedidoEntranteSchema, type Invitado, type PedidoEntrante, type Servicio } from "@jyl/core";
 import { ConfirmDialog, useToast } from "@jyl/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState, ViewTransition } from "react";
 import { useForm } from "react-hook-form";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Confirmacion } from "./Confirmacion";
 import { PasoDatos } from "./PasoDatos";
 import { PasoDetalles } from "./PasoDetalles";
@@ -111,10 +112,19 @@ export function FormularioPedido({
     return () => suscripcion.unsubscribe();
   }, [watch, guardar]);
 
+  /**
+   * Cambiar de paso va dentro de `startTransition` para que React lo trate
+   * como transición y anime el `<ViewTransition>` de abajo. Sin esto el paso
+   * se sustituye de golpe.
+   */
+  function irAlPaso(destino: number) {
+    startTransition(() => setPaso(Math.min(Math.max(destino, 0), TOTAL_PASOS - 1)));
+  }
+
   async function siguiente() {
     const campos = CAMPOS_POR_PASO[paso] ?? [];
     const valido = campos.length === 0 || (await trigger(campos as never, { shouldFocus: true }));
-    if (valido) setPaso((p) => Math.min(p + 1, TOTAL_PASOS - 1));
+    if (valido) irAlPaso(paso + 1);
   }
 
   async function enviar(datos: PedidoEntrante) {
@@ -157,7 +167,7 @@ export function FormularioPedido({
 
   return (
     <>
-      <Progreso actual={paso} />
+      <Progreso actual={paso} onIr={irAlPaso} />
 
       <form
         className="mt-8"
@@ -166,67 +176,64 @@ export function FormularioPedido({
           evento.preventDefault();
         }}
       >
-        {paso === 0 && producto && <PasoProducto producto={producto} />}
+        {/* `key={paso}` hace que cada paso sea un elemento distinto para
+            React: el anterior se va y el nuevo entra, que es lo que el
+            `<ViewTransition>` necesita para animar el relevo. */}
+        <ViewTransition key={paso} enter="paso-entra" exit="paso-sale" default="none">
+          <div>
+            {paso === 0 && producto && <PasoProducto producto={producto} />}
 
-        {paso === 0 && !producto && (
-          <PasoServicio
-            servicios={servicios}
-            seleccionado={serviceId}
-            onSeleccionar={(id) => setValue("serviceId", id, { shouldValidate: true })}
-            error={formState.errors.serviceId?.message}
-          />
-        )}
+            {paso === 0 && !producto && (
+              <PasoServicio
+                servicios={servicios}
+                seleccionado={serviceId}
+                onSeleccionar={(id) => setValue("serviceId", id, { shouldValidate: true })}
+                error={formState.errors.serviceId?.message}
+              />
+            )}
 
-        {paso === 1 && (
-          <PasoDetalles
-            servicio={servicioElegido}
-            producto={producto?.item.nombre ?? null}
-            register={register}
-            errors={formState.errors}
-          />
-        )}
+            {paso === 1 && (
+              <PasoDetalles
+                servicio={servicioElegido}
+                producto={producto?.item.nombre ?? null}
+                register={register}
+                errors={formState.errors}
+              />
+            )}
 
-        {paso === 2 && (
-          <PasoReferencias
-            referencias={referencias}
-            onAgregar={agregar}
-            onQuitar={quitar}
-            sugerir={producto ? producto.item.personalizado : (servicioElegido?.requiereReferencias ?? true)}
-          />
-        )}
+            {paso === 2 && (
+              <PasoReferencias
+                referencias={referencias}
+                onAgregar={agregar}
+                onQuitar={quitar}
+                sugerir={producto ? producto.item.personalizado : (servicioElegido?.requiereReferencias ?? true)}
+              />
+            )}
 
-        {paso === 3 && (
-          <PasoDatos identidad={identidad} register={register} errors={formState.errors} />
-        )}
+            {paso === 3 && (
+              <PasoDatos identidad={identidad} register={register} errors={formState.errors} />
+            )}
+          </div>
+        </ViewTransition>
 
         <div className="mt-10 flex items-center justify-between gap-3 border-t border-border pt-6">
           <button
             type="button"
-            onClick={() => setPaso((p) => Math.max(p - 1, 0))}
+            onClick={() => irAlPaso(paso - 1)}
             disabled={paso === 0}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas-sunken disabled:invisible"
+            className="rounded-full px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas-sunken disabled:invisible"
           >
             Atrás
           </button>
 
           {paso < TOTAL_PASOS - 1 ? (
-            <button
-              type="button"
-              onClick={siguiente}
-              disabled={subiendo}
-              className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-50"
-            >
+            <BotonAccion onClick={siguiente} deshabilitado={subiendo}>
               Continuar
-            </button>
+            </BotonAccion>
           ) : (
-            <button
-              type="button"
-              onClick={handleSubmit(() => setConfirmando(true))}
-              disabled={subiendo}
-              className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-50"
-            >
+            <BotonAccion onClick={handleSubmit(() => setConfirmando(true))} deshabilitado={subiendo}>
               Enviar pedido
-            </button>
+            </BotonAccion>
           )}
         </div>
 

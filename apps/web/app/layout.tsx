@@ -76,7 +76,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 a través de React, así que la anima el compositor y no cuesta
                 JavaScript. Sin soporte del navegador, la navegación sigue
                 siendo instantánea: no hay nada que se rompa. */}
-            <ViewTransition default="pagina">{children}</ViewTransition>
+            {/* `update="none"`: esta envoltura solo anima al cambiar de
+                página. Sin ello, cualquier cambio de estado de dentro —los
+                pasos del formulario de pedido, por ejemplo— fundiría también
+                la página entera. */}
+            <ViewTransition default="pagina" update="none">
+              {children}
+            </ViewTransition>
             {whatsapp && <BotonWhatsapp numero={whatsapp} />}
             <SiteFooter />
           </ToastProvider>

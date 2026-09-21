@@ -14,6 +14,12 @@ const SCROLL_DELTA = 8;
  *
  * - `data-past-hero`: el héroe ya pasó bajo el header → barra sólida.
  * - `data-header-hidden`: se bajó → el header se esconde hasta que se suba.
+ * - `data-desplazado`: se ha movido algo de la parte de arriba → el header
+ *   se encoge. A diferencia de `data-past-hero`, esto vale en todas las
+ *   páginas, tengan héroe o no.
+ * - `--progreso-scroll`: cuánto se lleva leído, de 0 a 1, para la línea de
+ *   progreso. Se escribe en el mismo fotograma que lo demás en vez de en un
+ *   segundo listener, que sería pagar dos veces por el mismo evento.
  *
  * Las páginas sin héroe no marcan nada: el CSS las trata como sólidas porque
  * no encuentra ningún `[data-hero]`.
@@ -54,28 +60,49 @@ export function useHeaderScroll(menuOpen: boolean) {
     let lastY = window.scrollY;
     let frame = 0;
 
+    const medir = () => {
+      const y = window.scrollY;
+
+      // Encogido y progreso se actualizan siempre, aunque el movimiento sea
+      // de un píxel: son continuos, no un umbral.
+      if (y > 4) document.body.dataset.desplazado = "";
+      else delete document.body.dataset.desplazado;
+
+      const recorrido = document.documentElement.scrollHeight - window.innerHeight;
+      const progreso = recorrido > 0 ? Math.min(y / recorrido, 1) : 0;
+      document.body.style.setProperty("--progreso-scroll", String(progreso));
+
+      // Esconder el header sí necesita umbral: si no, tiembla con el rebote
+      // del trackpad y con el rebote elástico del móvil.
+      const delta = y - lastY;
+      if (Math.abs(delta) < SCROLL_DELTA) return;
+      lastY = y;
+
+      if (y <= HEADER_HEIGHT_DESKTOP || delta < 0) {
+        delete document.body.dataset.headerHidden;
+      } else {
+        document.body.dataset.headerHidden = "";
+      }
+    };
+
     const onScroll = () => {
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
         frame = 0;
-        const y = window.scrollY;
-        const delta = y - lastY;
-        if (Math.abs(delta) < SCROLL_DELTA) return;
-        lastY = y;
-
-        if (y <= HEADER_HEIGHT_DESKTOP || delta < 0) {
-          delete document.body.dataset.headerHidden;
-        } else {
-          document.body.dataset.headerHidden = "";
-        }
+        medir();
       });
     };
 
+    // Una primera medida: al recargar a media página el header ya nace
+    // encogido y la línea de progreso no arranca en cero.
+    medir();
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, [menuOpen]);
+    // `pathname` entra en la lista porque cada página tiene su propio alto:
+    // el progreso hay que volver a medirlo al cambiar de una a otra.
+  }, [menuOpen, pathname]);
 }

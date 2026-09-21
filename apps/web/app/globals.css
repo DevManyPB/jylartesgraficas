@@ -14,6 +14,52 @@
   fieldset {
     min-inline-size: 0;
   }
+
+  /**
+   * Barra de scroll propia. La del sistema es gris de Windows y rompe la
+   * paleta en la única parte de la pantalla que no controlábamos.
+   *
+   * Los colores salen de `theme()` y no escritos a mano, para que sigan al
+   * sistema de diseño si algún día cambia (AGENTS.md §9). Se deja fina pero
+   * no invisible: una barra que no se ve es una barra que no se agarra.
+   */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.border-strong") theme("colors.canvas-sunken");
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: theme("colors.canvas-sunken");
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: theme("colors.border-strong");
+    border: 2px solid theme("colors.canvas-sunken");
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme("colors.ink-subtle");
+  }
+
+  /* Sobre el héroe oscuro y dentro del menú móvil, la misma barra en claro. */
+  .barra-oscura {
+    scrollbar-color: theme("colors.ink-subtle") theme("colors.canvas-dark");
+  }
+
+  .barra-oscura::-webkit-scrollbar-track {
+    background: theme("colors.canvas-dark");
+  }
+
+  .barra-oscura::-webkit-scrollbar-thumb {
+    background: theme("colors.ink-subtle");
+    border-color: theme("colors.canvas-dark");
+  }
 }
 
 /**
@@ -69,5 +115,34 @@
 @keyframes desenfoque-al-vuelo {
   35% {
     filter: blur(3px);
+  }
+}
+
+/**
+ * Los pasos del formulario de pedido. El mismo principio que entre páginas
+ * —lo que se va se va rápido, lo que llega entra con calma— pero más corto:
+ * aquí no se cambia de contexto, solo se avanza dentro del mismo.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(.paso-sale) {
+    animation: 120ms ease-in both salir-paso;
+  }
+
+  ::view-transition-new(.paso-entra) {
+    animation: 240ms cubic-bezier(0.2, 0.65, 0.3, 1) 90ms both entrar-paso;
+  }
+}
+
+@keyframes salir-paso {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes entrar-paso {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }

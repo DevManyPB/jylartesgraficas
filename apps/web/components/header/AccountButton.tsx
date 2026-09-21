@@ -43,7 +43,15 @@ export function AccountButton({ identidad }: { identidad: IdentidadHeader | null
 
   return (
     <>
-      <DropdownMenu.Root open={abierto} onOpenChange={setAbierto}>
+      {/*
+        `modal={false}` arregla el salto del header. En modo modal, Radix
+        bloquea el scroll del fondo, la barra desaparece y la página se
+        ensancha 15 px de golpe: el header, que está fijo, se estiraba y la
+        navegación saltaba a la derecha al abrir el menú.
+        Un menú de cuenta en la barra superior no tiene por qué bloquear la
+        página — Esc y el clic fuera lo siguen cerrando igual.
+      */}
+      <DropdownMenu.Root open={abierto} onOpenChange={setAbierto} modal={false}>
         <DropdownMenu.Trigger
           aria-label={`Cuenta de ${nombre}`}
           // El header cambia de color sobre el héroe, así que el estado se

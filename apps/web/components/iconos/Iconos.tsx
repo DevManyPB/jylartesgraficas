@@ -54,6 +54,14 @@ export function IconoSalida(props: IconoProps) {
   );
 }
 
+export function IconoCheck(props: IconoProps) {
+  return (
+    <Icono {...props}>
+      <path d="m5 12.5 4.5 4.5L19 7" />
+    </Icono>
+  );
+}
+
 export function IconoRecibo(props: IconoProps) {
   return (
     <Icono {...props}>
