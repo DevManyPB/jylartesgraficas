@@ -92,7 +92,16 @@
   nueva y ponerla solo en los `.env.local`.
 - Borrar las dos capturas de pantalla de la raíz: muestran el secreto de
   Cloudinary. Están en `.gitignore` y nunca se subieron.
-- **Desplegar `firestore.rules` y `firestore.indexes.json`** al proyecto real
-  cuando lo decidas. Solo se han probado en local, y hay índices nuevos
-  (facturas por estado, búsqueda de pedidos, movimientos).
+- **Desplegar los índices nuevos** con `firebase deploy --only firestore:indexes`.
+  Las reglas ya están desplegadas. Faltan los tres del tablero del panel:
+  `invoices estado+saldo`, `invoices estado+emitidaEn+total` y
+  `products activo+variantesBajoMinimo`.
 - Límite de peticiones en Cloudflare al publicar.
+
+> **Ojo con los índices:** el emulador no exige índices compuestos y
+> Firestore sí, así que una consulta puede funcionar en local y fallar en
+> producción con `FAILED_PRECONDITION`. Y con `sum()` hay una trampa extra:
+> **el campo que se suma tiene que estar también en el índice**, no solo los
+> campos por los que se filtra. Así aparecieron los tres que faltaban.
+> Nunca corras `firebase init` en esta carpeta: reescribe
+> `firestore.indexes.json` y lo deja vacío aunque respondas que no.
