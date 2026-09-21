@@ -99,12 +99,42 @@ const preset: Omit<Config, "content"> = {
           from: { transform: "translateY(5px) rotate(0deg)" },
           to: { transform: "translateY(0) rotate(-45deg)" },
         },
+        /**
+         * Carga de inicio — SPEC.md §9: el único momento orquestado del
+         * sitio. La foto del héroe no entra con un fundido, porque es el
+         * elemento que mide el LCP y arrancar en opacidad 0 retrasaría esa
+         * marca; se asienta con una escala, que ni repinta ni mueve nada.
+         */
+        "entrada-texto": {
+          from: { opacity: "0", transform: "translateY(1.25rem)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "entrada-foto": {
+          from: { transform: "scale(1.06)" },
+          to: { transform: "scale(1)" },
+        },
+        /** El cursor que indica que abajo sigue habiendo sitio. */
+        "cursor-abajo": {
+          "0%, 100%": { transform: "translateY(0)", opacity: "0.6" },
+          "50%": { transform: "translateY(0.375rem)", opacity: "1" },
+        },
       },
       maxWidth: {
         // Rejilla compartida por el header y el contenido de las páginas.
         content: "72rem",
       },
+      transitionTimingFunction: {
+        // Arranca rápido y frena al final: el movimiento del sitio, en una curva.
+        entrada: "cubic-bezier(0.2, 0.65, 0.3, 1)",
+      },
       animation: {
+        // La entrada del inicio, escalonada: título, frase, acciones y pie.
+        "entrada-1": "entrada-texto 700ms cubic-bezier(0.2, 0.65, 0.3, 1) both",
+        "entrada-2": "entrada-texto 700ms cubic-bezier(0.2, 0.65, 0.3, 1) 110ms both",
+        "entrada-3": "entrada-texto 700ms cubic-bezier(0.2, 0.65, 0.3, 1) 220ms both",
+        "entrada-4": "entrada-texto 700ms cubic-bezier(0.2, 0.65, 0.3, 1) 330ms both",
+        "entrada-foto": "entrada-foto 1400ms cubic-bezier(0.2, 0.65, 0.3, 1) both",
+        "cursor-abajo": "cursor-abajo 2s ease-in-out infinite",
         "overlay-in": "overlay-show 200ms ease-out",
         "overlay-out": "overlay-hide 150ms ease-in",
         "content-in-center": "content-show-center 200ms ease-out",

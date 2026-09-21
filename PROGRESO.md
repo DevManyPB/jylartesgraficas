@@ -30,6 +30,12 @@
   y el formulario de pedido de 4 pasos, que también recibe productos de la
   tienda y ofrece escribir por WhatsApp al terminar.
   SEO de §10: sitemap, robots, Open Graph y datos estructurados.
+- **Repaso de interfaz del sitio público** (SPEC §4.3, §4.4, §4.6, §4.7 y §9):
+  entrada orquestada del inicio, rejilla editorial con las proporciones
+  reales de cada pieza, servicios enlazados uno a uno, franja de tienda que
+  se arrastra en móvil, ubicación con mapa en el inicio, indicador de
+  «Abierto ahora», filtro por disponibilidad en la tienda, aviso de carga en
+  los filtros y botón flotante de WhatsApp en todas las páginas.
 - **Fase 3 completa:**
   1. Esqueleto del panel: navegación por rol, cambios sin guardar.
   2. Configuración y servicios.

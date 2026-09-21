@@ -17,10 +17,20 @@ const moneda = new Intl.NumberFormat("es-CO", {
 
 export const pesos = { format: (valor: number) => mismoEspacio(moneda.format(valor)) };
 
+/**
+ * El número tal como lo quiere `wa.me`, o null si en Configuración no hay uno
+ * completo: un enlace de WhatsApp a medias no abre nada y frustra más que no
+ * ofrecerlo.
+ */
+export function numeroWhatsapp(whatsapp: string): string | null {
+  const numero = normalizarWhatsapp(whatsapp);
+  return /^\d{11,15}$/.test(numero) ? numero : null;
+}
+
 /** Enlace de WhatsApp con un mensaje ya escrito, si el número está configurado. */
 export function enlaceWhatsapp(whatsapp: string, mensaje?: string): string | null {
-  const numero = normalizarWhatsapp(whatsapp);
-  if (!/^\d{11,15}$/.test(numero)) return null;
+  const numero = numeroWhatsapp(whatsapp);
+  if (!numero) return null;
   return mensaje ? `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}` : `https://wa.me/${numero}`;
 }
 

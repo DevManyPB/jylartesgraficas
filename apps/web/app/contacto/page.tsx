@@ -2,6 +2,7 @@ import { DIAS_SEMANA, NOMBRE_DIA } from "@jyl/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mapa } from "@/components/contacto/Mapa";
+import { EstadoAhora } from "@/components/horario/EstadoAhora";
 import { NegocioLocal } from "@/components/seo/DatosEstructurados";
 import { configuracionPublica } from "@/datos/cache";
 import { enlaceWhatsapp, franjaDelDia } from "@/lib/formato";
@@ -111,7 +112,11 @@ export default async function Contacto() {
               Horarios
             </h2>
             {horarios.some((h) => franjaDelDia(h) !== null) ? (
-              <dl className="mt-3 flex flex-col gap-1 text-sm">
+              <>
+                <div className="mt-3">
+                  <EstadoAhora horarios={horarios} />
+                </div>
+                <dl className="mt-3 flex flex-col gap-1 text-sm">
                 {DIAS_SEMANA.map((dia) => {
                   const horario = horarios.find((h) => h.dia === dia);
                   const franja = horario ? franjaDelDia(horario) : null;
@@ -122,7 +127,8 @@ export default async function Contacto() {
                     </div>
                   );
                 })}
-              </dl>
+                </dl>
+              </>
             ) : (
               <p className="mt-3 text-sm text-ink-muted">Escríbenos por WhatsApp y te decimos si estamos abiertos.</p>
             )}

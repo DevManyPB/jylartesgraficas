@@ -1,6 +1,5 @@
-import { cn } from "@jyl/ui";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Filtros } from "@/components/filtros/Filtros";
 import { GaleriaPortafolio } from "@/components/portafolio/GaleriaPortafolio";
 import { proyectosPublicos } from "@/datos/cache";
 
@@ -30,29 +29,17 @@ export default async function Portafolio({ searchParams }: PageProps<"/portafoli
       </p>
 
       {categorias.length > 1 && (
-        <nav aria-label="Filtrar por categoría" className="mt-8">
-          <ul className="flex flex-wrap gap-2">
-            {[{ valor: null, nombre: "Todo" }, ...categorias.map((c) => ({ valor: c, nombre: c }))].map((filtro) => {
-              const activo = filtro.valor === categoria;
-              return (
-                <li key={filtro.nombre}>
-                  <Link
-                    href={filtro.valor ? `/portafolio?categoria=${encodeURIComponent(filtro.valor)}` : "/portafolio"}
-                    aria-current={activo ? "page" : undefined}
-                    className={cn(
-                      "block rounded-full border px-4 py-1.5 text-sm transition-colors",
-                      activo
-                        ? "border-ink bg-ink text-ink-inverted"
-                        : "border-border text-ink-muted hover:border-border-strong hover:text-ink",
-                    )}
-                  >
-                    {filtro.nombre}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        <Filtros
+          etiqueta="Filtrar por categoría"
+          filtros={[
+            { href: "/portafolio", nombre: "Todo", activo: categoria === null },
+            ...categorias.map((c) => ({
+              href: `/portafolio?categoria=${encodeURIComponent(c)}`,
+              nombre: c,
+              activo: c === categoria,
+            })),
+          ]}
+        />
       )}
 
       {visibles.length > 0 ? (

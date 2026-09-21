@@ -5,6 +5,9 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SiteHeader } from "@/components/header/SiteHeader";
+import { BotonWhatsapp } from "@/components/whatsapp/BotonWhatsapp";
+import { configuracionPublica } from "@/datos/cache";
+import { numeroWhatsapp } from "@/lib/formato";
 import { SITIO_URL } from "@/lib/sitio";
 import "./globals.css";
 
@@ -36,9 +39,21 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const sesion = await leerSesion((await cookies()).get(COOKIE_SESION)?.value);
+  const [sesion, configuracion] = await Promise.all([
+    leerSesion((await cookies()).get(COOKIE_SESION)?.value),
+    configuracionPublica(),
+  ]);
+  const whatsapp = numeroWhatsapp(configuracion.whatsapp);
   return (
-    <html lang="es" className={`${spaceGrotesk.variable} ${inter.variable}`}>
+    // `scroll-smooth` solo con motion-safe: los saltos a un ancla se ven
+    // mejor deslizando, pero quien pidió menos movimiento no lo quiere.
+    // `data-scroll-behavior` es lo que le dice a Next que no deslice también
+    // al cambiar de página, donde el salto tiene que ser instantáneo.
+    <html
+      lang="es"
+      data-scroll-behavior="smooth"
+      className={`${spaceGrotesk.variable} ${inter.variable} motion-safe:scroll-smooth`}
+    >
       {/* `group` deja que el header lea con CSS si la página tiene héroe y en
           qué estado de scroll está, sin esperar a que hidrate el JS. */}
       <body className="group bg-canvas font-sans text-ink">
@@ -46,6 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <ToastProvider>
             <SiteHeader identidad={sesion?.nombre ?? sesion?.email ?? null} />
             {children}
+            {whatsapp && <BotonWhatsapp numero={whatsapp} />}
             <SiteFooter />
           </ToastProvider>
         </ModalProvider>

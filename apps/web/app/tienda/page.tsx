@@ -2,6 +2,7 @@ import { miniaturaDesdeUrl, rangoDePrecio } from "@jyl/core";
 import { cn } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Filtros } from "@/components/filtros/Filtros";
 import { productosPublicos } from "@/datos/cache";
 import { pesos } from "@/lib/formato";
 
@@ -12,15 +13,35 @@ export const metadata: Metadata = {
   description: "Productos del estudio, con opción de personalizarlos con tu diseño.",
 };
 
-/** Tienda — SPEC.md §4.4. Lo agotado se muestra, no se esconde (§6.4). */
+/**
+ * Tienda — SPEC.md §4.4: filtros por categoría y por disponibilidad. Lo
+ * agotado se muestra, no se esconde (§6.4); el filtro de disponibilidad es
+ * una elección del visitante, no una decisión de la tienda.
+ */
 export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
   const productos = await productosPublicos();
-  const pedida = (await searchParams).categoria;
+  const parametros = await searchParams;
+  const pedida = parametros.categoria;
   const categorias = [...new Set(productos.map((p) => p.categoria).filter(Boolean))].sort((a, b) =>
     a.localeCompare(b, "es"),
   );
   const categoria = typeof pedida === "string" && categorias.includes(pedida) ? pedida : null;
-  const visibles = categoria ? productos.filter((p) => p.categoria === categoria) : productos;
+  const soloDisponibles = parametros.disponibles === "1";
+
+  const visibles = productos.filter(
+    (p) => (!categoria || p.categoria === categoria) && (!soloDisponibles || p.stockTotal > 0),
+  );
+
+  /** Conserva el otro filtro al cambiar uno: se combinan, no se pisan. */
+  const enlace = (conCategoria: string | null, conDisponibles: boolean) => {
+    const query = new URLSearchParams();
+    if (conCategoria) query.set("categoria", conCategoria);
+    if (conDisponibles) query.set("disponibles", "1");
+    const texto = query.toString();
+    return texto ? `/tienda?${texto}` : "/tienda";
+  };
+
+  const hayAgotados = productos.some((p) => p.stockTotal <= 0);
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
@@ -31,29 +52,28 @@ export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
       </p>
 
       {categorias.length > 1 && (
-        <nav aria-label="Filtrar por categoría" className="mt-8">
-          <ul className="flex flex-wrap gap-2">
-            {[{ valor: null, nombre: "Todo" }, ...categorias.map((c) => ({ valor: c, nombre: c }))].map((filtro) => {
-              const activo = filtro.valor === categoria;
-              return (
-                <li key={filtro.nombre}>
-                  <Link
-                    href={filtro.valor ? `/tienda?categoria=${encodeURIComponent(filtro.valor)}` : "/tienda"}
-                    aria-current={activo ? "page" : undefined}
-                    className={cn(
-                      "block rounded-full border px-4 py-1.5 text-sm transition-colors",
-                      activo
-                        ? "border-ink bg-ink text-ink-inverted"
-                        : "border-border text-ink-muted hover:border-border-strong hover:text-ink",
-                    )}
-                  >
-                    {filtro.nombre}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        <Filtros
+          etiqueta="Filtrar por categoría"
+          filtros={[
+            { href: enlace(null, soloDisponibles), nombre: "Todo", activo: categoria === null },
+            ...categorias.map((c) => ({
+              href: enlace(c, soloDisponibles),
+              nombre: c,
+              activo: c === categoria,
+            })),
+          ]}
+        />
+      )}
+
+      {hayAgotados && (
+        <Filtros
+          etiqueta="Filtrar por disponibilidad"
+          seguido={categorias.length > 1}
+          filtros={[
+            { href: enlace(categoria, false), nombre: "Todos los productos", activo: !soloDisponibles },
+            { href: enlace(categoria, true), nombre: "Solo disponibles", activo: soloDisponibles },
+          ]}
+        />
       )}
 
       {visibles.length > 0 ? (
@@ -116,7 +136,9 @@ export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
         <p className="mt-12 rounded-xl border border-border bg-canvas-sunken p-6 text-sm text-ink-muted">
           {productos.length === 0
             ? "Estamos cargando los productos de la tienda. Mientras tanto, puedes pedirnos lo que necesites."
-            : "No hay productos en esa categoría todavía."}
+            : soloDisponibles
+              ? "Ahora mismo no hay nada con stock aquí. Quita el filtro para ver lo agotado: casi todo se puede encargar."
+              : "No hay productos en esa categoría todavía."}
         </p>
       )}
     </main>
