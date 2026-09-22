@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
-import { IconoFlecha, IconoPanel, IconoRecibo, IconoSalir } from "@/components/iconos/Iconos";
+import { IconoPanel, IconoPincel, IconoRecibo, IconoSalir } from "@/components/iconos/Iconos";
 import { cerrarSesion } from "@/lib/cerrar-sesion";
 
 export interface IdentidadHeader {
@@ -114,7 +114,7 @@ export function AccountButton({ identidad }: { identidad: IdentidadHeader | null
                 href="/pedido"
                 className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm outline-none data-[highlighted]:bg-canvas-sunken"
               >
-                <IconoFlecha className="h-4 w-4 text-ink-muted" />
+                <IconoPincel className="h-4 w-4 text-ink-muted" />
                 Pedir un trabajo
               </Link>
             </DropdownMenu.Item>
