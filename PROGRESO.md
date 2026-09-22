@@ -1,6 +1,6 @@
 # Por dónde vamos
 
-Última actualización: 20 de septiembre de 2026. Qué construir: `SPEC.md`. Cómo: `AGENTS.md`.
+Última actualización: 22 de septiembre de 2026. Qué construir: `SPEC.md`. Cómo: `AGENTS.md`.
 
 ## Para seguir en otra máquina
 
@@ -50,7 +50,22 @@
      facturas, total facturado y notas privadas del estudio.
   8. **Kanban de pedidos:** una columna por estado, arrastrar y soltar, y un
      selector en cada tarjeta para teclado y móvil.
-  9. **Ordenar arrastrando** productos y portafolio (último commit).
+  9. **Ordenar arrastrando** productos y portafolio.
+- **Repaso de interfaz del panel:** menú agrupado con iconos, «Ver el
+  sitio», «Volver a…» visible en los detalles, pantallas vacías que dicen
+  qué hacer, Servicios e Insumos se crean y editan en modal, y
+  Configuración es un resumen de cinco bloques que se editan por separado.
+  En la web, «Ir al panel del estudio» en el menú de cuenta si el rol lo
+  permite (se decide en el servidor).
+
+## Cómo se trabaja ahora
+
+- **Una rama por cambio** (`feat/…`, `fix/…`), typecheck, lint, test y
+  build en verde, y se une a `main` (AGENTS.md §13).
+- **El panel se desarrolla contra el emulador** (AGENTS.md §4): en
+  `apps/panel/.env.local`, `NEXT_PUBLIC_FIREBASE_USE_EMULATORS=true`.
+  Entrar con `admin@jyl.test` / `prueba123` tras sembrar. La web está
+  apuntando a tu Firebase real para probar el acceso con Google.
 
 ## Decisiones tomadas en el bloque 7
 
@@ -85,6 +100,22 @@
 - Decidir si el PDF lleva una nota aclarando que no es factura electrónica de
   la DIAN (SPEC §1 la deja para la Fase 4).
 
+### Del repaso del panel (encontrado, fuera de lo aprobado)
+
+- **Tablero:** cinco tarjetas en una rejilla de cuatro; «Facturado este
+  mes» queda sola en una segunda fila.
+- **Foco en los modales de formulario:** entra en la ✕ en vez del primer
+  campo. Y al crear el primer insumo cae al inicio de la página, porque el
+  botón que abrió el modal vivía en la pantalla vacía y esta desaparece.
+- **Contraste del token `warning`** (AGENTS.md §11): como texto da ≈3,3:1
+  sobre `warning-soft` y ≈3,7:1 sobre blanco, por debajo del AA. Se usa en
+  «bajo mínimo» del inventario. Arreglarlo es tocar el sistema de diseño.
+- **`canvas-dark` es #0E0D0B**, un «negro falso» de los que veta AGENTS.md
+  §8. Es token desde la Fase 1; decidir si pasa a negro.
+- `/servicios/nuevo`, `/servicios/[id]` e `/inventario/insumos/nuevo` ya no
+  se enlazan desde ningún sitio (se crea y edita en modal). Siguen
+  funcionando; decidir si se borran.
+
 ## Tareas tuyas, fuera del código
 
 - **Revocar la clave de la cuenta de servicio de Firebase** que se pegó en el
@@ -92,11 +123,10 @@
   nueva y ponerla solo en los `.env.local`.
 - Borrar las dos capturas de pantalla de la raíz: muestran el secreto de
   Cloudinary. Están en `.gitignore` y nunca se subieron.
-- **Desplegar los índices nuevos** con `firebase deploy --only firestore:indexes`.
-  Las reglas ya están desplegadas. Faltan los tres del tablero del panel:
-  `invoices estado+saldo`, `invoices estado+emitidaEn+total` y
-  `products activo+variantesBajoMinimo`.
 - Límite de peticiones en Cloudflare al publicar.
+
+Hecho por tu parte: reglas e índices (los 17) desplegados en el proyecto
+real, y tu cuenta de Google con rol de administrador.
 
 > **Ojo con los índices:** el emulador no exige índices compuestos y
 > Firestore sí, así que una consulta puede funcionar en local y fallar en
