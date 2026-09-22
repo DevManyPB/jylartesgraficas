@@ -1,9 +1,10 @@
 import { ESTADOS_FACTURA, type EstadoFactura } from "@jyl/core";
 import { listarFacturas } from "@jyl/core/server";
-import { cn } from "@jyl/ui";
+import { cn, Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TablaFacturas } from "@/components/facturas/TablaFacturas";
+import { IconoFacturas } from "@/components/iconos/Iconos";
 import { paginaSoloPara } from "@/servidor/sesion";
 
 export const runtime = "nodejs";
@@ -82,10 +83,26 @@ export default async function Facturas({ searchParams }: PageProps<"/facturas">)
       <div className="mt-4">
         {pagina.filas.length > 0 ? (
           <TablaFacturas filas={pagina.filas} />
-        ) : (
+        ) : estado ? (
           <p className="border-y border-border py-8 text-center text-sm text-ink-muted">
-            {estado ? `No hay facturas en "${NOMBRE_FILTRO[estado]}".` : "Todavía no hay facturas."}
+            No hay facturas en «{NOMBRE_FILTRO[estado]}».
           </p>
+        ) : (
+          <Vacio
+            compacto
+            icono={<IconoFacturas className="h-6 w-6" />}
+            titulo="Todavía no hay facturas"
+            accion={
+              <Link
+                href="/pedidos"
+                className="inline-flex rounded-md border border-border-strong px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                Ir a pedidos
+              </Link>
+            }
+          >
+            Lo normal es crearla desde un pedido, con «Crear factura»: así llega con los datos del cliente.
+          </Vacio>
         )}
 
         <div className="mt-4 flex gap-4 text-sm">

@@ -1,6 +1,8 @@
 import { listarProyectos } from "@jyl/core/server";
+import { Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { IconoPortafolio } from "@/components/iconos/Iconos";
 import { ListaProyectos } from "@/components/portafolio/ListaProyectos";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -29,9 +31,21 @@ export default async function Portafolio({ searchParams }: PageProps<"/portafoli
 
       <div className="mt-6 max-w-4xl">
         {pagina.filas.length === 0 ? (
-          <p className="border-y border-border py-8 text-center text-sm text-ink-muted">
-            Todavía no hay proyectos. El portafolio es lo primero que mira un cliente: vale la pena empezar por aquí.
-          </p>
+          <Vacio
+            compacto
+            icono={<IconoPortafolio className="h-6 w-6" />}
+            titulo="Todavía no hay proyectos"
+            accion={
+              <Link
+                href="/portafolio/nuevo"
+                className="inline-flex rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                Agregar el primer proyecto
+              </Link>
+            }
+          >
+            El portafolio es lo primero que mira un cliente: vale la pena empezar por aquí.
+          </Vacio>
         ) : (
           <ListaProyectos proyectos={pagina.filas} />
         )}

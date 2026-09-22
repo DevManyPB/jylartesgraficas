@@ -1,8 +1,9 @@
 import { estadoDeStock } from "@jyl/core";
 import { listarInsumos } from "@jyl/core/server";
-import { cn } from "@jyl/ui";
+import { cn, Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { IconoInventario } from "@/components/iconos/Iconos";
 import { PestanasInventario } from "@/components/inventario/PestanasInventario";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -31,7 +32,23 @@ export default async function Insumos({ searchParams }: PageProps<"/inventario/i
 
       <div className="mt-4 max-w-3xl">
         {pagina.filas.length === 0 ? (
-          <p className="border-y border-border py-8 text-center text-sm text-ink-muted">Todavía no hay insumos registrados.</p>
+          <Vacio
+            compacto
+            icono={<IconoInventario className="h-6 w-6" />}
+            titulo="Todavía no hay insumos"
+            accion={
+              sesion.rol === "admin" && (
+                <Link
+                  href="/inventario/insumos/nuevo"
+                  className="inline-flex rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  Agregar el primer insumo
+                </Link>
+              )
+            }
+          >
+            Lo que el estudio gasta y no vende, como tinta, papel o vinilo: así se sabe cuándo reponer.
+          </Vacio>
         ) : (
           <ul className="divide-y divide-border border-y border-border">
             {pagina.filas.map((i) => {
