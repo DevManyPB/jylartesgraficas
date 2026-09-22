@@ -16,6 +16,13 @@ import type { SVGProps } from "react";
 
 type IconoProps = SVGProps<SVGSVGElement>;
 
+/**
+ * Solo cuando quien lo usa no pasa clases: `cn` no resuelve conflictos de
+ * Tailwind, y un tamaño fijo junto al del que llama dejaba mandar al orden
+ * del CSS. Quien pase `className` tiene que incluir el tamaño.
+ */
+const TAMANO_POR_DEFECTO = "h-[18px] w-[18px]";
+
 function Icono({ children, className, ...props }: IconoProps) {
   return (
     <svg
@@ -26,7 +33,7 @@ function Icono({ children, className, ...props }: IconoProps) {
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn("h-[18px] w-[18px] shrink-0", className)}
+      className={cn("shrink-0", className ?? TAMANO_POR_DEFECTO)}
       {...props}
     >
       {children}
