@@ -272,6 +272,7 @@ Registro con Google o correo y contraseña. El cliente ve su historial, el estad
 | Cambiar el estado de un pedido a Entregado | Confirmación |
 | Registrar movimiento de inventario | Formulario en modal |
 | Crear o editar un servicio o un insumo (panel) | Formulario en modal, sin salir de la lista |
+| Editar un bloque de Configuración (contacto, ubicación, horarios, redes, facturación) | Formulario en modal, desde el resumen |
 | Ver imagen del portafolio o una referencia | Visor a tamaño completo |
 | Salir con cambios sin guardar | Confirmación, con opción de guardar |
 | Cerrar sesión | Confirmación simple |
