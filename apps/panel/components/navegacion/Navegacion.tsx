@@ -65,7 +65,7 @@ export function Navegacion({ rol, email, nombre, sitio }: NavegacionProps) {
                   recorre la lista, y repetirle "El día a día" antes de cada
                   grupo estorba más que ayuda. */}
               {grupo.nombre && (
-                <p aria-hidden className="px-3 pb-1 text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                <p aria-hidden className="px-3 pb-1 text-xs font-medium text-ink-subtle">
                   {grupo.nombre}
                 </p>
               )}

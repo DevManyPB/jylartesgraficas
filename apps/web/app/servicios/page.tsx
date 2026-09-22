@@ -33,20 +33,11 @@ export default async function Servicios() {
   const [servicios, configuracion] = await Promise.all([serviciosPublicos(), configuracionPublica()]);
   const whatsapp = enlaceWhatsapp(configuracion.whatsapp, "Hola, quiero preguntar por un servicio.");
 
-  /**
-   * Las áreas que tienen algo, con el número por el que empieza cada una:
-   * la numeración corre a lo largo de toda la página, como un índice, y no
-   * se reinicia en cada área. Se calcula de una vez y no con un contador que
-   * se va incrementando al pintar, que es mutar durante el render.
-   */
-  const areas = CATEGORIAS_SERVICIO.reduce<
-    { categoria: (typeof CATEGORIAS_SERVICIO)[number]; deLaCategoria: typeof servicios; desde: number }[]
-  >((acumulado, categoria) => {
-    const deLaCategoria = servicios.filter((s) => s.categoria === categoria);
-    if (deLaCategoria.length === 0) return acumulado;
-    const desde = acumulado.reduce((total, area) => total + area.deLaCategoria.length, 0);
-    return [...acumulado, { categoria, deLaCategoria, desde }];
-  }, []);
+  // Solo las áreas que tienen algo publicado.
+  const areas = CATEGORIAS_SERVICIO.map((categoria) => ({
+    categoria,
+    deLaCategoria: servicios.filter((s) => s.categoria === categoria),
+  })).filter((area) => area.deLaCategoria.length > 0);
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
@@ -58,29 +49,30 @@ export default async function Servicios() {
 
       {servicios.length > 0 ? (
         <div className="mt-14">
-          {areas.map(({ categoria, deLaCategoria, desde }) => {
-            return (
-              <section key={categoria} aria-labelledby={`categoria-${categoria}`} className="mt-16 first:mt-0">
-                <h2
-                  id={`categoria-${categoria}`}
-                  className="flex items-center gap-3 border-b border-border-strong pb-4 font-display text-sm uppercase tracking-widest text-ink-muted"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-accent">
-                    {ICONO_CATEGORIA[categoria]}
-                  </span>
-                  {NOMBRE_CATEGORIA[categoria]}
-                </h2>
+          {areas.map(({ categoria, deLaCategoria }) => (
+            <section key={categoria} aria-labelledby={`categoria-${categoria}`} className="mt-16 first:mt-0">
+              {/* Tono de frase y sin interletraje (AGENTS.md §8). El área es
+                  secundaria: lo que manda son los nombres de debajo, así que
+                  va pequeña y en gris, no en mayúsculas gritando. */}
+              <h2
+                id={`categoria-${categoria}`}
+                className="flex items-center gap-3 border-b border-border-strong pb-4 font-display text-base text-ink-muted"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-accent">
+                  {ICONO_CATEGORIA[categoria]}
+                </span>
+                {NOMBRE_CATEGORIA[categoria]}
+              </h2>
 
-                <ul>
-                  {deLaCategoria.map((servicio, indice) => (
-                    <li key={servicio.id}>
-                      <FilaServicio id={servicio.id} nombre={servicio.nombre} numero={desde + indice + 1} />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
+              <ul>
+                {deLaCategoria.map((servicio) => (
+                  <li key={servicio.id}>
+                    <FilaServicio id={servicio.id} nombre={servicio.nombre} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
         </div>
       ) : (
         <Vacio

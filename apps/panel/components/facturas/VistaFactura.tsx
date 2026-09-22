@@ -75,7 +75,7 @@ export function VistaFactura({ factura }: { factura: FacturaDelPanel }) {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <section aria-labelledby="factura-cliente">
-          <h2 id="factura-cliente" className="text-xs font-medium uppercase tracking-wide text-ink-muted">
+          <h2 id="factura-cliente" className="text-sm font-medium text-ink-muted">
             Facturar a
           </h2>
           <p className="mt-1 font-medium text-ink">{c.nombre}</p>
