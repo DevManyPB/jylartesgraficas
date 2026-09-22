@@ -4,6 +4,7 @@ import { cn, Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { IconoInventario } from "@/components/iconos/Iconos";
+import { BotonNuevoInsumo } from "@/components/inventario/InsumoEnModal";
 import { PestanasInventario } from "@/components/inventario/PestanasInventario";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -22,11 +23,9 @@ export default async function Insumos({ searchParams }: PageProps<"/inventario/i
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-2xl text-ink">Inventario</h1>
-        {sesion.rol === "admin" && (
-          <Link href="/inventario/insumos/nuevo" className="rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink-inverted hover:bg-accent-hover">
-            Nuevo insumo
-          </Link>
-        )}
+        {/* Con la lista vacía, la acción la lleva la pantalla vacía: dos
+            botones que hacen lo mismo en la misma pantalla solo confunden. */}
+        {sesion.rol === "admin" && pagina.filas.length > 0 && <BotonNuevoInsumo />}
       </div>
       <PestanasInventario actual="insumos" />
 
@@ -36,16 +35,7 @@ export default async function Insumos({ searchParams }: PageProps<"/inventario/i
             compacto
             icono={<IconoInventario className="h-6 w-6" />}
             titulo="Todavía no hay insumos"
-            accion={
-              sesion.rol === "admin" && (
-                <Link
-                  href="/inventario/insumos/nuevo"
-                  className="inline-flex rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  Agregar el primer insumo
-                </Link>
-              )
-            }
+            accion={sesion.rol === "admin" && <BotonNuevoInsumo etiqueta="Agregar el primer insumo" />}
           >
             Lo que el estudio gasta y no vende, como tinta, papel o vinilo: así se sabe cuándo reponer.
           </Vacio>

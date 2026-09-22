@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Volver } from "@/components/navegacion/Volver";
 import { BotonMovimiento } from "@/components/inventario/BotonMovimiento";
-import { FormularioInsumo } from "@/components/inventario/FormularioInsumo";
+import { BotonEditarInsumo } from "@/components/inventario/InsumoEnModal";
 import { HistorialMovimientos } from "@/components/inventario/HistorialMovimientos";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -43,19 +43,11 @@ export default async function DetalleInsumo({ params }: PageProps<"/inventario/i
           unidad={insumo.unidad}
           endpoint={`/api/insumos/${insumo.id}/movimientos`}
         />
-      </div>
-
-      <div className="mt-8 flex max-w-4xl flex-col gap-10">
-        <section aria-labelledby="titulo-historial">
-          <h2 id="titulo-historial" className="font-display text-base text-ink">Últimos movimientos</h2>
-          <div className="mt-3">
-            <HistorialMovimientos movimientos={movimientos} mostrarDe={false} />
-          </div>
-        </section>
-
+        {/* Antes el formulario entero vivía al final de la página, debajo del
+            historial: para cambiar el proveedor había que bajar hasta allí.
+            Ahora es un botón junto a las otras acciones, y abre un modal. */}
         {sesion.rol === "admin" && (
-          <FormularioInsumo
-            key={insumo.id}
+          <BotonEditarInsumo
             id={insumo.id}
             inicial={{
               nombre: insumo.nombre,
@@ -67,6 +59,15 @@ export default async function DetalleInsumo({ params }: PageProps<"/inventario/i
             }}
           />
         )}
+      </div>
+
+      <div className="mt-8 flex max-w-4xl flex-col gap-10">
+        <section aria-labelledby="titulo-historial">
+          <h2 id="titulo-historial" className="font-display text-base text-ink">Últimos movimientos</h2>
+          <div className="mt-3">
+            <HistorialMovimientos movimientos={movimientos} mostrarDe={false} />
+          </div>
+        </section>
       </div>
     </main>
   );
