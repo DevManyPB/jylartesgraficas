@@ -1,12 +1,11 @@
 import { miniaturaDesdeUrl, rangoDePrecio } from "@jyl/core";
-import { cn } from "@jyl/ui";
+import { cn, Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Filtros } from "@/components/filtros/Filtros";
 import { IconoCajaVacia } from "@/components/iconos/Iconos";
-import { Vacio } from "@/components/vacio/Vacio";
 import { productosPublicos } from "@/datos/cache";
 import { pesos } from "@/lib/formato";
 
