@@ -1,6 +1,8 @@
 import { listarProductos } from "@jyl/core/server";
+import { Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { IconoInventario } from "@/components/iconos/Iconos";
 import { ListaProductos } from "@/components/inventario/ListaProductos";
 import { PestanasInventario } from "@/components/inventario/PestanasInventario";
 import { paginaSoloPara } from "@/servidor/sesion";
@@ -33,10 +35,26 @@ export default async function Inventario({ searchParams }: PageProps<"/inventari
       <PestanasInventario actual="productos" />
 
       <div className="mt-4 max-w-4xl">
-        {pagina.filas.length === 0 ? (
-          <p className="border-y border-border py-8 text-center text-sm text-ink-muted">
-            {desde ? "No hay más productos." : "Todavía no hay productos en el inventario."}
-          </p>
+        {pagina.filas.length === 0 && desde ? (
+          <p className="border-y border-border py-8 text-center text-sm text-ink-muted">No hay más productos.</p>
+        ) : pagina.filas.length === 0 ? (
+          <Vacio
+            compacto
+            icono={<IconoInventario className="h-6 w-6" />}
+            titulo="Todavía no hay productos"
+            accion={
+              esAdmin && (
+                <Link
+                  href="/inventario/productos/nuevo"
+                  className="inline-flex rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  Agregar el primer producto
+                </Link>
+              )
+            }
+          >
+            Lo que agregues aquí aparece en la tienda del sitio.
+          </Vacio>
         ) : (
           <ListaProductos productos={pagina.filas} esAdmin={esAdmin} />
         )}

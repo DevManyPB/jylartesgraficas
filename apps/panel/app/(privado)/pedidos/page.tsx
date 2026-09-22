@@ -1,8 +1,10 @@
 import { ESTADOS_PEDIDO, NOMBRE_ESTADO, estadoPedidoSchema, type EstadoPedido } from "@jyl/core";
 import { buscarPedidos, listarPedidos } from "@jyl/core/server";
-import { cn } from "@jyl/ui";
+import { cn, Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { IconoPedidos } from "@/components/iconos/Iconos";
+import { SITIO_URL } from "@/lib/sitio";
 import { AvisoPedidosNuevos } from "@/components/pedidos/AvisoPedidosNuevos";
 import { TablaPedidos } from "@/components/pedidos/TablaPedidos";
 import { claseEntrada } from "@/components/formularios/Campo";
@@ -118,11 +120,32 @@ export default async function Pedidos({ searchParams }: PageProps<"/pedidos">) {
         {pagina.filas.length > 0 ? (
           <TablaPedidos filas={pagina.filas} />
         ) : (
-          !busqueda && (
+          !busqueda &&
+          // Un filtro sin resultados es lo normal al filtrar: línea discreta.
+          // La sección vacía de verdad es otra cosa, y dice qué hacer.
+          (estado ? (
             <p className="border-y border-border py-8 text-center text-sm text-ink-muted">
-              {estado ? `No hay pedidos en "${NOMBRE_ESTADO[estado]}".` : "Todavía no ha llegado ningún pedido."}
+              No hay pedidos en «{NOMBRE_ESTADO[estado]}».
             </p>
-          )
+          ) : (
+            <Vacio
+              compacto
+              icono={<IconoPedidos className="h-6 w-6" />}
+              titulo="Todavía no ha llegado ningún pedido"
+              accion={
+                <a
+                  href={SITIO_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex rounded-md border border-border-strong px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  Ver el sitio
+                </a>
+              }
+            >
+              Los pedidos llegan desde el formulario del sitio público. En cuanto entre el primero, aparece aquí.
+            </Vacio>
+          ))
         )}
 
         <div className="mt-4 flex gap-4 text-sm">
