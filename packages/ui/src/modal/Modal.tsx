@@ -75,6 +75,11 @@ export function Modal({
           )}
         />
         <Dialog.Content
+          // Radix no lo pone: esconde el resto de la página con aria-hidden,
+          // pero SPEC.md §5.3 y AGENTS.md §7 piden el atributo explícito, que
+          // es lo que les dice a los lectores de pantalla que el fondo no
+          // está disponible mientras el modal esté abierto.
+          aria-modal="true"
           onEscapeKeyDown={(event) => {
             if (locked) event.preventDefault();
           }}

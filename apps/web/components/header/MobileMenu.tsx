@@ -47,6 +47,9 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
         <Dialog.Overlay className="fixed inset-0 z-[55] bg-canvas-dark/60 motion-safe:data-[state=open]:animate-overlay-in motion-safe:data-[state=closed]:animate-overlay-out" />
         <Dialog.Content
           aria-describedby={undefined}
+          // Mismo motivo que en el Modal de @jyl/ui: Radix no lo pone y
+          // AGENTS.md §7 lo exige.
+          aria-modal="true"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             triggerRef.current?.focus();
