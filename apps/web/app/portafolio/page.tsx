@@ -1,9 +1,9 @@
+import { Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Filtros } from "@/components/filtros/Filtros";
 import { IconoImagen } from "@/components/iconos/Iconos";
 import { GaleriaPortafolio } from "@/components/portafolio/GaleriaPortafolio";
-import { Vacio } from "@/components/vacio/Vacio";
 import { proyectosPublicos } from "@/datos/cache";
 
 export const runtime = "nodejs";

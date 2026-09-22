@@ -10,4 +10,6 @@ export { ToastProvider, useToast } from "./toast/ToastProvider";
 export { Toast } from "./toast/Toast";
 export type { ToastProps, ToastVariant } from "./toast/Toast";
 
+export { Vacio } from "./vacio/Vacio";
+
 export { cn } from "./lib/cn";

@@ -1,10 +1,10 @@
 import { CATEGORIAS_SERVICIO, NOMBRE_CATEGORIA } from "@jyl/core";
+import { Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { IconoCodigo, IconoLlave, IconoPincel } from "@/components/iconos/Iconos";
 import { FilaServicio } from "@/components/servicios/FilaServicio";
-import { Vacio } from "@/components/vacio/Vacio";
 import { configuracionPublica, serviciosPublicos } from "@/datos/cache";
 import { enlaceWhatsapp } from "@/lib/formato";
 
