@@ -2,7 +2,7 @@ import type { BorradorFactura } from "@jyl/core";
 import { borradorDesdePedido, leerConfiguracion, variantesParaVender } from "@jyl/core/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { FormularioFactura } from "@/components/facturas/FormularioFactura";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -44,9 +44,9 @@ export default async function NuevaFactura({ searchParams }: PageProps<"/factura
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/facturas" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/facturas">
         Facturas
-      </EnlaceProtegido>
+      </Volver>
       <h1 className="mt-1 font-display text-2xl text-ink">Nueva factura</h1>
       <p className="mt-1 text-sm text-ink-muted">Se guarda como borrador. El número se asigna al emitirla.</p>
       <div className="mt-8 max-w-5xl">

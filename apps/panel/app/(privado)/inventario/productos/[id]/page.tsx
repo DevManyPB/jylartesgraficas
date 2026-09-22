@@ -1,7 +1,7 @@
 import { categoriasDeProductos, leerProducto, movimientosDeProducto } from "@jyl/core/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { FormularioProducto } from "@/components/inventario/FormularioProducto";
 import { HistorialMovimientos } from "@/components/inventario/HistorialMovimientos";
 import { TablaVariantes } from "@/components/inventario/TablaVariantes";
@@ -36,9 +36,9 @@ export default async function DetalleProducto({ params }: PageProps<"/inventario
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/inventario" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/inventario">
         Inventario
-      </EnlaceProtegido>
+      </Volver>
       <h1 className="mt-1 font-display text-2xl text-ink">{producto.nombre}</h1>
       <p className="mt-1 text-sm text-ink-muted">
         {producto.categoria} · {producto.stockTotal} en stock

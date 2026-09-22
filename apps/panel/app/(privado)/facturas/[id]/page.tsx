@@ -1,7 +1,7 @@
 import { leerFactura, variantesParaVender } from "@jyl/core/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { EstadoFactura } from "@/components/facturas/EstadoFactura";
 import { FormularioFactura } from "@/components/facturas/FormularioFactura";
 import { VistaFactura } from "@/components/facturas/VistaFactura";
@@ -23,9 +23,9 @@ export default async function DetalleFactura({ params }: PageProps<"/facturas/[i
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/facturas" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/facturas">
         Facturas
-      </EnlaceProtegido>
+      </Volver>
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
         <h1 className="font-display text-2xl tabular-nums text-ink">
           {factura.numero ?? `Borrador para ${factura.clienteDatos.nombre || "sin nombre"}`}

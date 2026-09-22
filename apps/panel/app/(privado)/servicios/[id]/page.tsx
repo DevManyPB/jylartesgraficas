@@ -2,7 +2,7 @@ import { servicioEditableSchema } from "@jyl/core";
 import { leerServicioDelPanel } from "@jyl/core/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { FormularioServicio } from "@/components/servicios/FormularioServicio";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -23,9 +23,9 @@ export default async function EditarServicio({ params }: PageProps<"/servicios/[
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/servicios" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/servicios">
         Servicios
-      </EnlaceProtegido>
+      </Volver>
       <h1 className="mt-1 font-display text-2xl text-ink">{servicio.nombre}</h1>
       <p className="mt-1 text-xs text-ink-subtle">Identificador: {servicio.id}</p>
       <div className="mt-8 max-w-4xl">

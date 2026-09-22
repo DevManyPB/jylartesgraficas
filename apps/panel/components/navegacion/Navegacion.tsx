@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useId, useState } from "react";
 import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
 import { CerrarSesionPanel } from "@/components/CerrarSesionPanel";
-import { estaActiva, seccionesPara } from "./secciones";
+import { estaActiva, gruposPara } from "./secciones";
 
 interface NavegacionProps {
   rol: Rol;
@@ -33,7 +33,7 @@ export function Navegacion({ rol, email, nombre, sitio }: NavegacionProps) {
   const ruta = usePathname();
   const [abierta, setAbierta] = useState(false);
   const idLista = useId();
-  const secciones = seccionesPara(rol);
+  const grupos = gruposPara(rol);
 
   return (
     <aside className="border-b border-border bg-canvas-sunken lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-56 lg:flex-col lg:border-b-0 lg:border-r">
@@ -58,30 +58,44 @@ export function Navegacion({ rol, email, nombre, sitio }: NavegacionProps) {
         id={idLista}
         className={cn("flex-1 flex-col px-2 pb-4 lg:flex lg:px-3", abierta ? "flex" : "hidden")}
       >
-        <nav aria-label="Secciones del panel">
-          <ul className="flex flex-col gap-0.5">
-            {secciones.map((seccion) => {
-              const activa = estaActiva(seccion, ruta);
-              return (
-                <li key={seccion.href}>
-                  <EnlaceProtegido
-                    href={seccion.href}
-                    onClick={() => setAbierta(false)}
-                    aria-current={activa ? "page" : undefined}
-                    className={cn(
-                      "flex items-center rounded-md border-l-2 px-3 py-2 text-sm transition-colors",
-                      "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                      activa
-                        ? "border-accent bg-canvas font-medium text-ink"
-                        : "border-transparent text-ink-muted hover:bg-border/60 hover:text-ink",
-                    )}
-                  >
-                    {seccion.nombre}
-                  </EnlaceProtegido>
-                </li>
-              );
-            })}
-          </ul>
+        <nav aria-label="Secciones del panel" className="flex flex-col gap-4">
+          {grupos.map((grupo, indice) => (
+            <div key={grupo.nombre ?? "principal"}>
+              {/* El epígrafe es solo para la vista: el lector de pantalla ya
+                  recorre la lista, y repetirle "El día a día" antes de cada
+                  grupo estorba más que ayuda. */}
+              {grupo.nombre && (
+                <p aria-hidden className="px-3 pb-1 text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                  {grupo.nombre}
+                </p>
+              )}
+              <ul aria-label={grupo.nombre ?? undefined} className="flex flex-col gap-0.5">
+                {grupo.secciones.map((seccion) => {
+                  const activa = estaActiva(seccion, ruta);
+                  return (
+                    <li key={seccion.href}>
+                      <EnlaceProtegido
+                        href={seccion.href}
+                        onClick={() => setAbierta(false)}
+                        aria-current={activa ? "page" : undefined}
+                        className={cn(
+                          "flex items-center gap-2.5 rounded-md border-l-2 px-3 py-2 text-sm transition-colors",
+                          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                          activa
+                            ? "border-accent bg-canvas font-medium text-ink"
+                            : "border-transparent text-ink-muted hover:bg-border/60 hover:text-ink",
+                        )}
+                      >
+                        <span className={activa ? "text-accent" : "text-ink-subtle"}>{seccion.icono}</span>
+                        {seccion.nombre}
+                      </EnlaceProtegido>
+                    </li>
+                  );
+                })}
+              </ul>
+              {indice === 0 && <div aria-hidden className="mt-4 border-t border-border" />}
+            </div>
+          ))}
         </nav>
 
         {/* Volver a ver la web. Va antes de los datos de la cuenta y con el

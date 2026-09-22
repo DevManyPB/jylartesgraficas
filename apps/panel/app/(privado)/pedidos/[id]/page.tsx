@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { EstadoFactura } from "@/components/facturas/EstadoFactura";
 import { CambiarEstado } from "@/components/pedidos/CambiarEstado";
 import { EstadoPedido } from "@/components/pedidos/EstadoPedido";
@@ -59,9 +59,9 @@ export default async function DetallePedido({ params }: PageProps<"/pedidos/[id]
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/pedidos" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/pedidos">
         Pedidos
-      </EnlaceProtegido>
+      </Volver>
 
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
         <h1 className="font-display text-2xl tabular-nums text-ink">{pedido.numero}</h1>

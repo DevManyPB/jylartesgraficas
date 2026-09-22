@@ -1,6 +1,6 @@
 import { categoriasDeProductos } from "@jyl/core/server";
 import type { Metadata } from "next";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { FormularioProducto } from "@/components/inventario/FormularioProducto";
 import { paginaSoloPara } from "@/servidor/sesion";
 
@@ -15,9 +15,9 @@ export default async function NuevoProducto() {
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/inventario" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/inventario">
         Inventario
-      </EnlaceProtegido>
+      </Volver>
       <h1 className="mt-1 font-display text-2xl text-ink">Nuevo producto</h1>
       <p className="mt-1 max-w-prose text-sm text-ink-muted">
         Primero el producto; al guardarlo podrás añadir sus variantes de talla y color, con su stock.

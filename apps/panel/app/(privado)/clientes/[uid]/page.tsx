@@ -2,7 +2,7 @@ import { leerCliente } from "@jyl/core/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { EnlaceProtegido } from "@/components/cambios/CambiosSinGuardar";
+import { Volver } from "@/components/navegacion/Volver";
 import { EstadoFactura } from "@/components/facturas/EstadoFactura";
 import { EstadoPedido } from "@/components/pedidos/EstadoPedido";
 import { enlaceWhatsapp, formatearFechaCorta, formatearFechaLarga, pesos } from "@/components/pedidos/formato";
@@ -25,9 +25,9 @@ export default async function FichaCliente({ params }: PageProps<"/clientes/[uid
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <EnlaceProtegido href="/clientes" className="text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline">
+      <Volver href="/clientes">
         Clientes
-      </EnlaceProtegido>
+      </Volver>
       <h1 className="mt-1 font-display text-2xl text-ink">{cliente.nombre || "Cliente sin nombre"}</h1>
       <p className="mt-1 text-sm text-ink-muted">
         Cuenta creada el {formatearFechaLarga(cliente.creadoEn)}
