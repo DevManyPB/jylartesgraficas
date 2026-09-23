@@ -1,17 +1,44 @@
 import Link from "next/link";
 import { configuracionPublica } from "@/datos/cache";
-import { enlaceWhatsapp, lineaDeDireccion } from "@/lib/formato";
+import { TarjetaDeVisita } from "./TarjetaDeVisita";
 
 /**
  * Pie de página — SPEC.md §4.2: el header solo lleva cuatro destinos y el
  * resto de enlaces vive aquí. Los datos de contacto salen de Configuración,
  * así que el estudio los cambia desde el panel sin tocar código.
+ *
+ * El contacto va en una tarjeta de visita impresa (`TarjetaDeVisita`); a su
+ * lado, los enlaces en columnas. Antes eran cuatro columnas de texto en una
+ * rejilla con la última vacía.
  */
 export async function SiteFooter() {
   const configuracion = await configuracionPublica();
-  const whatsapp = enlaceWhatsapp(configuracion.whatsapp);
-  const direccion = lineaDeDireccion(configuracion.direccion);
   const redes = Object.entries(configuracion.redes).filter(([, url]) => url);
+
+  const columnas = [
+    {
+      id: "pie-sitio",
+      titulo: "El sitio",
+      enlaces: [
+        { href: "/portafolio", label: "Portafolio" },
+        { href: "/servicios", label: "Servicios" },
+        { href: "/tienda", label: "Tienda" },
+        { href: "/nosotros", label: "Nosotros" },
+        { href: "/contacto", label: "Contacto" },
+      ],
+    },
+    {
+      id: "pie-cuenta",
+      titulo: "Tu pedido",
+      enlaces: [
+        { href: "/pedido", label: "Pedir un trabajo" },
+        { href: "/mi-cuenta", label: "Mi cuenta" },
+      ],
+    },
+  ];
+
+  const enlace =
+    "text-ink-muted underline-offset-4 hover:text-ink hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
   return (
     <footer className="bg-canvas-sunken">
@@ -23,97 +50,49 @@ export async function SiteFooter() {
         <span className="flex-1 bg-tinta-amarillo" />
         <span className="flex-1 bg-ink" />
       </div>
-      <div className="mx-auto grid w-full max-w-content gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
-        <div>
-          <p className="font-display text-lg text-ink">JYL Artes Gráficos</p>
-          <p className="mt-2 text-sm text-ink-muted">
-            Artes gráficas, desarrollo web y servicios técnicos.
-          </p>
-        </div>
 
-        <nav aria-labelledby="pie-sitio">
-          <h2 id="pie-sitio" className="text-sm font-medium text-ink">
-            El sitio
-          </h2>
-          <ul className="mt-3 flex flex-col gap-2 text-sm">
-            {[
-              { href: "/portafolio", label: "Portafolio" },
-              { href: "/nosotros", label: "Nosotros" },
-              { href: "/servicios", label: "Servicios" },
-              { href: "/tienda", label: "Tienda" },
-              { href: "/pedido", label: "Pedir un trabajo" },
-              { href: "/mi-cuenta", label: "Mi cuenta" },
-            ].map((enlace) => (
-              <li key={enlace.href}>
-                <Link href={enlace.href} className="text-ink-muted underline-offset-4 hover:text-ink hover:underline">
-                  {enlace.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      <div className="mx-auto grid w-full max-w-content gap-12 px-6 py-16 lg:grid-cols-[minmax(0,26rem)_1fr] lg:gap-20 lg:px-8">
+        <TarjetaDeVisita configuracion={configuracion} />
 
-        <div>
-          <h2 className="text-sm font-medium text-ink">Contacto</h2>
-          <ul className="mt-3 flex flex-col gap-2 text-sm text-ink-muted">
-            {whatsapp && (
-              <li>
-                <a href={whatsapp} target="_blank" rel="noreferrer" className="underline-offset-4 hover:text-ink hover:underline">
-                  WhatsApp
-                </a>
-              </li>
-            )}
-            {configuracion.telefono && (
-              <li>
-                <a
-                  href={`tel:${configuracion.telefono.replace(/\s/g, "")}`}
-                  className="tabular-nums underline-offset-4 hover:text-ink hover:underline"
-                >
-                  {configuracion.telefono}
-                </a>
-              </li>
-            )}
-            {configuracion.email && (
-              <li>
-                <a href={`mailto:${configuracion.email}`} className="break-all underline-offset-4 hover:text-ink hover:underline">
-                  {configuracion.email}
-                </a>
-              </li>
-            )}
-            {direccion && <li>{direccion}</li>}
-            <li>
-              <Link href="/contacto" className="underline-offset-4 hover:text-ink hover:underline">
-                Horarios y mapa
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <div className="grid content-start gap-10 sm:grid-cols-3">
+          {columnas.map((columna) => (
+            <nav key={columna.id} aria-labelledby={columna.id}>
+              <h2 id={columna.id} className="font-display text-base text-ink">
+                {columna.titulo}
+              </h2>
+              <ul className="mt-4 flex flex-col gap-2.5 text-sm">
+                {columna.enlaces.map((e) => (
+                  <li key={e.href}>
+                    <Link href={e.href} className={enlace}>
+                      {e.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
 
-        <div>
           {redes.length > 0 && (
-            <>
-              <h2 className="text-sm font-medium text-ink">Redes</h2>
-              <ul className="mt-3 flex flex-col gap-2 text-sm">
+            <nav aria-labelledby="pie-redes">
+              <h2 id="pie-redes" className="font-display text-base text-ink">
+                Redes
+              </h2>
+              <ul className="mt-4 flex flex-col gap-2.5 text-sm">
                 {redes.map(([red, url]) => (
                   <li key={red}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="capitalize text-ink-muted underline-offset-4 hover:text-ink hover:underline"
-                    >
+                    <a href={url} target="_blank" rel="noreferrer" className={`capitalize ${enlace}`}>
                       {red}
                     </a>
                   </li>
                 ))}
               </ul>
-            </>
+            </nav>
           )}
         </div>
       </div>
 
       <div className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-content flex-wrap items-center justify-between gap-3 px-6 py-5 text-xs text-ink-subtle lg:px-8">
+        <div className="mx-auto flex w-full max-w-content flex-wrap items-center justify-between gap-3 px-6 py-5 text-xs text-ink-muted lg:px-8">
           <p>© {new Date().getFullYear()} JYL Artes Gráficos</p>
           <ul className="flex gap-4">
             <li>

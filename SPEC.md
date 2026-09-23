@@ -520,6 +520,7 @@ El sitio de un estudio gráfico se juzga por cómo se ve. Un diseño genérico e
 - Nada de degradados decorativos. Las tramas son patrones de puntos, no degradados.
 - **Una tinta por área de servicio:** publicidad y diseño en magenta, desarrollo web en cian, servicios técnicos en amarillo. Se ve en la trama de su icono y, al pasar por un servicio, en la trama que entra y en la sombra corrida del nombre.
 - El pie de página y la línea de tiempo de «Cómo trabajamos» llevan las cuatro tintas en el orden en que se imprimen: cian, magenta, amarillo, negro.
+- En el pie, los datos del estudio van en una tarjeta de visita impresa, girada fuera de sus marcas de corte, que se endereza y encaja al pasar el ratón o llegar con el teclado. A su lado, los enlaces en columnas.
 - El panel no lleva CMYK: sigue sobrio, con un solo acento.
 
 **Tipografía.** Dos familias como máximo, claramente distintas. La de titulares se trata como elemento gráfico, con interletraje ajustado a mano en los títulos principales. Escala tipográfica definida. Nada de mayúsculas sostenidas en etiquetas ni de resaltar una sola palabra del titular en otro color.
