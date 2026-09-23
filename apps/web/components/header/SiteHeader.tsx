@@ -1,10 +1,10 @@
 "use client";
 
-import { cn } from "@jyl/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AccountButton, type IdentidadHeader } from "./AccountButton";
+import { Marca } from "./Marca";
 import { MobileMenu } from "./MobileMenu";
 import { navItems } from "./nav-items";
 import { useHeaderScroll } from "./use-header-scroll";
@@ -17,6 +17,9 @@ interface SiteHeaderProps {
   contacto: { whatsapp: string | null; telefono: string; email: string; redes: [string, string][] };
 }
 
+/** Largo de la línea que marca la página: corta, como pide SPEC.md §4.2. */
+const ANCHO_LINEA = 16;
+
 /**
  * SPEC.md §4.2. El estado visual lo decide el CSS a partir de los atributos
  * que `useHeaderScroll` escribe en <body>:
@@ -27,7 +30,53 @@ export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const enlacesRef = useRef<HTMLDivElement>(null);
+  const lineaRef = useRef<HTMLSpanElement>(null);
   useHeaderScroll(menuOpen);
+
+  /*
+    Una sola línea para toda la navegación. Descansa bajo la página actual
+    y, al pasar el ratón o el foco por otro enlace, se desliza hasta él; al
+    salir, vuelve. Antes cada enlace tenía su rayita y nada decía que eran
+    un mismo menú.
+
+    Se mueve escribiendo el estilo directamente y no con estado de React:
+    así pasar el ratón no re-renderiza el header, y la animación es solo un
+    `transform`, que lleva el compositor.
+  */
+  const moverLinea = useCallback((enlace: HTMLElement | null) => {
+    const linea = lineaRef.current;
+    if (!linea) return;
+    if (!enlace) {
+      linea.style.opacity = "0";
+      return;
+    }
+    const x = enlace.offsetLeft + enlace.offsetWidth / 2 - ANCHO_LINEA / 2;
+    linea.style.transform = `translateX(${x}px)`;
+    linea.style.opacity = "1";
+  }, []);
+
+  const volverALaActual = useCallback(() => {
+    moverLinea(enlacesRef.current?.querySelector<HTMLElement>('[aria-current="page"]') ?? null);
+  }, [moverLinea]);
+
+  useEffect(() => {
+    volverALaActual();
+    // La primera colocación no se anima: la línea tiene que nacer en su
+    // sitio, no llegar volando desde la izquierda. A partir de aquí sí, y
+    // al cambiar de página se desliza hasta la nueva, que es lo que cambió.
+    const frame = requestAnimationFrame(() => {
+      if (lineaRef.current) lineaRef.current.dataset.lista = "";
+    });
+    // La tipografía cambia el ancho de los enlaces al cargar, y la ventana
+    // al redimensionar: en los dos casos hay que volver a medir.
+    void document.fonts?.ready.then(volverALaActual);
+    window.addEventListener("resize", volverALaActual);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", volverALaActual);
+    };
+  }, [pathname, volverALaActual]);
 
   return (
     <>
@@ -47,47 +96,47 @@ export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
 
         {/* Cuánto se lleva leído. Se escala con una variable que el hook de
             scroll actualiza en su mismo fotograma, así que la anima el
-            compositor y no repinta nada. */}
+            compositor y no repinta nada. En el color del texto y no en el
+            de acento: «Entrar» es el único acento del header (§4.2). */}
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-[var(--progreso-scroll,0)] bg-accent transition-opacity duration-300 group-[&:has([data-hero]):not([data-past-hero])]:opacity-0"
+          className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-[var(--progreso-scroll,0)] bg-ink opacity-30 transition-opacity duration-300 group-[&:has([data-hero]):not([data-past-hero])]:opacity-0"
         />
 
         <div className="relative mx-auto flex h-16 w-full max-w-content items-center justify-between px-6 text-ink transition-[color,height] duration-300 motion-reduce:transition-none group-[&:has([data-hero]):not([data-past-hero])]:text-ink-inverted sm:h-20 sm:group-[[data-desplazado]]:h-16 lg:px-8">
-          <Link
-            href="/"
-            className="flex flex-col rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-          >
-            <span className="font-display text-xl font-bold leading-none">JYL</span>
-            <span className="text-xs leading-none opacity-70">artes gráficas</span>
-          </Link>
+          <Marca />
 
-          <nav className="hidden items-center gap-8 md:flex">
-            {navItems.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className="group/nav relative py-1 text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-                >
-                  {item.label}
-                  {/* La misma línea marca la página actual y responde al
-                      ratón: en la actual está puesta, en las demás crece
-                      desde el centro al pasar por encima. Antes solo la
-                      activa tenía marca y nada decía que las otras se
-                      pudieran pulsar. */}
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "absolute -bottom-1 left-1/2 h-0.5 -translate-x-1/2 bg-current transition-[width] duration-300 ease-entrada motion-reduce:transition-none",
-                      active ? "w-4" : "w-0 group-hover/nav:w-4 group-focus-visible/nav:w-4",
-                    )}
-                  />
-                </Link>
-              );
-            })}
+          <nav aria-label="Principal" className="hidden items-center gap-8 md:flex">
+            <div
+              ref={enlacesRef}
+              onPointerLeave={volverALaActual}
+              onBlur={(evento) => {
+                if (!evento.currentTarget.contains(evento.relatedTarget)) volverALaActual();
+              }}
+              className="relative flex items-center gap-8"
+            >
+              {navItems.map((item) => {
+                const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    onPointerEnter={(evento) => moverLinea(evento.currentTarget)}
+                    onFocus={(evento) => moverLinea(evento.currentTarget)}
+                    className="py-1 text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <span
+                ref={lineaRef}
+                aria-hidden
+                style={{ width: ANCHO_LINEA, opacity: 0 }}
+                className="pointer-events-none absolute -bottom-1 left-0 h-0.5 bg-current motion-safe:data-[lista]:transition-[transform,opacity] motion-safe:data-[lista]:duration-300 motion-safe:data-[lista]:ease-entrada"
+              />
+            </div>
 
             <AccountButton identidad={identidad} />
           </nav>

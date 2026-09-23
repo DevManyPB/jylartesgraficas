@@ -52,6 +52,15 @@ export function IconoFlecha(props: IconoProps) {
   );
 }
 
+/** Dice que un botón despliega algo; gira cuando está abierto. */
+export function IconoChevron(props: IconoProps) {
+  return (
+    <Icono {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </Icono>
+  );
+}
+
 /** Para enlaces que salen del sitio. */
 export function IconoSalida(props: IconoProps) {
   return (

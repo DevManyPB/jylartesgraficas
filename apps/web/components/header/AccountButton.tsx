@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
-import { IconoPanel, IconoPincel, IconoRecibo, IconoSalir } from "@/components/iconos/Iconos";
+import { IconoChevron, IconoPanel, IconoPincel, IconoRecibo, IconoSalir } from "@/components/iconos/Iconos";
 import { cerrarSesion } from "@/lib/cerrar-sesion";
 
 export interface IdentidadHeader {
@@ -60,11 +60,19 @@ export function AccountButton({ identidad }: { identidad: IdentidadHeader | null
       <DropdownMenu.Root open={abierto} onOpenChange={setAbierto} modal={false}>
         <DropdownMenu.Trigger
           aria-label={`Cuenta de ${nombre}`}
-          // El header cambia de color sobre el héroe, así que el estado se
-          // marca con opacidad y no con un fondo, que solo se vería en uno.
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-current text-sm font-medium transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current data-[state=open]:opacity-70"
+          // Inicial en un círculo relleno y un chevrón que gira al abrir:
+          // antes era un círculo con borde y nada decía que desplegaba un
+          // menú. El relleno se invierte sobre el héroe, donde el texto del
+          // header es claro.
+          className="group/cuenta flex items-center gap-1 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
         >
-          <span aria-hidden>{inicial}</span>
+          <span
+            aria-hidden
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-sm font-medium text-ink-inverted transition-transform duration-200 ease-entrada group-hover/cuenta:scale-105 group-data-[state=open]/cuenta:scale-95 motion-reduce:transition-none group-[&:has([data-hero]):not([data-past-hero])]:bg-ink-inverted group-[&:has([data-hero]):not([data-past-hero])]:text-ink"
+          >
+            {inicial}
+          </span>
+          <IconoChevron className="h-4 w-4 transition-transform duration-200 ease-entrada group-data-[state=open]/cuenta:rotate-180 motion-reduce:transition-none" />
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Portal>

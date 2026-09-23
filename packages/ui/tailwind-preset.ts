@@ -99,6 +99,11 @@ const preset: Omit<Config, "content"> = {
           from: { transform: "translateY(5px) rotate(0deg)" },
           to: { transform: "translateY(0) rotate(-45deg)" },
         },
+        // Cada destino del menú móvil, uno tras otro al abrirlo.
+        "menu-item": {
+          from: { opacity: "0", transform: "translateY(0.5rem)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
         /**
          * Carga de inicio — SPEC.md §9: el único momento orquestado del
          * sitio. La foto del héroe no entra con un fundido, porque es el
@@ -160,6 +165,9 @@ const preset: Omit<Config, "content"> = {
         "menu-out": "menu-hide 180ms ease-in",
         "menu-line-top": "menu-line-top 200ms ease-out",
         "menu-line-bottom": "menu-line-bottom 200ms ease-out",
+        // `both`: cada elemento espera invisible su turno (el retraso va en
+        // línea, por posición) en vez de verse y luego saltar.
+        "menu-item": "menu-item 200ms cubic-bezier(0.2, 0.65, 0.3, 1) both",
         "content-in-menu": "menu-cuenta-show 160ms cubic-bezier(0.2, 0.65, 0.3, 1)",
         "content-out-menu": "menu-cuenta-hide 120ms ease-in",
       },

@@ -68,6 +68,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="group bg-canvas font-sans text-ink">
         <ModalProvider>
           <ToastProvider>
+            {/* Lo primero que alcanza el Tab (AGENTS.md §11): sin esto, quien
+                navega con teclado atraviesa todo el header en cada página
+                antes de llegar a lo que vino a ver. Invisible hasta que
+                recibe el foco, y por encima del header cuando lo recibe. */}
+            <a
+              href="#contenido"
+              className="sr-only rounded-full bg-ink text-sm font-medium text-ink-inverted focus:not-sr-only focus:fixed focus:px-4 focus:py-2 focus:left-4 focus:top-4 focus:z-[80] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Saltar al contenido
+            </a>
             <SiteHeader
               identidad={
                 sesion
@@ -92,9 +102,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 página. Sin ello, cualquier cambio de estado de dentro —los
                 pasos del formulario de pedido, por ejemplo— fundiría también
                 la página entera. */}
-            <ViewTransition default="pagina" update="none">
-              {children}
-            </ViewTransition>
+            {/* Destino de «Saltar al contenido». `tabIndex={-1}` para que el
+                foco llegue aquí de verdad y el siguiente Tab siga desde el
+                contenido, no desde el header. No es un control, así que no
+                lleva anillo de foco: el que se ve es el del siguiente Tab. */}
+            <div id="contenido" tabIndex={-1} className="focus:outline-none">
+              <ViewTransition default="pagina" update="none">
+                {children}
+              </ViewTransition>
+            </div>
             {whatsapp && <BotonWhatsapp numero={whatsapp} />}
             <SiteFooter />
           </ToastProvider>

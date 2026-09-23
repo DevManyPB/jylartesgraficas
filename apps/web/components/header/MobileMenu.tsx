@@ -15,7 +15,18 @@ import {
 } from "@/components/iconos/Iconos";
 import { cerrarSesion } from "@/lib/cerrar-sesion";
 import type { IdentidadHeader } from "./AccountButton";
+import { Marca } from "./Marca";
 import { navItems } from "./nav-items";
+
+/**
+ * Retraso de cada bloque del menú al abrirse: 40 ms entre uno y otro, tras
+ * los primeros 100 ms en que el panel aún está entrando desde la derecha.
+ * Responde a la acción de abrir (SPEC.md §9); con `prefers-reduced-motion`
+ * no se anima nada, porque la clase va detrás de `motion-safe`.
+ */
+function entradaEscalonada(posicion: number) {
+  return { animationDelay: `${100 + posicion * 40}ms` };
+}
 
 interface MobileMenuProps {
   open: boolean;
@@ -59,14 +70,7 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
           <Dialog.Title className="sr-only">Menú de navegación</Dialog.Title>
 
           <div className="mx-auto flex h-16 w-full max-w-content shrink-0 items-center justify-between px-6 sm:h-20 lg:px-8">
-            <Link
-              href="/"
-              onClick={() => onOpenChange(false)}
-              className="flex flex-col rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-            >
-              <span className="font-display text-xl font-bold leading-none">JYL</span>
-              <span className="text-xs leading-none opacity-70">artes gráficas</span>
-            </Link>
+            <Marca onClick={() => onOpenChange(false)} />
 
             <Dialog.Close
               aria-label="Cerrar menú"
@@ -84,7 +88,7 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
           </div>
 
           <nav className="mx-auto flex w-full max-w-content flex-1 flex-col px-6 pt-6 lg:px-8">
-            {navItems.map((item) => {
+            {navItems.map((item, i) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
@@ -92,7 +96,8 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   onClick={() => onOpenChange(false)}
-                  className="flex items-center py-4 font-display text-3xl leading-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                  style={entradaEscalonada(i)}
+                  className="flex items-center py-4 font-display text-3xl leading-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current motion-safe:animate-menu-item"
                 >
                   {item.label}
                   {active && (
@@ -105,7 +110,8 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
             <Link
               href="/pedido"
               onClick={() => onOpenChange(false)}
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-accent px-5 py-3.5 text-base font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+              style={entradaEscalonada(navItems.length)}
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-accent px-5 py-3.5 text-base font-medium text-ink-inverted transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current motion-safe:animate-menu-item"
             >
               Pedir un trabajo
             </Link>
@@ -113,7 +119,10 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
             {/* La cuenta, abajo y separada de los destinos: aquí es donde se
                 entra y, sobre todo, donde se sale — antes no había manera de
                 cerrar sesión desde el móvil sin ir a «Mi cuenta». */}
-            <div className="mt-6 border-t border-ink-inverted/15 pt-4">
+            <div
+              style={entradaEscalonada(navItems.length + 1)}
+              className="mt-6 border-t border-ink-inverted/15 pt-4 motion-safe:animate-menu-item"
+            >
               {nombre ? (
                 <>
                   <p className="truncate text-sm text-ink-inverted/50">{nombre}</p>
@@ -162,7 +171,10 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
           {/* Los datos de contacto cierran el menú — SPEC.md §4.2. Salen de
               Configuración; lo que el estudio no haya puesto, no aparece. */}
           {(contacto.whatsapp || contacto.telefono || contacto.email || contacto.redes.length > 0) && (
-            <div className="mx-auto w-full max-w-content shrink-0 px-6 pb-8 pt-6 lg:px-8">
+            <div
+              style={entradaEscalonada(navItems.length + 2)}
+              className="mx-auto w-full max-w-content shrink-0 px-6 pb-8 pt-6 motion-safe:animate-menu-item lg:px-8"
+            >
               <ul className="flex flex-col gap-3 text-sm text-ink-inverted/70">
                 {contacto.whatsapp && (
                   <li>

@@ -191,15 +191,19 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 
 - Arranca **transparente sobre la pieza del héroe**, con el texto en blanco. Al pasar el primer pliegue, se vuelve sólido con desenfoque de fondo y una línea inferior de un píxel. La transición dura entre 200 y 300 ms.
 - Al bajar se oculta, al subir reaparece. Esto devuelve pantalla al portafolio en el móvil.
-- La página actual se marca con una línea corta debajo del enlace, no con negrita ni con otro color.
-- Si el usuario tiene sesión iniciada, el botón de cuenta reemplaza al de login y muestra su inicial. Al pulsarlo abre un menú con su nombre y su correo, *Mis pedidos y facturas*, *Pedir un trabajo* y *Cerrar sesión*. Salir tiene que poder hacerse desde cualquier página, no solo desde «Mi cuenta».
+- La página actual se marca con una línea corta debajo del enlace, no con negrita ni con otro color. Es una sola línea para toda la navegación: al pasar el ratón o el foco por otro enlace se desliza hasta él, y al salir vuelve a la página actual.
+- Una línea fina en el color del texto marca cuánto se lleva leído de la página. No va en el color de acento: ese es solo de *Entrar*.
+- Al pasar el ratón por la marca, las letras de «JYL» suben una tras otra y vuelven.
+- Si el usuario tiene sesión iniciada, el botón de cuenta reemplaza al de login y muestra su inicial en un círculo relleno, con un chevrón que gira al abrir el menú. Al pulsarlo abre un menú con su nombre y su correo, *Mis pedidos y facturas*, *Pedir un trabajo* y *Cerrar sesión*. Salir tiene que poder hacerse desde cualquier página, no solo desde «Mi cuenta».
 
 **En móvil**
 
 - Marca a la izquierda, botón de menú a la derecha, y nada más. El botón de WhatsApp flota aparte.
 - El menú abre a pantalla completa desde la derecha, con los enlaces en tamaño grande, cómodos para el pulgar, y al final los datos de contacto y las redes.
 - El icono de menú se transforma en X con animación. Esc lo cierra. El foco queda atrapado dentro mientras está abierto. El fondo no hace scroll.
-- Altura del header: 64 px en móvil, 80 px en escritorio.
+- Al abrirse, los destinos entran uno tras otro, y después la cuenta y el contacto.
+- Altura del header: 64 px en móvil; en escritorio, 80 px arriba del todo y 64 px en cuanto la página se desplaza.
+- «Saltar al contenido» es lo primero que alcanza el teclado, invisible hasta recibir el foco.
 
 **Prohibido en el header:** enlaces en mayúsculas sostenidas, una flecha pegada al texto del botón, sombra gris suave debajo de la barra, más de un botón de acento, y el logo repetido en el centro.
 
