@@ -8,7 +8,7 @@ import { cn } from "@jyl/ui";
  */
 const TONO: Record<Estado, string> = {
   borrador: "bg-canvas-sunken text-ink",
-  emitida: "bg-warning-soft text-warning",
+  emitida: "bg-warning-soft text-warning-text",
   pagada: "bg-success-soft text-success",
   anulada: "bg-canvas-sunken text-ink-subtle line-through",
 };

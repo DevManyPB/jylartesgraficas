@@ -16,7 +16,7 @@ const preset: Omit<Config, "content"> = {
 
       canvas: "#FFFFFF",
       "canvas-sunken": "#F6F4F1",
-      "canvas-dark": "#0E0D0B",
+      "canvas-dark": "#000000",
 
       ink: "#14120F",
       "ink-muted": "#5C5850",
@@ -33,6 +33,7 @@ const preset: Omit<Config, "content"> = {
       success: "#1E7B4D",
       "success-soft": "#E3F3EA",
       warning: "#B4790A",
+      "warning-text": "#7C5E00",
       "warning-soft": "#FBF0DC",
       danger: "#C21F3A",
       "danger-soft": "#FBE4E7",

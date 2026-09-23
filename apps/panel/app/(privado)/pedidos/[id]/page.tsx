@@ -89,7 +89,7 @@ export default async function DetallePedido({ params }: PageProps<"/pedidos/[id]
 
           <Bloque titulo={`Referencias (${pedido.archivosDetalle.length})`}>
             {pedido.archivosIncompletos && (
-              <p role="note" className="mb-3 rounded-md bg-warning-soft px-3 py-2 text-sm text-warning">
+              <p role="note" className="mb-3 rounded-md bg-warning-soft px-3 py-2 text-sm text-warning-text">
                 Algunas referencias no llegaron bien al enviar el pedido. Pídele al cliente los archivos que falten.
               </p>
             )}

@@ -110,7 +110,7 @@ export function ListaServicios({ servicios }: { servicios: ServicioDelPanel[] })
                     <p className="text-xs text-ink-muted">
                       {servicio.precioBase === null ? "Se cotiza" : `Desde ${pesos.format(servicio.precioBase)}`}
                       {servicio.descripcion === "" && (
-                        <span className="text-warning"> · Sin descripción</span>
+                        <span className="text-warning-text"> · Sin descripción</span>
                       )}
                     </p>
                   </div>

@@ -287,7 +287,7 @@ export function FormularioFactura({ id, inicial, impuestoPorcentaje, variantes, 
           </dl>
         </div>
         {impuestoPorcentaje === null && (
-          <p className="mt-4 rounded-md bg-warning-soft px-3 py-2 text-sm text-warning">
+          <p className="mt-4 rounded-md bg-warning-soft px-3 py-2 text-sm text-warning-text">
             Para emitir hace falta el porcentaje de impuesto.{" "}
             <Link href="/configuracion" className="font-medium underline underline-offset-2">
               Configúralo

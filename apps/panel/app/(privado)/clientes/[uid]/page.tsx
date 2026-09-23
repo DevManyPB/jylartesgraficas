@@ -47,7 +47,7 @@ export default async function FichaCliente({ params }: PageProps<"/clientes/[uid
               </div>
               <div>
                 <dt className="text-xs text-ink-muted">Por cobrar</dt>
-                <dd className={`font-display text-xl tabular-nums ${cliente.porCobrar > 0 ? "text-warning" : "text-ink"}`}>
+                <dd className={`font-display text-xl tabular-nums ${cliente.porCobrar > 0 ? "text-warning-text" : "text-ink"}`}>
                   {pesos.format(cliente.porCobrar)}
                 </dd>
               </div>
@@ -105,7 +105,7 @@ export default async function FichaCliente({ params }: PageProps<"/clientes/[uid
                     <span className="flex items-center gap-3">
                       <span className="tabular-nums text-ink">{pesos.format(factura.total)}</span>
                       {factura.saldo > 0 && (
-                        <span className="tabular-nums text-warning">faltan {pesos.format(factura.saldo)}</span>
+                        <span className="tabular-nums text-warning-text">faltan {pesos.format(factura.saldo)}</span>
                       )}
                       <EstadoFactura estado={factura.estado} />
                     </span>

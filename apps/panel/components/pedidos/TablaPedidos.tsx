@@ -34,7 +34,7 @@ export function TablaPedidos({ filas }: { filas: FilaPedido[] }) {
                   {fila.numero}
                 </Link>
                 {fila.archivosIncompletos && (
-                  <span className="ml-2 text-xs text-warning" title="Algunas referencias no se subieron bien">
+                  <span className="ml-2 text-xs text-warning-text" title="Algunas referencias no se subieron bien">
                     Faltan archivos
                   </span>
                 )}

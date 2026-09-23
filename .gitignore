@@ -46,3 +46,6 @@ Captura de pantalla*.png
 
 # Índice del grafo de código: se regenera localmente.
 .codebase-memory/
+
+# Instalador de una herramienta local (codebase-memory-mcp), no del proyecto.
+install.ps1

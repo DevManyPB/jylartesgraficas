@@ -165,7 +165,7 @@ export function TableroPedidos({ columnas }: TableroPedidosProps) {
                         <p className="truncate text-xs text-ink-muted">{fila.servicio ?? "Productos de la tienda"}</p>
                         <p className="text-xs text-ink-subtle">
                           {formatearFechaCorta(fila.creadoEn)}
-                          {fila.archivosIncompletos && <span className="ml-2 text-warning">Faltan archivos</span>}
+                          {fila.archivosIncompletos && <span className="ml-2 text-warning-text">Faltan archivos</span>}
                         </p>
 
                         <label htmlFor={`${idBase}-${fila.id}`} className="sr-only">

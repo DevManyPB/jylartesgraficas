@@ -84,7 +84,7 @@ export function PedirProducto({ producto }: { producto: ProductoPublicoConVarian
                       {nombre}
                       {sinStock && <span className="ml-2 text-xs text-ink-muted">Agotada</span>}
                       {!sinStock && v.stock <= 3 && (
-                        <span className="ml-2 text-xs text-warning">Quedan {v.stock}</span>
+                        <span className="ml-2 text-xs text-warning-text">Quedan {v.stock}</span>
                       )}
                     </span>
                     <span className="text-sm tabular-nums text-ink">{pesos.format(v.precioVenta)}</span>

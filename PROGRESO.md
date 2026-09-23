@@ -102,16 +102,10 @@
 
 ### Del repaso del panel (encontrado, fuera de lo aprobado)
 
-- **Tablero:** cinco tarjetas en una rejilla de cuatro; «Facturado este
-  mes» queda sola en una segunda fila.
-- **Foco en los modales de formulario:** entra en la ✕ en vez del primer
-  campo. Y al crear el primer insumo cae al inicio de la página, porque el
-  botón que abrió el modal vivía en la pantalla vacía y esta desaparece.
-- **Contraste del token `warning`** (AGENTS.md §11): como texto da ≈3,3:1
-  sobre `warning-soft` y ≈3,7:1 sobre blanco, por debajo del AA. Se usa en
-  «bajo mínimo» del inventario. Arreglarlo es tocar el sistema de diseño.
-- **`canvas-dark` es #0E0D0B**, un «negro falso» de los que veta AGENTS.md
-  §8. Es token desde la Fase 1; decidir si pasa a negro.
+- Resuelto el 22 de septiembre: el tablero va en dos filas (trabajo y, para
+  el admin, dinero); el foco de los modales entra en el primer campo y
+  vuelve a un botón equivalente si el que abrió desapareció; el texto de
+  aviso usa `warning-text` (5,4:1); y `canvas-dark` es negro.
 - `/servicios/nuevo`, `/servicios/[id]` e `/inventario/insumos/nuevo` ya no
   se enlazan desde ningún sitio (se crea y edita en modal). Siguen
   funcionando; decidir si se borran.

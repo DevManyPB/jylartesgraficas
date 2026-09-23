@@ -32,7 +32,7 @@ export default async function DetalleInsumo({ params }: PageProps<"/inventario/i
           <span className="font-display text-2xl tabular-nums text-ink">{insumo.stock}</span>{" "}
           <span className="text-ink-muted">{insumo.unidad}</span>
           {estado !== "ok" && (
-            <span className={estado === "agotado" ? "ml-2 text-danger" : "ml-2 text-warning"}>
+            <span className={estado === "agotado" ? "ml-2 text-danger" : "ml-2 text-warning-text"}>
               {estado === "agotado" ? "agotado" : `bajo el mínimo de ${insumo.stockMinimo}`}
             </span>
           )}

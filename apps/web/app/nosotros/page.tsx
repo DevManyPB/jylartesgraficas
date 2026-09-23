@@ -1,6 +1,7 @@
 import { CATEGORIAS_SERVICIO, NOMBRE_CATEGORIA } from "@jyl/core";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { configuracionPublica, serviciosPublicos } from "@/datos/cache";
 import { enlaceWhatsapp } from "@/lib/formato";
 
@@ -44,6 +45,15 @@ export default async function Nosotros() {
     },
   ];
 
+  const categoriasConServicios = CATEGORIAS_SERVICIO.map((cat) => ({
+    categoria: cat,
+    nombre: NOMBRE_CATEGORIA[cat],
+    items: servicios.filter((s) => s.categoria === cat),
+  })).filter((c) => c.items.length > 0);
+
+  const principal = categoriasConServicios[0];
+  const secundarias = categoriasConServicios.slice(1);
+
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
       <h1 className="font-display text-4xl text-ink sm:text-5xl">Nosotros</h1>
@@ -59,71 +69,120 @@ export default async function Nosotros() {
         </p>
       </section>
 
-      <section aria-labelledby="que-hacemos" className="mt-14">
-        <h2 id="que-hacemos" className="font-display text-2xl text-ink">
-          Qué hacemos
-        </h2>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-3">
-          {CATEGORIAS_SERVICIO.map((categoria) => {
-            const deLaCategoria = servicios.filter((s) => s.categoria === categoria);
-            if (deLaCategoria.length === 0) return null;
-            return (
-              <li key={categoria} className="rounded-xl border border-border p-5">
-                <h3 className="font-display text-lg text-ink">{NOMBRE_CATEGORIA[categoria]}</h3>
-                <ul className="mt-2 flex flex-col gap-1 text-sm text-ink-muted">
-                  {deLaCategoria.slice(0, 6).map((servicio) => (
-                    <li key={servicio.id}>{servicio.nombre}</li>
+      <section aria-labelledby="que-hacemos" className="mt-16">
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 id="que-hacemos" className="font-display text-2xl text-ink">
+            Qué hacemos
+          </h2>
+          <Link href="/servicios" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
+            Ver catálogo completo
+          </Link>
+        </div>
+
+        {/* Layout asimétrico: columna principal destacada + secundarias apiladas (AGENTS.md §8) */}
+        <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-12">
+          {principal && (
+            <div className="flex flex-col justify-between rounded-2xl border border-border-strong bg-canvas-sunken/60 p-6 sm:p-8 lg:col-span-7">
+              <div>
+                <h3 className="font-display text-2xl text-ink sm:text-3xl">{principal.nombre}</h3>
+                {/* TODO: contenido pendiente del cliente — la descripción del
+                    área la escribe el estudio (AGENTS.md §10). */}
+                <p className="mt-2 text-sm text-ink-muted">
+                  <span className="font-medium text-ink">Pendiente: </span>
+                  una línea del estudio sobre esta área.
+                </p>
+                <ul className="mt-6 grid grid-cols-1 gap-2.5 text-sm text-ink sm:grid-cols-2">
+                  {principal.items.slice(0, 8).map((servicio) => (
+                    <li key={servicio.id} className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+                      <span className="truncate">{servicio.nombre}</span>
+                    </li>
                   ))}
                 </ul>
-              </li>
-            );
-          })}
-        </ul>
-        <p className="mt-4 text-sm">
-          <Link href="/servicios" className="font-medium text-accent underline-offset-4 hover:underline">
-            Ver todos los servicios
-          </Link>
-        </p>
+              </div>
+              <div className="mt-8 border-t border-border pt-4">
+                <Link href={`/servicios#categoria-${principal.categoria}`} className="text-xs font-medium text-ink-muted hover:text-accent">
+                  Explorar todos los servicios de {principal.nombre.toLowerCase()}
+                </Link>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-5 lg:col-span-5">
+            {secundarias.map((cat) => (
+              <div key={cat.categoria} className="flex flex-1 flex-col justify-between rounded-2xl border border-border p-6">
+                <div>
+                  <h3 className="font-display text-xl text-ink">{cat.nombre}</h3>
+                  <ul className="mt-3 flex flex-wrap gap-2 text-xs">
+                    {cat.items.slice(0, 6).map((servicio) => (
+                      <li key={servicio.id} className="rounded-md bg-canvas-sunken px-2.5 py-1 text-ink-muted">
+                        {servicio.nombre}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-6 border-t border-border pt-3">
+                  <Link href={`/servicios#categoria-${cat.categoria}`} className="text-xs font-medium text-ink-muted hover:text-accent">
+                    Ver {cat.nombre.toLowerCase()}
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section aria-labelledby="proceso" className="mt-14">
+      <section aria-labelledby="proceso" className="mt-20">
         <h2 id="proceso" className="font-display text-2xl text-ink">
           Cómo trabajamos
         </h2>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-2">
-          {pasos.map((paso, i) => (
-            <li key={paso.titulo} className="rounded-xl border border-border p-5">
-              <span aria-hidden className="font-display text-sm text-accent">
-                {i + 1}
-              </span>
-              <h3 className="mt-1 font-display text-lg text-ink">{paso.titulo}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-muted">{paso.texto}</p>
-            </li>
-          ))}
-        </ol>
+        <p className="mt-1 text-sm text-ink-muted">
+          Del primer contacto a la entrega, con seguimiento claro en cada etapa.
+        </p>
+
+        {/* Timeline horizontal en escritorio, vertical en móvil — sin números decorativos (AGENTS.md §8) */}
+        <div className="mt-10">
+          {/* Vista móvil: vertical con línea continua */}
+          <ol className="relative space-y-8 border-l border-border pl-6 lg:hidden">
+            {pasos.map((paso) => (
+              <li key={paso.titulo} className="relative">
+                <span
+                  className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-accent bg-canvas"
+                  aria-hidden
+                />
+                <h3 className="font-display text-base text-ink">{paso.titulo}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{paso.texto}</p>
+              </li>
+            ))}
+          </ol>
+
+          {/* Vista escritorio: horizontal continuo con conectores */}
+          <ol className="hidden border-t border-border pt-4 lg:grid lg:grid-cols-4 lg:gap-8">
+            {pasos.map((paso) => (
+              <li key={paso.titulo} className="relative">
+                <span
+                  className="absolute -top-[23px] left-0 h-3.5 w-3.5 rounded-full border-2 border-accent bg-canvas"
+                  aria-hidden
+                />
+                <h3 className="font-display text-lg text-ink">{paso.titulo}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">{paso.texto}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
-      <section className="mt-14 rounded-2xl bg-canvas-sunken p-8 sm:p-10">
+      <section className="mt-20 rounded-2xl bg-canvas-sunken p-8 sm:p-10">
         <h2 className="font-display text-2xl text-ink">¿Empezamos?</h2>
         <p className="mt-2 max-w-prose text-sm text-ink-muted">
           Cuéntanos qué necesitas y te respondemos con una cotización.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/pedido"
-            className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink-inverted transition-colors hover:bg-accent-hover"
-          >
-            Pedir un trabajo
-          </Link>
+          <BotonAccion href="/pedido">Pedir un trabajo</BotonAccion>
           {whatsapp && (
-            <a
-              href={whatsapp}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas"
-            >
+            <BotonAccion href={whatsapp} variante="contorno" externo>
               Escribir por WhatsApp
-            </a>
+            </BotonAccion>
           )}
         </div>
       </section>

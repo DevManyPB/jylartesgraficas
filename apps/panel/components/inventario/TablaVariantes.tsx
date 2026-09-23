@@ -19,11 +19,11 @@ function EstadoStock({ stock, minimo }: { stock: number; minimo: number }) {
   const estado = estadoDeStock(stock, minimo);
   return (
     <span className="whitespace-nowrap tabular-nums">
-      <span className={cn("font-medium", estado === "agotado" ? "text-danger" : estado === "bajo" ? "text-warning" : "text-ink")}>
+      <span className={cn("font-medium", estado === "agotado" ? "text-danger" : estado === "bajo" ? "text-warning-text" : "text-ink")}>
         {stock}
       </span>
       {estado !== "ok" && (
-        <span className={cn("ml-1.5 text-xs", estado === "agotado" ? "text-danger" : "text-warning")}>
+        <span className={cn("ml-1.5 text-xs", estado === "agotado" ? "text-danger" : "text-warning-text")}>
           {estado === "agotado" ? "agotado" : "bajo mínimo"}
         </span>
       )}

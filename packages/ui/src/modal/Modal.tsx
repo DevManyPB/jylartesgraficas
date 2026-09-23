@@ -44,10 +44,19 @@ export function Modal({
   // Esta API es controlada desde afuera (sin Trigger), así que capturamos y
   // restauramos el foco nosotros — SPEC.md §5.3.
   const triggerRef = useRef<HTMLElement | null>(null);
+  const triggerInfoRef = useRef<{ id?: string; text?: string; ariaLabel?: string } | null>(null);
 
   useEffect(() => {
     if (open) {
-      triggerRef.current = document.activeElement as HTMLElement | null;
+      const el = document.activeElement as HTMLElement | null;
+      triggerRef.current = el;
+      if (el) {
+        triggerInfoRef.current = {
+          id: el.id || undefined,
+          text: el.textContent?.trim() || undefined,
+          ariaLabel: el.getAttribute("aria-label") || undefined,
+        };
+      }
       setAllowed(requestOpen(id));
     } else {
       release(id);
@@ -80,12 +89,83 @@ export function Modal({
           // es lo que les dice a los lectores de pantalla que el fondo no
           // está disponible mientras el modal esté abierto.
           aria-modal="true"
+          onOpenAutoFocus={(event) => {
+            const target = event.currentTarget as HTMLElement | null;
+            if (!target) return;
+
+            // 1. Respetar autofocus explícito si existe
+            const explicit = target.querySelector<HTMLElement>("[autofocus], [data-autofocus]");
+            if (explicit) {
+              event.preventDefault();
+              explicit.focus();
+              return;
+            }
+
+            // 2. En formularios, el foco va al primer campo y no a la ✕ (SPEC.md §5.3 / AGENTS.md §7)
+            const primerCampo = target.querySelector<HTMLElement>(
+              'input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
+            );
+            if (primerCampo) {
+              event.preventDefault();
+              primerCampo.focus();
+              return;
+            }
+
+            // 3. Si no hay campos, buscar un botón que no sea la ✕ de cerrar
+            const botones = Array.from(
+              target.querySelectorAll<HTMLElement>(
+                'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+              ),
+            );
+            const noCerrar = botones.find((el) => {
+              const esCerrar =
+                el.getAttribute("aria-label") === "Cerrar" ||
+                el.textContent?.trim() === "✕";
+              return !esCerrar;
+            });
+            if (noCerrar) {
+              event.preventDefault();
+              noCerrar.focus();
+            }
+          }}
           onEscapeKeyDown={(event) => {
             if (locked) event.preventDefault();
           }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
-            triggerRef.current?.focus();
+            // Restaurar foco al disparador original si aún existe en el DOM
+            if (triggerRef.current && document.body.contains(triggerRef.current)) {
+              triggerRef.current.focus();
+              return;
+            }
+
+            // Si el botón desapareció (ej. pantalla vacía que ahora muestra la lista),
+            // buscar un botón equivalente por id, aria-label o texto
+            const info = triggerInfoRef.current;
+            let reintento: HTMLElement | null = null;
+            if (info?.id) {
+              reintento = document.getElementById(info.id);
+            }
+            if (!reintento && info?.ariaLabel) {
+              reintento = document.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(info.ariaLabel)}"]`);
+            }
+            if (!reintento && info?.text) {
+              const candidatos = Array.from(document.querySelectorAll<HTMLElement>("main button, main a"));
+              reintento = candidatos.find((b) => b.textContent?.trim() === info.text) ?? null;
+            }
+            if (!reintento) {
+              const candidatos = Array.from(document.querySelectorAll<HTMLElement>("main button, main a"));
+              reintento =
+                candidatos.find((b) => /nuevo|agregar|crear/i.test(b.textContent || "")) ??
+                candidatos[0] ??
+                document.querySelector<HTMLElement>("main");
+            }
+            if (reintento) {
+              if (reintento.tagName.toLowerCase() === "main" && !reintento.hasAttribute("tabindex")) {
+                reintento.setAttribute("tabindex", "-1");
+              }
+              reintento.focus();
+            }
           }}
           onPointerDownOutside={(event) => {
             if (locked || !closeOnOutsideClick) event.preventDefault();

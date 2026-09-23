@@ -50,13 +50,22 @@ export default async function Tablero() {
           href="/pedidos?estado=en_produccion"
         />
         <Tarjeta
+          titulo="Pedidos listos"
+          valor="Ver"
+          pie="Esperan entrega o despacho"
+          href="/pedidos?estado=listo"
+        />
+        <Tarjeta
           titulo="Variantes bajo mínimo"
           valor={String(resumen.variantesBajoMinimo)}
           pie={resumen.variantesBajoMinimo > 0 ? "Hay que reponer" : "Inventario al día"}
           href="/inventario"
           tono={resumen.variantesBajoMinimo > 0 ? "aviso" : "normal"}
         />
-        {esAdmin ? (
+      </div>
+
+      {esAdmin && (
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <Tarjeta
             titulo="Por cobrar"
             valor={pesos.format(resumen.porCobrar)}
@@ -64,18 +73,14 @@ export default async function Tablero() {
             href="/facturas?estado=emitida"
             tono={resumen.porCobrar > 0 ? "aviso" : "normal"}
           />
-        ) : (
-          <Tarjeta titulo="Pedidos listos" valor="Ver" pie="Los que esperan entrega" href="/pedidos?estado=listo" />
-        )}
-        {esAdmin && (
           <Tarjeta
             titulo="Facturado este mes"
             valor={pesos.format(resumen.ingresosMes)}
             pie={comparacion(resumen.ingresosMes, resumen.ingresosMesAnterior)}
             href="/facturas"
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <section aria-labelledby="entregas" className="mt-10">
         <div className="flex flex-wrap items-baseline justify-between gap-3">

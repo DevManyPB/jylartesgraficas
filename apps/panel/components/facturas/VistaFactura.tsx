@@ -141,8 +141,8 @@ export function VistaFactura({ factura }: { factura: FacturaDelPanel }) {
         <dd className="border-t border-border pt-1 text-right font-display text-lg tabular-nums">{pesos.format(factura.total)}</dd>
         {factura.estado === "emitida" && (
           <>
-            <dt className="font-medium text-warning">Por cobrar</dt>
-            <dd className="text-right font-medium tabular-nums text-warning">{pesos.format(factura.saldo)}</dd>
+            <dt className="font-medium text-warning-text">Por cobrar</dt>
+            <dd className="text-right font-medium tabular-nums text-warning-text">{pesos.format(factura.saldo)}</dd>
           </>
         )}
       </dl>

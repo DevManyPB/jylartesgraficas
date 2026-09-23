@@ -52,11 +52,11 @@ export default async function Insumos({ searchParams }: PageProps<"/inventario/i
                     {i.proveedor && <p className="text-xs text-ink-muted">{i.proveedor}</p>}
                   </div>
                   <span className="text-right text-sm tabular-nums">
-                    <span className={cn(estado === "agotado" ? "text-danger" : estado === "bajo" ? "text-warning" : "text-ink")}>
+                    <span className={cn(estado === "agotado" ? "text-danger" : estado === "bajo" ? "text-warning-text" : "text-ink")}>
                       {i.stock} {i.unidad}
                     </span>
                     {estado !== "ok" && (
-                      <span className={cn("block text-xs", estado === "agotado" ? "text-danger" : "text-warning")}>
+                      <span className={cn("block text-xs", estado === "agotado" ? "text-danger" : "text-warning-text")}>
                         {estado === "agotado" ? "agotado" : "bajo mínimo"}
                       </span>
                     )}

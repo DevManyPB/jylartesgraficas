@@ -70,7 +70,7 @@ export function ListaProductos({ productos, esAdmin }: { productos: ProductoDelP
             <div className="text-right text-sm tabular-nums">
               <span className={cn(p.stockTotal === 0 ? "text-danger" : "text-ink")}>{p.stockTotal} en stock</span>
               {p.variantesBajoMinimo > 0 && (
-                <span className="block text-xs text-warning">
+                <span className="block text-xs text-warning-text">
                   {p.variantesBajoMinimo === 1 ? "1 variante" : `${p.variantesBajoMinimo} variantes`} bajo mínimo
                 </span>
               )}

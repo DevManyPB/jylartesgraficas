@@ -9,8 +9,8 @@ import { cn } from "@jyl/ui";
  */
 const TONO: Record<EstadoPedido, string> = {
   recibido: "bg-accent-soft text-accent",
-  en_revision: "bg-warning-soft text-warning",
-  cotizado: "bg-warning-soft text-warning",
+  en_revision: "bg-warning-soft text-warning-text",
+  cotizado: "bg-warning-soft text-warning-text",
   aprobado: "bg-canvas-sunken text-ink",
   en_produccion: "bg-canvas-sunken text-ink",
   listo: "bg-success-soft text-success",
