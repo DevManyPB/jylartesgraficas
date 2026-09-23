@@ -1,7 +1,6 @@
 import { CATEGORIAS_SERVICIO, miniaturaDesdeUrl, NOMBRE_CATEGORIA, rangoDePrecio } from "@jyl/core";
 import Link from "next/link";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
-import { ParticulasJYL } from "@/components/animacion/ParticulasJYL";
 import { PastillaArea } from "@/components/cmyk/areas";
 import { Mapa } from "@/components/contacto/Mapa";
 import { EstadoAhora } from "@/components/horario/EstadoAhora";
@@ -68,31 +67,25 @@ export default async function Home() {
         <PliegoImprenta />
 
         <div className="relative mx-auto w-full max-w-content">
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
-            <div className="lg:col-span-7">
-              {/* El único momento orquestado del sitio (SPEC.md §9): el texto
-                  entra escalonado una vez, al cargar. Con prefers-reduced-motion
-                  aparece ya colocado. */}
-              <h1 className="registro animate-entrada-1 font-display text-5xl motion-reduce:animate-none sm:text-display lg:text-display-lg">
-                JYL Artes Gráficos
-              </h1>
-              <p className="mt-6 max-w-md animate-entrada-2 text-base text-ink-inverted/70 motion-reduce:animate-none">
-                Artes gráficas, desarrollo web y servicios técnicos.
-              </p>
-              <div className="mt-10 flex animate-entrada-3 flex-wrap gap-3 motion-reduce:animate-none">
-                <BotonAccion href="/pedido" tamano="grande">
-                  Pedir un trabajo
+          <div className="lg:w-7/12">
+            {/* El único momento orquestado del sitio (SPEC.md §9): el texto
+                entra escalonado una vez, al cargar. Con prefers-reduced-motion
+                aparece ya colocado. */}
+            <h1 className="registro animate-entrada-1 font-display text-5xl motion-reduce:animate-none sm:text-display lg:text-display-lg">
+              JYL Artes Gráficos
+            </h1>
+            <p className="mt-6 max-w-md animate-entrada-2 text-base text-ink-inverted/70 motion-reduce:animate-none">
+              Artes gráficas, desarrollo web y servicios técnicos.
+            </p>
+            <div className="mt-10 flex animate-entrada-3 flex-wrap gap-3 motion-reduce:animate-none">
+              <BotonAccion href="/pedido" tamano="grande">
+                Pedir un trabajo
+              </BotonAccion>
+              {whatsapp && (
+                <BotonAccion href={whatsapp} variante="claro" tamano="grande" externo>
+                  Escribir por WhatsApp
                 </BotonAccion>
-                {whatsapp && (
-                  <BotonAccion href={whatsapp} variante="claro" tamano="grande" externo>
-                    Escribir por WhatsApp
-                  </BotonAccion>
-                )}
-              </div>
-            </div>
-
-            <div className="hidden lg:col-span-5 lg:flex lg:items-center lg:justify-center">
-              <ParticulasJYL />
+              )}
             </div>
           </div>
           <div className="mt-8 flex animate-entrada-4 flex-wrap items-center justify-between gap-4 motion-reduce:animate-none">

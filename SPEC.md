@@ -529,7 +529,7 @@ El sitio de un estudio gráfico se juzga por cómo se ve. Un diseño genérico e
 
 **Movimiento.** Un momento orquestado en la carga de inicio. De ahí en adelante, el movimiento solo responde a acciones del usuario y muestra qué cambió: abrir una pieza, avanzar un paso, abrir un modal. Sin animaciones de entrada en cada sección al hacer scroll.
 
-**Excepción: el héroe del inicio vive** (decidido el 22 de septiembre de 2026). Es el único sitio con movimiento continuo: las partículas tipográficas ondulan y, si nadie las toca, un pincel invisible las recorre; y en el hueco superior la pluma de Bézier dibuja formas nuevas, generadas al azar, una tras otra. Se detiene fuera de pantalla y con la pestaña oculta, y con `prefers-reduced-motion` queda quieto. Fuera del héroe sigue la regla general.
+**Excepción: el héroe del inicio vive** (decidido el 22 de septiembre de 2026). Es el único sitio con movimiento continuo: en el hueco superior la pluma de Bézier dibuja formas nuevas, generadas al azar, una tras otra. (Las partículas tipográficas se quitaron el 23 de septiembre de 2026: no aportaban.) Se detiene fuera de pantalla y con la pestaña oculta, y con `prefers-reduced-motion` queda quieto. Fuera del héroe sigue la regla general.
 
 **Panel.** Densidad de información sobre aire decorativo. El administrador entra a trabajar. Tipografía más pequeña, filas compactas, teclado utilizable.
 
