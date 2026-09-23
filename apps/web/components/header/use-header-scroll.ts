@@ -72,18 +72,28 @@ export function useHeaderScroll(menuOpen: boolean) {
       const progreso = recorrido > 0 ? Math.min(y / recorrido, 1) : 0;
       document.body.style.setProperty("--progreso-scroll", String(progreso));
 
+      // Arriba del todo el header siempre se ve, sin esperar al umbral.
+      if (y <= HEADER_HEIGHT_DESKTOP) {
+        lastY = y;
+        delete document.body.dataset.headerHidden;
+        return;
+      }
+
       // Esconder el header sí necesita umbral: si no, tiembla con el rebote
       // del trackpad y con el rebote elástico del móvil.
       const delta = y - lastY;
       if (Math.abs(delta) < SCROLL_DELTA) return;
       lastY = y;
 
-      if (y <= HEADER_HEIGHT_DESKTOP || delta < 0) {
-        delete document.body.dataset.headerHidden;
-      } else {
-        document.body.dataset.headerHidden = "";
-      }
+      if (delta < 0) delete document.body.dataset.headerHidden;
+      else document.body.dataset.headerHidden = "";
     };
+
+    // Una página nueva empieza con el header a la vista. El estado vive en
+    // <body>, que no cambia al navegar: sin esto, si en la página anterior se
+    // había escondido al bajar (los servicios del inicio llevan a /pedido),
+    // la nueva abría sin header hasta que se subiera.
+    delete document.body.dataset.headerHidden;
 
     const onScroll = () => {
       if (frame) return;
