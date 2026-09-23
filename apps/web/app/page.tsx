@@ -6,6 +6,7 @@ import { Mapa } from "@/components/contacto/Mapa";
 import { EstadoAhora } from "@/components/horario/EstadoAhora";
 import { IconoCodigo, IconoLlave, IconoPincel } from "@/components/iconos/Iconos";
 import { Pieza } from "@/components/inicio/Pieza";
+import { PliegoImprenta } from "@/components/inicio/PliegoImprenta";
 import { configuracionPublica, productosPublicos, proyectosPublicos, serviciosPublicos } from "@/datos/cache";
 import { enlaceWhatsapp, pesos } from "@/lib/formato";
 
@@ -70,6 +71,8 @@ export default async function Home() {
             />
           </>
         )}
+
+        <PliegoImprenta />
 
         <div className="relative mx-auto w-full max-w-content">
           {/* El único momento orquestado del sitio (SPEC.md §9): el texto

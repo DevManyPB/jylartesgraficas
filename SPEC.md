@@ -209,7 +209,7 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 
 ### 4.3 Inicio
 
-1. Pieza destacada a pantalla completa, con el nombre del estudio y una sola acción: *Pedir un trabajo*.
+1. Pieza destacada a pantalla completa, con el nombre del estudio y una sola acción: *Pedir un trabajo*. Encima de la foto (o sola, si aún no hay pieza destacada) va un pliego de imprenta dibujado en líneas finas: cuadrícula de mesa de corte, marcas de corte en las esquinas del área de contenido, cruces de registro y una tira de control de tono. Es estático y sin degradados.
 2. Rejilla de portafolio reciente (6–8 piezas), con las proporciones reales de cada pieza, sin recortes cuadrados forzados.
 3. Bloque de servicios, agrupado por las tres áreas.
 4. Franja de productos: camisetas, lapiceros y demás, con enlace a la tienda.
