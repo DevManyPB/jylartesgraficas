@@ -146,3 +146,63 @@
     transform: translateY(10px);
   }
 }
+
+/**
+ * El pliego del héroe se «imprime» al cargar — parte del único momento
+ * orquestado del inicio (SPEC.md §9), a la vez que entra el texto:
+ * la cuadrícula aparece, las marcas de corte se trazan, las cruces de
+ * registro giran hasta su sitio y la tira de control se llena parche a
+ * parche. Los retrasos van en línea, por pieza. Después, nada se mueve solo.
+ *
+ * Las trazas usan `pathLength="1"`: así un solo `stroke-dasharray: 1` sirve
+ * para dibujar cualquier trazo, mida lo que mida.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .pliego-cuadricula {
+    animation: pliego-aparece 1400ms ease-out both;
+  }
+
+  .pliego-traza {
+    stroke-dasharray: 1;
+    animation: pliego-traza 700ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+
+  .pliego-registro {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pliego-registro 900ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+
+  .pliego-parche {
+    transform-origin: bottom;
+    animation: pliego-parche 320ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+}
+
+@keyframes pliego-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pliego-traza {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pliego-registro {
+  from {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.6);
+  }
+}
+
+@keyframes pliego-parche {
+  from {
+    transform: scaleY(0);
+  }
+}
