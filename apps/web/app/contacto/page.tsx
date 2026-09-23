@@ -1,12 +1,12 @@
-import { DIAS_SEMANA, NOMBRE_DIA } from "@jyl/core";
 import type { Metadata } from "next";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Mapa } from "@/components/contacto/Mapa";
 import { EstadoAhora } from "@/components/horario/EstadoAhora";
-import { IconoCorreo, IconoReloj, IconoTelefono, IconoUbicacion } from "@/components/iconos/Iconos";
+import { TablaHorarios } from "@/components/horario/TablaHorarios";
+import { IconoCorreo, IconoReloj, IconoTelefono, IconoUbicacion, IconoWhatsapp } from "@/components/iconos/Iconos";
 import { NegocioLocal } from "@/components/seo/DatosEstructurados";
 import { configuracionPublica } from "@/datos/cache";
-import { enlaceWhatsapp, franjaDelDia } from "@/lib/formato";
+import { enlaceWhatsapp, franjaDelDia, lineaDeDireccion } from "@/lib/formato";
 
 export const runtime = "nodejs";
 
@@ -20,7 +20,7 @@ export default async function Contacto() {
   const configuracion = await configuracionPublica();
   const { direccion, horarios } = configuracion;
   const whatsapp = enlaceWhatsapp(configuracion.whatsapp, "Hola, quiero hacer una consulta.");
-  const lineaDireccion = [direccion.linea, direccion.barrio, direccion.ciudad].filter(Boolean).join(", ");
+  const lineaDireccion = lineaDeDireccion(direccion);
   const hayMapa = direccion.lat !== null && direccion.lng !== null;
   const comoLlegar = hayMapa
     ? `https://www.google.com/maps/dir/?api=1&destination=${direccion.lat},${direccion.lng}`
@@ -28,13 +28,25 @@ export default async function Contacto() {
       ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lineaDireccion)}`
       : null;
 
+  // Cada forma de contacto es una fila que se pulsa entera: escribir, llamar
+  // o mandar un correo, sin tener que copiar el dato.
   const contactos = [
+    whatsapp
+      ? {
+          etiqueta: "WhatsApp",
+          valor: "Escríbenos",
+          href: whatsapp,
+          externo: true,
+          icono: <IconoWhatsapp className="h-5 w-5" />,
+        }
+      : null,
     configuracion.telefono
       ? {
           etiqueta: "Teléfono",
           valor: configuracion.telefono,
           href: `tel:${configuracion.telefono.replace(/\s/g, "")}`,
-          icono: <IconoTelefono className="h-4 w-4" />,
+          externo: false,
+          icono: <IconoTelefono className="h-5 w-5" />,
         }
       : null,
     configuracion.email
@@ -42,7 +54,8 @@ export default async function Contacto() {
           etiqueta: "Correo",
           valor: configuracion.email,
           href: `mailto:${configuracion.email}`,
-          icono: <IconoCorreo className="h-4 w-4" />,
+          externo: false,
+          icono: <IconoCorreo className="h-5 w-5" />,
         }
       : null,
   ].filter((c) => c !== null);
@@ -75,21 +88,25 @@ export default async function Contacto() {
               <h2 id="datos" className="font-display text-xl text-ink">
                 Datos
               </h2>
-              <dl className="mt-3 flex flex-col gap-2 text-sm">
+              <ul className="mt-3 flex flex-col">
                 {contactos.map((contacto) => (
-                  <div key={contacto.etiqueta} className="flex items-center gap-3">
-                    <dt className="flex w-24 shrink-0 items-center gap-2 text-ink-muted">
-                      {contacto.icono}
-                      {contacto.etiqueta}
-                    </dt>
-                    <dd>
-                      <a href={contacto.href} className="text-ink underline-offset-4 hover:underline">
-                        {contacto.valor}
-                      </a>
-                    </dd>
-                  </div>
+                  <li key={contacto.etiqueta}>
+                    <a
+                      href={contacto.href}
+                      {...(contacto.externo ? { target: "_blank", rel: "noreferrer" } : {})}
+                      className="group flex items-center gap-4 border-b border-border px-1 py-3 transition-colors hover:bg-canvas-sunken focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-ink transition-colors group-hover:border-accent group-hover:text-accent">
+                        {contacto.icono}
+                      </span>
+                      <span className="flex min-w-0 flex-col">
+                        <span className="text-xs text-ink-muted">{contacto.etiqueta}</span>
+                        <span className="truncate text-sm font-medium text-ink">{contacto.valor}</span>
+                      </span>
+                    </a>
+                  </li>
                 ))}
-              </dl>
+              </ul>
             </section>
           )}
 
@@ -104,14 +121,11 @@ export default async function Contacto() {
                 {direccion.referencia && <span className="block text-ink-muted">{direccion.referencia}</span>}
               </address>
               {comoLlegar && (
-                <a
-                  href={comoLlegar}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
-                >
-                  Cómo llegar
-                </a>
+                <div className="mt-4">
+                  <BotonAccion href={comoLlegar} variante="contorno" externo>
+                    Cómo llegar
+                  </BotonAccion>
+                </div>
               )}
             </section>
           )}
@@ -126,18 +140,9 @@ export default async function Contacto() {
                 <div className="mt-3">
                   <EstadoAhora horarios={horarios} />
                 </div>
-                <dl className="mt-3 flex flex-col gap-1 text-sm">
-                {DIAS_SEMANA.map((dia) => {
-                  const horario = horarios.find((h) => h.dia === dia);
-                  const franja = horario ? franjaDelDia(horario) : null;
-                  return (
-                    <div key={dia} className="flex justify-between gap-4 border-b border-border py-1 last:border-0">
-                      <dt className="text-ink-muted">{NOMBRE_DIA[dia]}</dt>
-                      <dd className="tabular-nums text-ink">{franja ?? "—"}</dd>
-                    </div>
-                  );
-                })}
-                </dl>
+                <div className="mt-3">
+                  <TablaHorarios horarios={horarios} />
+                </div>
               </>
             ) : (
               <p className="mt-3 text-sm text-ink-muted">Escríbenos por WhatsApp y te decimos si estamos abiertos.</p>
@@ -167,8 +172,18 @@ export default async function Contacto() {
           )}
         </div>
 
+        {/* En escritorio el mapa acompaña la columna al hacer scroll: la de
+            la izquierda es mucho más larga y el mapa se quedaba arriba, con
+            un hueco debajo. */}
         {hayMapa ? (
-          <Mapa lat={direccion.lat!} lng={direccion.lng!} titulo="JYL Artes Gráficos" />
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <Mapa
+              lat={direccion.lat!}
+              lng={direccion.lng!}
+              titulo="JYL Artes Gráficos"
+              alto="h-80 sm:h-96 lg:h-[calc(100vh-9rem)] lg:max-h-[44rem]"
+            />
+          </div>
         ) : (
           <div className="flex h-72 items-center justify-center rounded-xl border border-dashed border-border bg-canvas-sunken p-6 text-center text-sm text-ink-muted sm:h-96">
             Estamos actualizando la ubicación en el mapa. Mientras tanto, escríbenos y te indicamos cómo llegar.

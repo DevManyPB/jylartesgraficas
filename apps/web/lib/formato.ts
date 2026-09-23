@@ -57,3 +57,20 @@ const fechaLarga = new Intl.DateTimeFormat("es-CO", { dateStyle: "long", timeZon
 export function formatearFecha(iso: string | null): string {
   return iso ? mismoEspacio(fechaLarga.format(new Date(iso))) : "—";
 }
+
+/**
+ * "Mz 99 Cs 4, El Pando, Santa Marta": la dirección en una línea, sin repetir
+ * un dato que ya está dentro de otro. Si en Configuración el barrio se
+ * escribió también dentro de la dirección —o es la misma línea copiada—, se
+ * salta en vez de salir dos veces.
+ */
+export function lineaDeDireccion(direccion: { linea: string; barrio: string; ciudad: string }): string {
+  const partes: string[] = [];
+  for (const parte of [direccion.linea, direccion.barrio, direccion.ciudad]) {
+    const limpia = parte.trim();
+    if (!limpia) continue;
+    const yaEsta = partes.some((previa) => previa.toLowerCase().includes(limpia.toLowerCase()));
+    if (!yaEsta) partes.push(limpia);
+  }
+  return partes.join(", ");
+}

@@ -8,7 +8,7 @@ import { EstadoAhora } from "@/components/horario/EstadoAhora";
 import { Pieza } from "@/components/inicio/Pieza";
 import { PliegoImprenta } from "@/components/inicio/PliegoImprenta";
 import { configuracionPublica, productosPublicos, proyectosPublicos, serviciosPublicos } from "@/datos/cache";
-import { enlaceWhatsapp, pesos } from "@/lib/formato";
+import { enlaceWhatsapp, lineaDeDireccion, pesos } from "@/lib/formato";
 
 export const runtime = "nodejs";
 
@@ -39,7 +39,7 @@ export default async function Home() {
   const [principal, ...acompanan] = piezas.slice(1);
   const whatsapp = enlaceWhatsapp(configuracion.whatsapp, "Hola, quiero preguntar por un trabajo.");
   const { direccion, horarios } = configuracion;
-  const lineaDireccion = [direccion.linea, direccion.barrio, direccion.ciudad].filter(Boolean).join(", ");
+  const lineaDireccion = lineaDeDireccion(direccion);
   const hayMapa = direccion.lat !== null && direccion.lng !== null;
   const hayHorarios = horarios.some((h) => !h.cerrado && h.abre && h.cierra);
 

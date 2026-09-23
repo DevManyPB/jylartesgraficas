@@ -15,9 +15,14 @@ interface MapaProps {
 
 /**
  * Mapa con Leaflet y OpenStreetMap — SPEC.md §2.6: nada de Google Maps, que
- * exige cuenta de facturación. El marcador es un punto dibujado, para no
- * depender de las imágenes que Leaflet trae y que un empaquetador suele
- * romper.
+ * exige cuenta de facturación.
+ *
+ * Nocturno (SPEC.md §4.6): las teselas de OpenStreetMap se oscurecen con un
+ * filtro de CSS (clase `mapa-nocturno` en globals.css), así que no hace falta
+ * otro proveedor de mapas ni otra cuenta. Lo único con color es el marcador:
+ * una cruz de registro con las tres tintas corridas, que encajan al pasar el
+ * ratón, como los títulos del sitio. Está dibujado en SVG, sin las imágenes
+ * que Leaflet trae y que un empaquetador suele romper.
  *
  * La librería no se descarga hasta que el mapa entra en pantalla (SPEC.md
  * §4.6). En el inicio eso importa: el mapa está al final de la página y
@@ -26,6 +31,20 @@ interface MapaProps {
  * El mapa es un complemento: la dirección, el teléfono y "Cómo llegar" están
  * en la página como texto y funcionan sin él.
  */
+/**
+ * La cruz de registro del marcador. Leaflet la recibe como HTML, así que los
+ * colores van como clases de Tailwind (que sí las encuentra en este archivo)
+ * y no escritos a mano. Tres círculos corridos —cian, amarillo, magenta—, el
+ * punto magenta y la cruz en claro.
+ */
+const PIN_REGISTRO = `<svg viewBox="0 0 44 44" width="44" height="44" class="pin-registro" aria-hidden="true">
+  <circle cx="22" cy="22" r="11" fill="none" stroke-width="2" class="pin-capa pin-cian stroke-tinta-cian" />
+  <circle cx="22" cy="22" r="11" fill="none" stroke-width="2" class="pin-capa pin-amarillo stroke-tinta-amarillo" />
+  <circle cx="22" cy="22" r="11" fill="none" stroke-width="2" class="stroke-accent" />
+  <circle cx="22" cy="22" r="4.5" class="fill-accent" />
+  <path d="M22 2V42M2 22H42" stroke-width="1.2" class="stroke-ink-inverted" />
+</svg>`;
+
 export function Mapa({ lat, lng, titulo, alto = "h-72 sm:h-96" }: MapaProps) {
   const contenedor = useRef<HTMLDivElement>(null);
 
@@ -61,9 +80,9 @@ export function Mapa({ lat, lng, titulo, alto = "h-72 sm:h-96" }: MapaProps) {
         alt: titulo,
         icon: L.divIcon({
           className: "",
-          html: '<span style="display:block;width:18px;height:18px;border-radius:9999px;background:#D6127A;box-shadow:0 0 0 4px rgba(214,18,122,.25)"></span>',
-          iconSize: [18, 18],
-          iconAnchor: [9, 9],
+          html: PIN_REGISTRO,
+          iconSize: [44, 44],
+          iconAnchor: [22, 22],
         }),
       }).addTo(mapa);
     }
@@ -82,7 +101,7 @@ export function Mapa({ lat, lng, titulo, alto = "h-72 sm:h-96" }: MapaProps) {
       ref={contenedor}
       role="img"
       aria-label={`Mapa con la ubicación de ${titulo}`}
-      className={cn("w-full overflow-hidden rounded-xl border border-border bg-canvas-sunken", alto)}
+      className={cn("mapa-nocturno w-full overflow-hidden rounded-xl border border-ink bg-canvas-dark", alto)}
     />
   );
 }

@@ -288,3 +288,64 @@
     }
   }
 }
+
+/**
+ * Mapa nocturno — SPEC.md §4.6. Las teselas de OpenStreetMap se invierten y
+ * se pasan a gris: calles claras sobre fondo negro, como el héroe del inicio,
+ * sin cambiar de proveedor de mapas. Los controles de Leaflet se visten igual
+ * para que no queden dos cajas blancas encima.
+ */
+@layer components {
+  .mapa-nocturno.leaflet-container {
+    background: theme("colors.canvas-dark");
+    font-family: inherit;
+  }
+
+  .mapa-nocturno .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) grayscale(1) brightness(0.8) contrast(1.15);
+  }
+
+  .mapa-nocturno .leaflet-bar {
+    border: 1px solid theme("colors.ink-inverted / 20%");
+  }
+
+  .mapa-nocturno .leaflet-bar a {
+    background: theme("colors.ink");
+    color: theme("colors.ink-inverted");
+    border-bottom-color: theme("colors.ink-inverted / 20%");
+  }
+
+  .mapa-nocturno .leaflet-bar a:hover {
+    background: theme("colors.canvas-dark");
+  }
+
+  .mapa-nocturno .leaflet-control-attribution {
+    background: theme("colors.canvas-dark / 75%");
+    color: theme("colors.ink-inverted / 75%");
+  }
+
+  .mapa-nocturno .leaflet-control-attribution a {
+    color: theme("colors.ink-inverted");
+    text-decoration: underline;
+  }
+
+  /* El marcador: dos de las tres tintas corridas, que encajan al pasar el
+     ratón por encima — el mismo gesto de los títulos con registro. */
+  .pin-registro .pin-cian {
+    transform: translate(-2.5px, 1.5px);
+  }
+
+  .pin-registro .pin-amarillo {
+    transform: translate(1.5px, 2.5px);
+  }
+
+  .leaflet-marker-icon:hover .pin-capa {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pin-registro .pin-capa {
+      transition: transform 350ms cubic-bezier(0.2, 0.65, 0.3, 1);
+    }
+  }
+}

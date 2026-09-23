@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { configuracionPublica } from "@/datos/cache";
-import { enlaceWhatsapp } from "@/lib/formato";
+import { enlaceWhatsapp, lineaDeDireccion } from "@/lib/formato";
 
 /**
  * Pie de página — SPEC.md §4.2: el header solo lleva cuatro destinos y el
@@ -10,9 +10,7 @@ import { enlaceWhatsapp } from "@/lib/formato";
 export async function SiteFooter() {
   const configuracion = await configuracionPublica();
   const whatsapp = enlaceWhatsapp(configuracion.whatsapp);
-  const direccion = [configuracion.direccion.linea, configuracion.direccion.barrio, configuracion.direccion.ciudad]
-    .filter(Boolean)
-    .join(", ");
+  const direccion = lineaDeDireccion(configuracion.direccion);
   const redes = Object.entries(configuracion.redes).filter(([, url]) => url);
 
   return (

@@ -42,7 +42,8 @@ interface Estado {
   detalle: string;
 }
 
-function calcular(horarios: Horario[], ahora: Date): Estado | null {
+/** El día y los minutos desde medianoche en Bogotá, o null si Intl falla. */
+export function ahoraEnBogota(ahora: Date): { dia: DiaSemana; minutos: number } | null {
   const formato = new Intl.DateTimeFormat("en-US", {
     timeZone: ZONA,
     weekday: "long",
@@ -56,7 +57,13 @@ function calcular(horarios: Horario[], ahora: Date): Estado | null {
   const dia = DIA_DESDE_INTL[valor("weekday")];
   if (!dia) return null;
   // Intl escribe la medianoche como "24" en algunas versiones de ICU.
-  const minutos = (Number(valor("hour")) % 24) * 60 + Number(valor("minute"));
+  return { dia, minutos: (Number(valor("hour")) % 24) * 60 + Number(valor("minute")) };
+}
+
+function calcular(horarios: Horario[], ahora: Date): Estado | null {
+  const momento = ahoraEnBogota(ahora);
+  if (!momento) return null;
+  const { dia, minutos } = momento;
 
   const hoy = horarios.find((h) => h.dia === dia);
   if (hoy && !hoy.cerrado) {

@@ -241,11 +241,11 @@ Reglas: un pedido enviado nunca se pierde; si fallan las imágenes, el pedido se
 
 ### 4.6 Ubicación y contacto
 
-- Dirección completa, barrio y ciudad.
-- Mapa con Leaflet y OpenStreetMap, con un marcador de la identidad visual del estudio. Carga diferida: no se descarga la librería del mapa hasta que la sección entra en pantalla.
+- Dirección completa, barrio y ciudad, en una línea y sin repetir un dato que ya esté dentro de otro.
+- Mapa con Leaflet y OpenStreetMap, **nocturno**: las teselas se oscurecen con un filtro de CSS, sin otro proveedor. El marcador es una cruz de registro con las tintas corridas, que encajan al pasar el ratón (§9). Carga diferida: no se descarga la librería del mapa hasta que la sección entra en pantalla.
 - Botón *Cómo llegar* que abre la app de mapas del teléfono.
-- Horario de atención por día, con indicador de abierto o cerrado calculado en el cliente.
-- Teléfono y correo como enlaces pulsables.
+- Horario de atención por día, con indicador de abierto o cerrado y el día de hoy marcado, calculados en el cliente con la hora de Bogotá.
+- WhatsApp, teléfono y correo como filas que se pulsan enteras. En escritorio, el mapa acompaña la columna al hacer scroll.
 - Punto de referencia en texto. En muchos barrios sirve más que la dirección.
 
 Todo esto sale de `settings/general`, nunca escrito en el código.
