@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { AccountButton, type IdentidadHeader } from "./AccountButton";
 import { Marca } from "./Marca";
 import { MobileMenu } from "./MobileMenu";
@@ -17,66 +17,56 @@ interface SiteHeaderProps {
   contacto: { whatsapp: string | null; telefono: string; email: string; redes: [string, string][] };
 }
 
-/** Largo de la línea que marca la página: corta, como pide SPEC.md §4.2. */
-const ANCHO_LINEA = 16;
+/** Opacidad del fondo que sigue al ratón: un velo del color del texto. */
+const VELO = "0.1";
 
 /**
- * SPEC.md §4.2. El estado visual lo decide el CSS a partir de los atributos
- * que `useHeaderScroll` escribe en <body>:
- * - sobre el héroe y sin haberlo pasado → transparente, texto claro
- * - en cualquier otro caso → sólido con desenfoque y línea inferior de 1px
+ * SPEC.md §4.2 — barra flotante.
+ *
+ * Se despega de los bordes de la ventana: una cápsula con fondo translúcido,
+ * desenfoque y borde de 1 px, sin sombra. Antes era texto suelto sobre la
+ * página y se veía plano; la cápsula le da un objeto propio al header sin
+ * tapar el trabajo que hay detrás.
+ *
+ * El estado visual lo decide el CSS a partir de los atributos que
+ * `useHeaderScroll` escribe en <body>:
+ * - sobre el héroe → cápsula clara casi transparente y texto claro
+ * - en cualquier otro caso → cápsula blanca translúcida y texto en tinta
  */
 export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const enlacesRef = useRef<HTMLDivElement>(null);
-  const lineaRef = useRef<HTMLSpanElement>(null);
+  const fondoRef = useRef<HTMLSpanElement>(null);
   useHeaderScroll(menuOpen);
 
   /*
-    Una sola línea para toda la navegación. Descansa bajo la página actual
-    y, al pasar el ratón o el foco por otro enlace, se desliza hasta él; al
-    salir, vuelve. Antes cada enlace tenía su rayita y nada decía que eran
-    un mismo menú.
+    Un fondo suave se desliza detrás del enlace que se apunta o se enfoca, y
+    se desvanece al salir de la navegación. Dice «esto se pulsa» y une los
+    cuatro enlaces en un solo objeto.
 
-    Se mueve escribiendo el estilo directamente y no con estado de React:
-    así pasar el ratón no re-renderiza el header, y la animación es solo un
-    `transform`, que lleva el compositor.
+    Se mueve escribiendo el estilo directamente, sin estado de React: pasar
+    el ratón no re-renderiza el header.
   */
-  const moverLinea = useCallback((enlace: HTMLElement | null) => {
-    const linea = lineaRef.current;
-    if (!linea) return;
-    if (!enlace) {
-      linea.style.opacity = "0";
-      return;
+  const apuntar = useCallback((enlace: HTMLElement) => {
+    const fondo = fondoRef.current;
+    if (!fondo) return;
+    const oculto = fondo.style.opacity !== VELO;
+    // Si estaba oculto, aparece ya en su sitio en vez de llegar deslizando
+    // desde el último enlace que se apuntó.
+    if (oculto) fondo.style.transition = "none";
+    fondo.style.width = `${enlace.offsetWidth}px`;
+    fondo.style.transform = `translateX(${enlace.offsetLeft}px)`;
+    if (oculto) {
+      void fondo.offsetWidth;
+      fondo.style.transition = "";
     }
-    const x = enlace.offsetLeft + enlace.offsetWidth / 2 - ANCHO_LINEA / 2;
-    linea.style.transform = `translateX(${x}px)`;
-    linea.style.opacity = "1";
+    fondo.style.opacity = VELO;
   }, []);
 
-  const volverALaActual = useCallback(() => {
-    moverLinea(enlacesRef.current?.querySelector<HTMLElement>('[aria-current="page"]') ?? null);
-  }, [moverLinea]);
-
-  useEffect(() => {
-    volverALaActual();
-    // La primera colocación no se anima: la línea tiene que nacer en su
-    // sitio, no llegar volando desde la izquierda. A partir de aquí sí, y
-    // al cambiar de página se desliza hasta la nueva, que es lo que cambió.
-    const frame = requestAnimationFrame(() => {
-      if (lineaRef.current) lineaRef.current.dataset.lista = "";
-    });
-    // La tipografía cambia el ancho de los enlaces al cargar, y la ventana
-    // al redimensionar: en los dos casos hay que volver a medir.
-    void document.fonts?.ready.then(volverALaActual);
-    window.addEventListener("resize", volverALaActual);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", volverALaActual);
-    };
-  }, [pathname, volverALaActual]);
+  const soltar = useCallback(() => {
+    if (fondoRef.current) fondoRef.current.style.opacity = "0";
+  }, []);
 
   return (
     <>
@@ -87,34 +77,23 @@ export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
         de ese flujo, así que sin esto se quedaba 15 px más ancho que la
         página y el contenido saltaba. SPEC.md §5.3 pide justo que no salte.
       */}
-      <header className="fixed inset-x-0 top-0 z-50 pr-[var(--removed-body-scroll-bar-size,0px)] transition-transform duration-300 motion-reduce:transition-none group-[[data-header-hidden]]:-translate-y-full">
-        {/* Capa sólida. Sin sombra: el SPEC solo admite la línea de 1px. */}
+      <header className="fixed inset-x-0 top-3 z-50 px-3 pr-[calc(0.75rem+var(--removed-body-scroll-bar-size,0px))] transition-transform duration-300 ease-entrada motion-reduce:transition-none group-[[data-header-hidden]]:-translate-y-[calc(100%+1.5rem)] sm:px-4 sm:pr-[calc(1rem+var(--removed-body-scroll-bar-size,0px))]">
         <div
-          aria-hidden
-          className="absolute inset-0 border-b border-border bg-canvas/80 backdrop-blur-md transition-opacity duration-300 motion-reduce:transition-none group-[&:has([data-hero]):not([data-past-hero])]:opacity-0"
-        />
-
-        {/* Cuánto se lleva leído. Se escala con una variable que el hook de
-            scroll actualiza en su mismo fotograma, así que la anima el
-            compositor y no repinta nada. En el color del texto y no en el
-            de acento: «Entrar» es el único acento del header (§4.2). */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-[var(--progreso-scroll,0)] bg-ink opacity-30 transition-opacity duration-300 group-[&:has([data-hero]):not([data-past-hero])]:opacity-0"
-        />
-
-        <div className="relative mx-auto flex h-16 w-full max-w-content items-center justify-between px-6 text-ink transition-[color,height] duration-300 motion-reduce:transition-none group-[&:has([data-hero]):not([data-past-hero])]:text-ink-inverted sm:h-20 sm:group-[[data-desplazado]]:h-16 lg:px-8">
+          // Sobre el héroe (y sin haberlo pasado), cápsula casi transparente
+          // con texto claro. Las clases van escritas enteras: Tailwind no ve
+          // las que se arman con plantillas.
+          className="relative mx-auto flex h-14 w-full max-w-content items-center justify-between overflow-hidden rounded-full border border-border bg-canvas/80 pl-5 pr-2 text-ink backdrop-blur-md transition-[color,background-color,border-color,height] duration-300 motion-reduce:transition-none group-[&:has([data-hero]):not([data-past-hero])]:border-ink-inverted/15 group-[&:has([data-hero]):not([data-past-hero])]:bg-ink-inverted/5 group-[&:has([data-hero]):not([data-past-hero])]:text-ink-inverted sm:h-16 sm:group-[[data-desplazado]]:h-14 md:pl-6"
+        >
           <Marca />
 
-          <nav aria-label="Principal" className="hidden items-center gap-8 md:flex">
-            <div
-              ref={enlacesRef}
-              onPointerLeave={volverALaActual}
-              onBlur={(evento) => {
-                if (!evento.currentTarget.contains(evento.relatedTarget)) volverALaActual();
-              }}
-              className="relative flex items-center gap-8"
-            >
+          <nav aria-label="Principal" className="hidden items-center gap-3 md:flex">
+            <div onPointerLeave={soltar} className="relative flex items-center">
+              <span
+                ref={fondoRef}
+                aria-hidden
+                style={{ opacity: 0 }}
+                className="pointer-events-none absolute inset-y-0 left-0 rounded-full bg-current motion-safe:transition-[transform,width,opacity] motion-safe:duration-300 motion-safe:ease-entrada"
+              />
               {navItems.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
@@ -122,20 +101,22 @@ export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    onPointerEnter={(evento) => moverLinea(evento.currentTarget)}
-                    onFocus={(evento) => moverLinea(evento.currentTarget)}
-                    className="py-1 text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                    onPointerEnter={(evento) => apuntar(evento.currentTarget)}
+                    onFocus={(evento) => apuntar(evento.currentTarget)}
+                    onBlur={soltar}
+                    className="relative rounded-full px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
                   >
                     {item.label}
+                    {/* La página actual: línea corta debajo (§4.2), fija. */}
+                    {active && (
+                      <span
+                        aria-hidden
+                        className="absolute bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-current"
+                      />
+                    )}
                   </Link>
                 );
               })}
-              <span
-                ref={lineaRef}
-                aria-hidden
-                style={{ width: ANCHO_LINEA, opacity: 0 }}
-                className="pointer-events-none absolute -bottom-1 left-0 h-0.5 bg-current motion-safe:data-[lista]:transition-[transform,opacity] motion-safe:data-[lista]:duration-300 motion-safe:data-[lista]:ease-entrada"
-              />
             </div>
 
             <AccountButton identidad={identidad} />
@@ -147,11 +128,20 @@ export function SiteHeader({ identidad, contacto }: SiteHeaderProps) {
             onClick={() => setMenuOpen(true)}
             aria-label="Abrir menú"
             aria-expanded={menuOpen}
-            className="relative -mr-2 flex h-11 w-11 items-center justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current md:hidden"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current md:hidden"
           >
-            <span aria-hidden className="absolute h-px w-6 -translate-y-[5px] bg-current" />
-            <span aria-hidden className="absolute h-px w-6 translate-y-[5px] bg-current" />
+            <span aria-hidden className="absolute h-px w-5 -translate-y-[5px] bg-current" />
+            <span aria-hidden className="absolute h-px w-5 translate-y-[5px] bg-current" />
           </button>
+
+          {/* Cuánto se lleva leído: una línea fina en el borde inferior de la
+              cápsula, en el color del texto — «Entrar» es el único acento
+              del header (§4.2). La escala una variable que el hook de scroll
+              actualiza en su mismo fotograma, así que no repinta nada. */}
+          <span
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-[var(--progreso-scroll,0)] bg-current opacity-25 group-[&:has([data-hero]):not([data-past-hero])]:opacity-0"
+          />
         </div>
       </header>
 

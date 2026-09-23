@@ -185,14 +185,14 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 - **Marca a la izquierda, en dos líneas.** "JYL" en el peso más fuerte de la tipografía de titulares, "artes gráficas" debajo, mucho más pequeño y en el color secundario. La marca es un elemento tipográfico compuesto, no un logo genérico centrado.
 - **Navegación al centro-derecha**, en tamaño pequeño y espaciado generoso. Cuatro destinos como máximo. El resto vive en el pie de página.
 - **Una sola acción destacada:** *Entrar*. Es el único elemento del header con color de acento. *Pedir un trabajo* no va arriba: ya está en el héroe, en cada servicio, en cada producto, en el menú de la cuenta y en el pie, y repetirlo en el header solo restaba sitio a la navegación. Entrar, en cambio, no estaba en ningún otro lado.
-- Alineado a la misma rejilla que el contenido de la página, no pegado a los bordes del navegador.
+- **Barra flotante:** una cápsula de bordes redondeados, separada 12 px del borde superior y de los lados de la ventana, alineada a la misma rejilla que el contenido. Fondo translúcido con desenfoque y borde de 1 px, sin sombra.
 
 **Comportamiento**
 
-- Arranca **transparente sobre la pieza del héroe**, con el texto en blanco. Al pasar el primer pliegue, se vuelve sólido con desenfoque de fondo y una línea inferior de un píxel. La transición dura entre 200 y 300 ms.
+- Arranca **casi transparente sobre la pieza del héroe**, con el texto en blanco y solo el borde de la cápsula marcado. Al pasar el primer pliegue, la cápsula se vuelve blanca translúcida con el texto en tinta. La transición dura entre 200 y 300 ms.
 - Al bajar se oculta, al subir reaparece. Esto devuelve pantalla al portafolio en el móvil.
-- La página actual se marca con una línea corta debajo del enlace, no con negrita ni con otro color. Es una sola línea para toda la navegación: al pasar el ratón o el foco por otro enlace se desliza hasta él, y al salir vuelve a la página actual.
-- Una línea fina en el color del texto marca cuánto se lleva leído de la página. No va en el color de acento: ese es solo de *Entrar*.
+- La página actual se marca con una línea corta debajo del enlace, no con negrita ni con otro color. Al pasar el ratón o el foco por los enlaces, un velo suave del color del texto se desliza detrás del enlace apuntado y se desvanece al salir de la navegación.
+- Una línea fina en el color del texto, en el borde inferior de la cápsula, marca cuánto se lleva leído de la página. No va en el color de acento: ese es solo de *Entrar*.
 - Al pasar el ratón por la marca, las letras de «JYL» suben una tras otra y vuelven.
 - Si el usuario tiene sesión iniciada, el botón de cuenta reemplaza al de login y muestra su inicial en un círculo relleno, con un chevrón que gira al abrir el menú. Al pulsarlo abre un menú con su nombre y su correo, *Mis pedidos y facturas*, *Pedir un trabajo* y *Cerrar sesión*. Salir tiene que poder hacerse desde cualquier página, no solo desde «Mi cuenta».
 

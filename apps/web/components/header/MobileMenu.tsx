@@ -69,20 +69,22 @@ export function MobileMenu({ open, onOpenChange, triggerRef, identidad, contacto
         >
           <Dialog.Title className="sr-only">Menú de navegación</Dialog.Title>
 
-          <div className="mx-auto flex h-16 w-full max-w-content shrink-0 items-center justify-between px-6 sm:h-20 lg:px-8">
+          {/* Misma geometría que la cápsula del header: la marca y la X caen
+              justo donde estaban la marca y el botón de menú. */}
+          <div className="mx-3 mt-3 flex h-14 shrink-0 items-center justify-between border border-transparent pl-5 pr-2 sm:mx-4 sm:h-16">
             <Marca onClick={() => onOpenChange(false)} />
 
             <Dialog.Close
               aria-label="Cerrar menú"
-              className="relative -mr-2 flex h-11 w-11 items-center justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+              className="relative flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
             >
               <span
                 aria-hidden
-                className="absolute h-px w-6 rotate-45 bg-current motion-safe:animate-menu-line-top"
+                className="absolute h-px w-5 rotate-45 bg-current motion-safe:animate-menu-line-top"
               />
               <span
                 aria-hidden
-                className="absolute h-px w-6 -rotate-45 bg-current motion-safe:animate-menu-line-bottom"
+                className="absolute h-px w-5 -rotate-45 bg-current motion-safe:animate-menu-line-bottom"
               />
             </Dialog.Close>
           </div>
