@@ -246,3 +246,45 @@
     }
   }
 }
+
+/**
+ * La tinta de un área de servicio como variable (`--tinta`), para las reglas
+ * que la usan. Las clases salen de `CLASE_TINTA` en components/cmyk/areas.
+ */
+@layer components {
+  .tinta-cian {
+    --tinta: theme("colors.tinta-cian");
+  }
+
+  .tinta-magenta {
+    --tinta: theme("colors.accent");
+  }
+
+  .tinta-amarillo {
+    --tinta: theme("colors.tinta-amarillo");
+  }
+
+  .tinta-negro {
+    --tinta: theme("colors.ink");
+  }
+
+  /**
+   * Sombra de plancha: al pasar por una fila de servicio, el nombre se
+   * imprime una segunda vez, corrido, en la tinta de su área. Es el mismo
+   * gesto del registro de los títulos, en una sola tinta.
+   */
+  .plancha {
+    text-shadow: 0 0 0 transparent;
+  }
+
+  .group\/fila:hover .plancha,
+  .group\/fila:focus-visible .plancha {
+    text-shadow: 0.05em 0.045em 0 var(--tinta);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .plancha {
+      transition: text-shadow 300ms cubic-bezier(0.2, 0.65, 0.3, 1);
+    }
+  }
+}

@@ -518,6 +518,8 @@ El sitio de un estudio gráfico se juzga por cómo se ve. Un diseño genérico e
 - **Cian y amarillo** (`tinta-cian`, `tinta-amarillo`) son solo gráficos: el desalineado de los títulos, las tramas de puntos y las marcas del pliego. Nunca en texto ni en botones: sobre blanco no llegan al AA.
 - **Títulos con registro:** las tres tintas asoman como sombras desplazadas del mismo texto, como un pliego con las planchas corridas, y encajan al pasar el ratón. El texto es uno solo y en tinta; el contraste es el suyo.
 - Nada de degradados decorativos. Las tramas son patrones de puntos, no degradados.
+- **Una tinta por área de servicio:** publicidad y diseño en magenta, desarrollo web en cian, servicios técnicos en amarillo. Se ve en la trama de su icono y, al pasar por un servicio, en la trama que entra y en la sombra corrida del nombre.
+- El pie de página y la línea de tiempo de «Cómo trabajamos» llevan las cuatro tintas en el orden en que se imprimen: cian, magenta, amarillo, negro.
 - El panel no lleva CMYK: sigue sobrio, con un solo acento.
 
 **Tipografía.** Dos familias como máximo, claramente distintas. La de titulares se trata como elemento gráfico, con interletraje ajustado a mano en los títulos principales. Escala tipográfica definida. Nada de mayúsculas sostenidas en etiquetas ni de resaltar una sola palabra del titular en otro color.

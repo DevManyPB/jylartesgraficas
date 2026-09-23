@@ -1,11 +1,10 @@
 import { CATEGORIAS_SERVICIO, miniaturaDesdeUrl, NOMBRE_CATEGORIA, rangoDePrecio } from "@jyl/core";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { ParticulasJYL } from "@/components/animacion/ParticulasJYL";
+import { PastillaArea } from "@/components/cmyk/areas";
 import { Mapa } from "@/components/contacto/Mapa";
 import { EstadoAhora } from "@/components/horario/EstadoAhora";
-import { IconoCodigo, IconoLlave, IconoPincel } from "@/components/iconos/Iconos";
 import { Pieza } from "@/components/inicio/Pieza";
 import { PliegoImprenta } from "@/components/inicio/PliegoImprenta";
 import { configuracionPublica, productosPublicos, proyectosPublicos, serviciosPublicos } from "@/datos/cache";
@@ -14,13 +13,6 @@ import { enlaceWhatsapp, pesos } from "@/lib/formato";
 export const runtime = "nodejs";
 
 const PIEZAS_EN_INICIO = 9;
-
-/** Un icono por área de servicio, para que el bloque se recorra con la vista. */
-const ICONO_CATEGORIA: Record<(typeof CATEGORIAS_SERVICIO)[number], ReactNode> = {
-  publicidad: <IconoPincel className="h-5 w-5" />,
-  web: <IconoCodigo className="h-5 w-5" />,
-  tecnico: <IconoLlave className="h-5 w-5" />,
-};
 
 /**
  * Inicio — SPEC.md §4.3: una pieza del portafolio a pantalla completa,
@@ -185,9 +177,7 @@ export default async function Home() {
                       {/* El icono no dice nada por sí solo: acompaña al
                           nombre para poder saltar de un vistazo al área que
                           interesa, en vez de leer tres bloques de texto. */}
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
-                        {ICONO_CATEGORIA[categoria]}
-                      </span>
+                      <PastillaArea area={categoria} />
                       {NOMBRE_CATEGORIA[categoria]}
                     </dt>
                     <dd>

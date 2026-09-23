@@ -16,7 +16,15 @@ export async function SiteFooter() {
   const redes = Object.entries(configuracion.redes).filter(([, url]) => url);
 
   return (
-    <footer className="border-t border-border bg-canvas-sunken">
+    <footer className="bg-canvas-sunken">
+      {/* Tira de control en el borde, como en un pliego: las cuatro tintas
+          de proceso en el orden en que se imprimen (SPEC.md §9). */}
+      <div aria-hidden className="flex h-1">
+        <span className="flex-1 bg-tinta-cian" />
+        <span className="flex-1 bg-accent" />
+        <span className="flex-1 bg-tinta-amarillo" />
+        <span className="flex-1 bg-ink" />
+      </div>
       <div className="mx-auto grid w-full max-w-content gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
           <p className="font-display text-lg text-ink">JYL Artes Gráficos</p>

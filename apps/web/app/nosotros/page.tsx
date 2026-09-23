@@ -45,6 +45,11 @@ export default async function Nosotros() {
     },
   ];
 
+  // Los cuatro pasos, en las cuatro tintas y en el orden en que se imprimen:
+  // cian, magenta, amarillo, negro (SPEC.md §9). El filo fino hace visible el
+  // amarillo sobre blanco.
+  const tintaPaso = ["bg-tinta-cian", "bg-accent", "bg-tinta-amarillo", "bg-ink"];
+
   const categoriasConServicios = CATEGORIAS_SERVICIO.map((cat) => ({
     categoria: cat,
     nombre: NOMBRE_CATEGORIA[cat],
@@ -144,10 +149,10 @@ export default async function Nosotros() {
         <div className="mt-10">
           {/* Vista móvil: vertical con línea continua */}
           <ol className="relative space-y-8 border-l border-border pl-6 lg:hidden">
-            {pasos.map((paso) => (
+            {pasos.map((paso, i) => (
               <li key={paso.titulo} className="relative">
                 <span
-                  className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-accent bg-canvas"
+                  className={`absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full ring-1 ring-inset ring-ink/15 ${tintaPaso[i]}`}
                   aria-hidden
                 />
                 <h3 className="font-display text-base text-ink">{paso.titulo}</h3>
@@ -158,10 +163,10 @@ export default async function Nosotros() {
 
           {/* Vista escritorio: horizontal continuo con conectores */}
           <ol className="hidden border-t border-border pt-4 lg:grid lg:grid-cols-4 lg:gap-8">
-            {pasos.map((paso) => (
+            {pasos.map((paso, i) => (
               <li key={paso.titulo} className="relative">
                 <span
-                  className="absolute -top-[23px] left-0 h-3.5 w-3.5 rounded-full border-2 border-accent bg-canvas"
+                  className={`absolute -top-[23px] left-0 h-3.5 w-3.5 rounded-full ring-1 ring-inset ring-ink/15 ${tintaPaso[i]}`}
                   aria-hidden
                 />
                 <h3 className="font-display text-lg text-ink">{paso.titulo}</h3>

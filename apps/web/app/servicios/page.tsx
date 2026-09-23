@@ -1,9 +1,9 @@
 import { CATEGORIAS_SERVICIO, NOMBRE_CATEGORIA } from "@jyl/core";
 import { Vacio } from "@jyl/ui";
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
-import { IconoCodigo, IconoLlave, IconoPincel } from "@/components/iconos/Iconos";
+import { PastillaArea, TINTA_AREA } from "@/components/cmyk/areas";
+import { IconoPincel } from "@/components/iconos/Iconos";
 import { FilaServicio } from "@/components/servicios/FilaServicio";
 import { configuracionPublica, serviciosPublicos } from "@/datos/cache";
 import { enlaceWhatsapp } from "@/lib/formato";
@@ -13,12 +13,6 @@ export const runtime = "nodejs";
 export const metadata: Metadata = {
   title: "Servicios",
   description: "Publicidad y diseño gráfico, desarrollo web y servicios técnicos.",
-};
-
-const ICONO_CATEGORIA: Record<(typeof CATEGORIAS_SERVICIO)[number], ReactNode> = {
-  publicidad: <IconoPincel className="h-5 w-5" />,
-  web: <IconoCodigo className="h-5 w-5" />,
-  tecnico: <IconoLlave className="h-5 w-5" />,
 };
 
 /**
@@ -58,16 +52,14 @@ export default async function Servicios() {
                 id={`categoria-${categoria}`}
                 className="flex items-center gap-3 border-b border-border-strong pb-4 font-display text-base text-ink-muted"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-accent">
-                  {ICONO_CATEGORIA[categoria]}
-                </span>
+                <PastillaArea area={categoria} className="h-10 w-10" />
                 {NOMBRE_CATEGORIA[categoria]}
               </h2>
 
               <ul>
                 {deLaCategoria.map((servicio) => (
                   <li key={servicio.id}>
-                    <FilaServicio id={servicio.id} nombre={servicio.nombre} />
+                    <FilaServicio id={servicio.id} nombre={servicio.nombre} tinta={TINTA_AREA[categoria]} />
                   </li>
                 ))}
               </ul>
