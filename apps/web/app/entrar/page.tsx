@@ -102,7 +102,7 @@ export default function Entrar() {
 
   return (
     <main className="mx-auto w-full max-w-sm px-6 pb-24 pt-28 sm:pt-32">
-      <h1 className="font-display text-3xl text-ink">
+      <h1 className="registro font-display text-3xl text-ink">
         {modo === "entrar" ? "Entrar a tu cuenta" : "Crear una cuenta"}
       </h1>
       <p className="mt-3 text-sm text-ink-muted">

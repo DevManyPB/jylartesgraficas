@@ -56,7 +56,7 @@ export default async function Nosotros() {
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
-      <h1 className="font-display text-4xl text-ink sm:text-5xl">Nosotros</h1>
+      <h1 className="registro font-display text-4xl text-ink sm:text-5xl">Nosotros</h1>
 
       <section aria-labelledby="quienes" className="mt-10 max-w-prose">
         <h2 id="quienes" className="font-display text-2xl text-ink">

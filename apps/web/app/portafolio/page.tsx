@@ -26,7 +26,7 @@ export default async function Portafolio({ searchParams }: PageProps<"/portafoli
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
-      <h1 className="font-display text-4xl text-ink sm:text-5xl">Portafolio</h1>
+      <h1 className="registro font-display text-4xl text-ink sm:text-5xl">Portafolio</h1>
       <p className="mt-4 max-w-prose text-base text-ink-muted">
         Trabajos que han salido del estudio. Toca una pieza para verla completa.
       </p>

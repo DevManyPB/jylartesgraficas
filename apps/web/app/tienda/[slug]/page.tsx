@@ -38,7 +38,7 @@ export default async function Producto({ params }: PageProps<"/tienda/[slug]">) 
 
         <div>
           <p className="text-sm text-ink-muted">{producto.categoria}</p>
-          <h1 className="mt-1 font-display text-3xl text-ink sm:text-4xl">{producto.nombre}</h1>
+          <h1 className="registro mt-1 font-display text-3xl text-ink sm:text-4xl">{producto.nombre}</h1>
           {producto.descripcion && (
             <p className="mt-4 max-w-prose whitespace-pre-line text-base leading-relaxed text-ink-muted">
               {producto.descripcion}

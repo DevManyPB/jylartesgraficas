@@ -48,7 +48,7 @@ export default async function Tienda({ searchParams }: PageProps<"/tienda">) {
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
-      <h1 className="font-display text-4xl text-ink sm:text-5xl">Tienda</h1>
+      <h1 className="registro font-display text-4xl text-ink sm:text-5xl">Tienda</h1>
       <p className="mt-4 max-w-prose text-base text-ink-muted">
         Pides, lo confirmamos y acordamos el pago. No se paga en línea.
       </p>

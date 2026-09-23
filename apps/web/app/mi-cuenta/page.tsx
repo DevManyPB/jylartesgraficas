@@ -28,7 +28,7 @@ export default async function MiCuenta() {
 
   return (
     <main className="mx-auto w-full max-w-content px-6 pb-24 pt-28 sm:pt-32 lg:px-8">
-      <h1 className="font-display text-4xl text-ink">Mi cuenta</h1>
+      <h1 className="registro font-display text-4xl text-ink">Mi cuenta</h1>
       <p className="mt-2 text-base text-ink-muted">{contacto.nombre || sesion.nombre || sesion.email}</p>
 
       <section aria-labelledby="mis-pedidos" className="mt-10">

@@ -126,10 +126,10 @@ export default async function Home() {
       </section>
 
       {principal && (
-        <section aria-labelledby="inicio-portafolio" className="border-b border-border px-6 py-20 lg:px-8">
+        <section aria-labelledby="inicio-portafolio" className="group/registro border-b border-border px-6 py-20 lg:px-8">
           <div className="mx-auto w-full max-w-content">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <h2 id="inicio-portafolio" className="scroll-mt-24 font-display text-3xl text-ink">
+              <h2 id="inicio-portafolio" className="registro scroll-mt-24 font-display text-3xl text-ink">
                 Trabajos recientes
               </h2>
               <Link href="/portafolio" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
@@ -158,10 +158,10 @@ export default async function Home() {
       )}
 
       {servicios.length > 0 && (
-        <section aria-labelledby="inicio-servicios" className="border-b border-border px-6 py-20 lg:px-8">
+        <section aria-labelledby="inicio-servicios" className="group/registro border-b border-border px-6 py-20 lg:px-8">
           <div className="mx-auto w-full max-w-content">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <h2 id="inicio-servicios" className="font-display text-3xl text-ink">
+              <h2 id="inicio-servicios" className="registro font-display text-3xl text-ink">
                 Servicios
               </h2>
               <Link href="/servicios" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
@@ -213,10 +213,10 @@ export default async function Home() {
       )}
 
       {productos.length > 0 && (
-        <section aria-labelledby="inicio-tienda" className="border-b border-border px-6 py-20 lg:px-8">
+        <section aria-labelledby="inicio-tienda" className="group/registro border-b border-border px-6 py-20 lg:px-8">
           <div className="mx-auto w-full max-w-content">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <h2 id="inicio-tienda" className="font-display text-3xl text-ink">
+              <h2 id="inicio-tienda" className="registro font-display text-3xl text-ink">
                 Tienda
               </h2>
               <Link href="/tienda" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
@@ -264,11 +264,11 @@ export default async function Home() {
         </section>
       )}
 
-      <section aria-labelledby="inicio-ubicacion" className="px-6 py-20 lg:px-8">
+      <section aria-labelledby="inicio-ubicacion" className="group/registro px-6 py-20 lg:px-8">
         <div className="mx-auto grid w-full max-w-content gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-14">
           <div className="flex flex-col gap-6">
             <div>
-              <h2 id="inicio-ubicacion" className="font-display text-3xl text-ink">
+              <h2 id="inicio-ubicacion" className="registro font-display text-3xl text-ink">
                 Dónde estamos
               </h2>
               {lineaDireccion ? (
