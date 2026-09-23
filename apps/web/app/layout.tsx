@@ -98,16 +98,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 a través de React, así que la anima el compositor y no cuesta
                 JavaScript. Sin soporte del navegador, la navegación sigue
                 siendo instantánea: no hay nada que se rompa. */}
-            {/* `update="none"`: esta envoltura solo anima al cambiar de
-                página. Sin ello, cualquier cambio de estado de dentro —los
-                pasos del formulario de pedido, por ejemplo— fundiría también
-                la página entera. */}
+            {/* Cambiar de página es un «update» de esta envoltura, así que el
+                update tiene que animar. Lo único que se excluye son los pasos
+                del formulario de pedido (tipo `paso`), que tienen su propia
+                transición y no deben fundir la página entera. Con
+                `update="none"` a secas se apagaban también los cambios de
+                página. */}
             {/* Destino de «Saltar al contenido». `tabIndex={-1}` para que el
                 foco llegue aquí de verdad y el siguiente Tab siga desde el
                 contenido, no desde el header. No es un control, así que no
                 lleva anillo de foco: el que se ve es el del siguiente Tab. */}
             <div id="contenido" tabIndex={-1} className="focus:outline-none">
-              <ViewTransition default="pagina" update="none">
+              <ViewTransition default="pagina" update={{ paso: "none", default: "pagina" }}>
                 {children}
               </ViewTransition>
             </div>

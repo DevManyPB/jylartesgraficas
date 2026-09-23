@@ -3,7 +3,7 @@
 import { pedidoEntranteSchema, type Invitado, type PedidoEntrante, type Servicio } from "@jyl/core";
 import { ConfirmDialog, useToast } from "@jyl/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useEffect, useState, ViewTransition } from "react";
+import { addTransitionType, startTransition, useEffect, useState, ViewTransition } from "react";
 import { useForm } from "react-hook-form";
 import { BotonAccion } from "@/components/animacion/BotonAccion";
 import { Confirmacion } from "./Confirmacion";
@@ -116,9 +116,15 @@ export function FormularioPedido({
    * Cambiar de paso va dentro de `startTransition` para que React lo trate
    * como transición y anime el `<ViewTransition>` de abajo. Sin esto el paso
    * se sustituye de golpe.
+   *
+   * El tipo `paso` le dice a la envoltura de página del layout que esto no es
+   * un cambio de página, para que no funda la página entera.
    */
   function irAlPaso(destino: number) {
-    startTransition(() => setPaso(Math.min(Math.max(destino, 0), TOTAL_PASOS - 1)));
+    startTransition(() => {
+      addTransitionType("paso");
+      setPaso(Math.min(Math.max(destino, 0), TOTAL_PASOS - 1));
+    });
   }
 
   async function siguiente() {
