@@ -209,7 +209,7 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 
 ### 4.3 Inicio
 
-1. Pieza destacada a pantalla completa, con el nombre del estudio y una sola acción: *Pedir un trabajo*. Encima de la foto (o sola, si aún no hay pieza destacada) va un pliego de imprenta dibujado en líneas finas: cuadrícula de mesa de corte, marcas de corte en las esquinas del área de contenido, cruces de registro y una tira de control de tono, sin degradados. Al cargar se «imprime» junto con la entrada del texto (la cuadrícula aparece, las marcas se trazan, las cruces giran hasta su sitio, la tira se llena). Después solo se mueve con el cursor: dos guías de corte lo siguen, la celda de la cuadrícula bajo él se marca y las cruces giran según su posición. Sin cursor o con `prefers-reduced-motion`, queda quieto.
+1. Pieza destacada a pantalla completa, con el nombre del estudio y una sola acción: *Pedir un trabajo*. Encima de la foto (o sola, si aún no hay pieza destacada) va un pliego de imprenta dibujado en líneas finas: cuadrícula de mesa de corte, marcas de corte en las esquinas del área de contenido, cruces de registro y una tira de control con las cuatro tintas de proceso (cian, magenta, amarillo, negro) y tres tonos, sin degradados. El nombre del estudio va con registro CMYK (§9). Al cargar se «imprime» junto con la entrada del texto (la cuadrícula aparece, las marcas se trazan, las cruces giran hasta su sitio, la tira se llena). Después solo se mueve con el cursor: dos guías de corte lo siguen, la celda de la cuadrícula bajo él se marca y las cruces giran según su posición. Sin cursor o con `prefers-reduced-motion`, queda quieto.
 2. Rejilla de portafolio reciente (6–8 piezas), con las proporciones reales de cada pieza, sin recortes cuadrados forzados.
 3. Bloque de servicios, agrupado por las tres áreas.
 4. Franja de productos: camisetas, lapiceros y demás, con enlace a la tienda.
@@ -512,7 +512,13 @@ El sitio de un estudio gráfico se juzga por cómo se ve. Un diseño genérico e
 
 **Principio rector:** el sitio es el marco, el trabajo es el cuadro. La interfaz es deliberadamente sobria para que las piezas del estudio sean lo único con color fuerte en pantalla.
 
-**Color.** Base neutra profunda con un solo acento, usado poco y con intención: enlaces, estado activo y la acción principal. Nada de degradados decorativos.
+**Color: registro CMYK.** Base neutra profunda, y las cuatro tintas de proceso como identidad del sitio público (decidido el 22 de septiembre de 2026; antes era un solo acento).
+
+- **Magenta** (`accent`) es el único color de acción: botones, enlaces, estado activo y *Entrar*. Nada que se pulse lleva otra tinta.
+- **Cian y amarillo** (`tinta-cian`, `tinta-amarillo`) son solo gráficos: el desalineado de los títulos, las tramas de puntos y las marcas del pliego. Nunca en texto ni en botones: sobre blanco no llegan al AA.
+- **Títulos con registro:** las tres tintas asoman como sombras desplazadas del mismo texto, como un pliego con las planchas corridas, y encajan al pasar el ratón. El texto es uno solo y en tinta; el contraste es el suyo.
+- Nada de degradados decorativos. Las tramas son patrones de puntos, no degradados.
+- El panel no lleva CMYK: sigue sobrio, con un solo acento.
 
 **Tipografía.** Dos familias como máximo, claramente distintas. La de titulares se trata como elemento gráfico, con interletraje ajustado a mano en los títulos principales. Escala tipográfica definida. Nada de mayúsculas sostenidas en etiquetas ni de resaltar una sola palabra del titular en otro color.
 

@@ -30,6 +30,16 @@ const preset: Omit<Config, "content"> = {
       "accent-hover": "#B80F68",
       "accent-soft": "#FBE4F0",
 
+      /**
+       * Tintas de proceso — SPEC.md §9. El magenta es `accent` y el negro es
+       * `ink`; estas completan el CMYK. **Solo para elementos gráficos**: las
+       * capas desalineadas de los títulos, las tramas y las marcas del
+       * pliego. Nunca en texto ni en botones: sobre blanco el cian da ≈2,3:1
+       * y el amarillo ≈1,1:1, lejos del AA (AGENTS.md §11).
+       */
+      "tinta-cian": "#00AEEF",
+      "tinta-amarillo": "#FFF200",
+
       success: "#1E7B4D",
       "success-soft": "#E3F3EA",
       warning: "#B4790A",

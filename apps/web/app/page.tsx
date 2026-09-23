@@ -81,7 +81,7 @@ export default async function Home() {
               {/* El único momento orquestado del sitio (SPEC.md §9): el texto
                   entra escalonado una vez, al cargar. Con prefers-reduced-motion
                   aparece ya colocado. */}
-              <h1 className="animate-entrada-1 font-display text-5xl motion-reduce:animate-none sm:text-display lg:text-display-lg">
+              <h1 className="registro animate-entrada-1 font-display text-5xl motion-reduce:animate-none sm:text-display lg:text-display-lg">
                 JYL Artes Gráficos
               </h1>
               <p className="mt-6 max-w-md animate-entrada-2 text-base text-ink-inverted/70 motion-reduce:animate-none">

@@ -10,7 +10,7 @@ import { GuiasDeCorte } from "./GuiasDeCorte";
  * - la cuadrícula de una mesa de corte, fina cada 24 px y marcada cada 120;
  * - marcas de corte en las esquinas de la zona de contenido;
  * - cruces de registro a media altura, a cada lado;
- * - una tira de control de tono, con el acento como último parche.
+ * - una tira de control con las cuatro tintas de proceso y tres tonos.
  *
  * Es SVG en el servidor y sin degradados (AGENTS.md §8). Los colores son los
  * tokens con opacidad, nunca escritos a mano (AGENTS.md §9).
@@ -107,22 +107,28 @@ function CruzDeRegistro({ className, desde }: { className: string; desde: number
 }
 
 /**
- * Tira de control: parches de la tinta al 100, 70, 45 y 20 %, y el acento
- * del estudio al final. Pegada al borde inferior izquierdo del área útil, por
- * fuera, donde va en un pliego. A la derecha la tapaba el botón de WhatsApp.
+ * Tira de control: las cuatro tintas de proceso en el orden en que se
+ * imprimen —cian, magenta, amarillo, negro— y después el negro al 70, 45 y
+ * 20 %. Pegada al borde inferior izquierdo del área útil, por fuera, donde va
+ * en un pliego. A la derecha la tapaba el botón de WhatsApp.
+ *
+ * El parche negro lleva un filo claro: sobre el fondo negro del héroe, sin
+ * él no se vería.
  */
 function TiraDeControl({ desde }: { desde: number }) {
-  const tonos = [
-    "bg-ink-inverted/90",
+  const parches = [
+    "bg-tinta-cian",
+    "bg-accent",
+    "bg-tinta-amarillo",
+    "bg-ink ring-1 ring-inset ring-ink-inverted/40",
     "bg-ink-inverted/70",
     "bg-ink-inverted/45",
     "bg-ink-inverted/20",
-    "bg-accent",
   ];
   return (
     <div className="absolute -bottom-6 left-6 flex">
-      {tonos.map((tono, i) => (
-        <span key={tono} className={cn("pliego-parche h-2.5 w-2.5", tono)} style={retraso(desde + i * 70)} />
+      {parches.map((parche, i) => (
+        <span key={parche} className={cn("pliego-parche h-2.5 w-2.5", parche)} style={retraso(desde + i * 70)} />
       ))}
     </div>
   );
