@@ -1,5 +1,6 @@
 import { cn } from "@jyl/ui";
 import type { CSSProperties } from "react";
+import { DibujoPluma } from "./DibujoPluma";
 import { GuiasDeCorte } from "./GuiasDeCorte";
 
 /**
@@ -57,6 +58,10 @@ export function PliegoImprenta() {
         <CruzDeRegistro className="-right-11 top-1/2 hidden -translate-y-1/2 lg:block" desde={650} />
 
         <TiraDeControl desde={800} />
+
+        {/* Un diseño haciéndose en el hueco de arriba, donde el titular no
+            llega: formas nuevas cada vez, trazadas con la pluma. */}
+        <DibujoPluma className="absolute left-0 top-0 h-[40%] w-full lg:w-7/12" />
       </div>
     </div>
   );

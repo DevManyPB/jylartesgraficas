@@ -46,6 +46,8 @@ export function ParticulasJYL() {
     let timerPalabra: NodeJS.Timeout | null = null;
     let isVisible = true;
     const particulas: Particula[] = [];
+    let limites = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+    let ultimoMovimiento = 0;
     let indiceActual = 0;
 
     const mouse = {
@@ -124,6 +126,17 @@ export function ParticulasJYL() {
       const palabra = PALABRAS[nuevoIndice]!;
       const nuevosPuntos = obtenerPuntosDePalabra(palabra, rectWidth, rectHeight);
       if (nuevosPuntos.length === 0) return;
+
+      // La caja de la palabra: por dónde pasea el pincel fantasma.
+      limites = nuevosPuntos.reduce(
+        (caja, punto) => ({
+          minX: Math.min(caja.minX, punto.x),
+          maxX: Math.max(caja.maxX, punto.x),
+          minY: Math.min(caja.minY, punto.y),
+          maxY: Math.max(caja.maxY, punto.y),
+        }),
+        { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity },
+      );
 
       // Ajustar cantidad de partículas exactamente a la cantidad de puntos
       if (particulas.length > nuevosPuntos.length) {
@@ -216,6 +229,7 @@ export function ParticulasJYL() {
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
       mouse.active = true;
+      ultimoMovimiento = performance.now();
     };
 
     const onPointerLeave = () => {
@@ -233,6 +247,17 @@ export function ParticulasJYL() {
     const FRICCION = 0.86; // Amortiguación
     const FUERZA = 5.2;    // Fuerza de repulsión
 
+    /*
+      Pincel fantasma: cuando nadie mueve el ratón sobre las partículas (o
+      en pantallas táctiles), un pincel invisible recorre la palabra en una
+      curva de Lissajous y las aparta a su paso, más suave que el cursor.
+      Así la palabra nunca se ve quieta y, de paso, enseña que reacciona.
+      Se retira en cuanto el cursor real se acerca.
+    */
+    const ESPERA_PINCEL = 1500; // ms sin mover el ratón cerca antes de que entre
+    const RADIO_PINCEL = 55;
+    const FUERZA_PINCEL = 2.2;
+
     function animar() {
       if (!ctx || !isVisible) return;
       tiempo += 0.02;
@@ -240,6 +265,25 @@ export function ParticulasJYL() {
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, rectWidth, rectHeight);
+
+      // ¿Está el cursor real cerca de la palabra y moviéndose?
+      const cursorCerca =
+        mouse.active &&
+        isFinePointer &&
+        performance.now() - ultimoMovimiento < ESPERA_PINCEL &&
+        mouse.x > -mouse.radius &&
+        mouse.x < rectWidth + mouse.radius &&
+        mouse.y > -mouse.radius &&
+        mouse.y < rectHeight + mouse.radius;
+
+      let pincelX = -9999;
+      let pincelY = -9999;
+      if (!cursorCerca && limites.maxX > limites.minX) {
+        const centroX = (limites.minX + limites.maxX) / 2;
+        const centroY = (limites.minY + limites.maxY) / 2;
+        pincelX = centroX + ((limites.maxX - limites.minX) / 2) * 1.05 * Math.sin(tiempo * 0.55);
+        pincelY = centroY + ((limites.maxY - limites.minY) / 2) * 0.9 * Math.sin(tiempo * 1.3 + 1);
+      }
 
       const total = particulas.length;
       for (let i = 0; i < total; i++) {
@@ -267,9 +311,22 @@ export function ParticulasJYL() {
           }
         }
 
-        // Respiración ambiental
-        const ambienteX = Math.sin(tiempo + p.phase) * 0.4;
-        const ambienteY = Math.cos(tiempo * 0.85 + p.phase) * 0.4;
+        // El pincel fantasma, si le toca.
+        if (pincelX > -9999) {
+          const dx = p.x - pincelX;
+          const dy = p.y - pincelY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < RADIO_PINCEL && dist > 0) {
+            const factor = (RADIO_PINCEL - dist) / RADIO_PINCEL;
+            p.vx += (dx / dist) * factor * FUERZA_PINCEL;
+            p.vy += (dy / dist) * factor * FUERZA_PINCEL;
+          }
+        }
+
+        // Una onda lenta que atraviesa la palabra, más la respiración propia
+        // de cada partícula: la tinta nunca está del todo quieta.
+        const ambienteX = Math.sin(tiempo * 1.1 + p.originY * 0.045) * 1.6 + Math.sin(tiempo + p.phase) * 0.4;
+        const ambienteY = Math.cos(tiempo * 0.9 + p.originX * 0.035) * 1.6 + Math.cos(tiempo * 0.85 + p.phase) * 0.4;
 
         // Física hacia el origen
         const targetX = p.originX + ambienteX;

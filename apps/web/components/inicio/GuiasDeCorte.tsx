@@ -83,9 +83,14 @@ export function GuiasDeCorte() {
 
     heroe.addEventListener("pointermove", seguir);
     heroe.addEventListener("pointerleave", soltar);
+    // Si la ventana pierde el foco (otra app, una captura de pantalla), el
+    // cursor ya no está aquí aunque el héroe no se haya enterado: sin esto
+    // las guías se quedaban clavadas donde se fue el ratón.
+    window.addEventListener("blur", soltar);
     return () => {
       heroe.removeEventListener("pointermove", seguir);
       heroe.removeEventListener("pointerleave", soltar);
+      window.removeEventListener("blur", soltar);
     };
   }, []);
 

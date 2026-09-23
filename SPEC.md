@@ -209,7 +209,7 @@ El header es lo primero que se ve y donde se decide si el sitio parece profesion
 
 ### 4.3 Inicio
 
-1. Pieza destacada a pantalla completa, con el nombre del estudio y una sola acción: *Pedir un trabajo*. Encima de la foto (o sola, si aún no hay pieza destacada) va un pliego de imprenta dibujado en líneas finas: cuadrícula de mesa de corte, marcas de corte en las esquinas del área de contenido, cruces de registro y una tira de control con las cuatro tintas de proceso (cian, magenta, amarillo, negro) y tres tonos, sin degradados. El nombre del estudio va con registro CMYK (§9). Al cargar se «imprime» junto con la entrada del texto (la cuadrícula aparece, las marcas se trazan, las cruces giran hasta su sitio, la tira se llena). Después solo se mueve con el cursor: dos guías de corte lo siguen, la celda de la cuadrícula bajo él se marca y las cruces giran según su posición. Sin cursor o con `prefers-reduced-motion`, queda quieto.
+1. Pieza destacada a pantalla completa, con el nombre del estudio y una sola acción: *Pedir un trabajo*. Encima de la foto (o sola, si aún no hay pieza destacada) va un pliego de imprenta dibujado en líneas finas: cuadrícula de mesa de corte, marcas de corte en las esquinas del área de contenido, cruces de registro y una tira de control con las cuatro tintas de proceso (cian, magenta, amarillo, negro) y tres tonos, sin degradados. El nombre del estudio va con registro CMYK (§9). Al cargar se «imprime» junto con la entrada del texto (la cuadrícula aparece, las marcas se trazan, las cruces giran hasta su sitio, la tira se llena). En el hueco superior, la pluma de Bézier dibuja formas nuevas sin parar (ver §9, excepción del héroe). Con el cursor: dos guías de corte lo siguen, la celda de la cuadrícula bajo él se marca y las cruces giran según su posición. Sin cursor o con `prefers-reduced-motion`, queda quieto.
 2. Rejilla de portafolio reciente (6–8 piezas), con las proporciones reales de cada pieza, sin recortes cuadrados forzados.
 3. Bloque de servicios, agrupado por las tres áreas.
 4. Franja de productos: camisetas, lapiceros y demás, con enlace a la tienda.
@@ -528,6 +528,8 @@ El sitio de un estudio gráfico se juzga por cómo se ve. Un diseño genérico e
 **Rejilla.** Editorial y asimétrica, no tres tarjetas iguales en fila. Las piezas del portafolio conservan su proporción real.
 
 **Movimiento.** Un momento orquestado en la carga de inicio. De ahí en adelante, el movimiento solo responde a acciones del usuario y muestra qué cambió: abrir una pieza, avanzar un paso, abrir un modal. Sin animaciones de entrada en cada sección al hacer scroll.
+
+**Excepción: el héroe del inicio vive** (decidido el 22 de septiembre de 2026). Es el único sitio con movimiento continuo: las partículas tipográficas ondulan y, si nadie las toca, un pincel invisible las recorre; y en el hueco superior la pluma de Bézier dibuja formas nuevas, generadas al azar, una tras otra. Se detiene fuera de pantalla y con la pestaña oculta, y con `prefers-reduced-motion` queda quieto. Fuera del héroe sigue la regla general.
 
 **Panel.** Densidad de información sobre aire decorativo. El administrador entra a trabajar. Tipografía más pequeña, filas compactas, teclado utilizable.
 
